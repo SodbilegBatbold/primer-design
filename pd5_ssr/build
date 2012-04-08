@@ -1,0 +1,1 @@
+g++ -Wall pd5_ssr.cpp ../primer.cpp ../sequence_utils.cpp ../dimerisation.cpp ../annealing_temperature.cpp ../primer_pair.cpp ../DNAfind.cpp ../oligotm.c ../constraints.cpp ../display_utils.cpp sputnik.cpp sputnik_pd5.cpp -g -o pd5_ssr 
