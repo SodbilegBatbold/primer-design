@@ -3,20 +3,20 @@
 #include <cstdlib>
 #include "../primer.h"
 
-#ifndef SPUTNIK_HELYGEN_H
-#define SPUTNIK_HELYGEN_H
+#ifndef SPUTNIK_SSR_H
+#define SPUTNIK_SSR_H
 
 using namespace std;
 
-class sputnik_helygen
+class sputnik_ssr
 {
  public:
   
   primer *fwdP;
   primer *revP;
   
-  sputnik_helygen();
-  ~sputnik_helygen();
+  sputnik_ssr();
+  ~sputnik_ssr();
   
   int find_primers(char*, int start, int end, int repeat_len);
 

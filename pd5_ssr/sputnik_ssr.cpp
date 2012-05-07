@@ -1,6 +1,6 @@
 #include <cmath>
 #include "../display_utils.h"
-#include "sputnik_helygen.h"
+#include "sputnik_ssr.h"
 #include "../sequence_utils.h"
 #include "../annealing_temperature.h"
 #include "sputnik.h"
@@ -18,19 +18,19 @@
 
 #define MAX_TEMP_DIFF 2
 
-sputnik_helygen::sputnik_helygen(){
+sputnik_ssr::sputnik_ssr(){
   fwdP = new primer;
   revP = new primer;
 }
 
-sputnik_helygen::~sputnik_helygen(){
+sputnik_ssr::~sputnik_ssr(){
     delete(fwdP);
     delete(revP);
     fwdP = NULL;
     revP = NULL;
 }
 
-int sputnik_helygen::has_repeat(char *seq) {
+int sputnik_ssr::has_repeat(char *seq) {
   sputnik sp;
   sp.Min_Unit_Length = 2; 
   sp.Max_Unit_Length = 5;
@@ -51,7 +51,7 @@ int sputnik_helygen::has_repeat(char *seq) {
 }
 
 
-int sputnik_helygen::find_primers(char* seq, int start, int end, int repeat_len) {
+int sputnik_ssr::find_primers(char* seq, int start, int end, int repeat_len) {
   //int good_candidates = 0;
 
   // This pattern is the repeating motif and shouldn't be found in the primer
