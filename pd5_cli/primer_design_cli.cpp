@@ -1,6 +1,6 @@
 /***********************************************************************\
  
- helygen_cli.cpp 
+ primer_design_cli.cpp 
  
  Created by Michael C. Riley on 28/07/2010.
  Edited by Amanda Clare, 2011.
@@ -48,7 +48,7 @@ enum OutputType { TXT, HTML, CSV };
  * Describes the command line arguments available. Outputs to stdout.
  */
 void usage() {
-  std::cout << "helygen_cli [OPTION]" << std::endl << std::endl;
+  std::cout << "primer_design_cli [OPTION]" << std::endl << std::endl;
   std::cout << "Find primers in a given target sequence. Options are as follows:" << std::endl;
   std::cout << "-h, --help" << std::endl;
   std::cout << "      Display this message." << std::endl;
@@ -466,7 +466,7 @@ int process(char* seq, char *seqFile, char *fwdargs_s, char *revargs_s, OutputTy
 
 
 /**
- * Main method for helygen_cli. 
+ * Main method for primer_design_cli. 
  * Deals with basic command line argument processing.
  */
  
