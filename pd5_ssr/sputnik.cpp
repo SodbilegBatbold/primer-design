@@ -24,7 +24,7 @@
 #include <string.h>
 #include <errno.h>
 #include <sys/types.h>
-#include "sputnik_helygen.h"
+#include "sputnik_ssr.h"
 #include "sputnik.h"
 
 /* #define DEBUG_SPUTNIK */
@@ -518,7 +518,7 @@ Boolean sputnik::findRepeats(SeqStructPtr seqP)
         if (matchAtThisPos)
           {
 	    if(findingPrimers) {
-	      sputnik_helygen primer_factory;
+	      sputnik_ssr primer_factory;
 	      int good_primers = primer_factory.find_primers(seqP->seqStr, match.curPos+1, match.testPos, match.testLen);
 	      if(good_primers) {
 		

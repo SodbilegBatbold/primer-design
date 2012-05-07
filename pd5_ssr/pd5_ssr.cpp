@@ -24,7 +24,7 @@
 #include <string.h>
 #include <errno.h>
 #include <sys/types.h>
-#include "sputnik_helygen.h"
+#include "sputnik_ssr.h"
 #include "sputnik.h"
 
 
@@ -47,7 +47,7 @@ int main(int argc, char* argv[])
 
    count = 0;
    while (! sp.endOfFile) 
-     if (seqP = sp.getSeq(argv[1]))
+	   if ((seqP = sp.getSeq(argv[1])))
        {
 #ifdef DEBUG_SPUTNIK
 	 fprintf(stderr,"processing sequence %d\n", count++);

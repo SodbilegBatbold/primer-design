@@ -186,11 +186,11 @@ private:
 
 #endif
 
-/** \mainpage Helygen software library for primer design applications
+/** \mainpage PD5 software library for primer design applications
  
  \section intro_sec Introduction
  
- The Helygen software library is a versatile collection of software modules suitable for use in primer 
+ The PD5 software library is a versatile collection of software modules suitable for use in primer 
  design applications. It was developed in response to a growing need for increasingly complex primer
  design applications.
  

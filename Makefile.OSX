@@ -6,55 +6,55 @@ COMMONOBJS = annealing_temperature.o DNAfind.o primer.o dimerisation.o primer_pa
 
 #OBJ_PA = precise_auto.o
 
-OBJ_CLI = helygen_cli/helygen_cli.o
+OBJ_CLI = pd5_cli/pd5_cli.o
 
 OBJ_METH = meth_pcr/meth_pcr.o
 
-OBJ_SSR = helygen_ssr/sputnik_helygen.o helygen_ssr/sputnik.o helygen_ssr/helygen_ssr.o
+OBJ_SSR = pd5_ssr/sputnik_pd5.o pd5_ssr/sputnik.o pd5_ssr/pd5_ssr.o
 
 OBJ_SS = second_site/second_site.o
 
 OBJ_BA = basic_app/basic_app.o
 
 
-DEPS = annealing_temperature.h dimerisation.h DNAfind.h primer.h primer_pair.h oligotm.h display_utils.h constraints.h sputnik_helygen.h sequence_utils.h sputnik.h
+DEPS = annealing_temperature.h dimerisation.h DNAfind.h primer.h primer_pair.h oligotm.h display_utils.h constraints.h sputnik_pd5.h sequence_utils.h sputnik.h
 
 CC     = g++
 
 CFLAGS = -O2 -g -Wall
 
-all : libhelygen.a helygen_ssr helygen_cli meth_pcr basic_app second_site
+all : libpd5.a pd5_ssr pd5_cli meth_pcr basic_app second_site
 
-libhelygen.a: $(COMMONOBJS)
-	libtool -static -o libhelygen.a $(COMMONOBJS)
+libpd5.a: $(COMMONOBJS)
+	libtool -static -o libpd5.a $(COMMONOBJS)
 
 %.o: %.cpp
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 
 
-#precise_auto : $(OBJ_PA) libhelygen.a
-#	$(CC) $(CFLAGS) $(OBJ_PA) -L. -lhelygen -o precise_auto
+#precise_auto : $(OBJ_PA) libpd5.a
+#	$(CC) $(CFLAGS) $(OBJ_PA) -L. -lpd5 -o precise_auto
 
 
-helygen_ssr : $(OBJ_SSR) libhelygen.a
-	$(CC) $(CFLAGS) $(OBJ_SSR)  -L. -lhelygen -o helygen_ssr/helygen_ssr
+pd5_ssr : $(OBJ_SSR) libpd5.a
+	$(CC) $(CFLAGS) $(OBJ_SSR)  -L. -lpd5 -o pd5_ssr/pd5_ssr
 
-helygen_cli : $(OBJ_CLI) libhelygen.a
-	$(CC) $(CFLAGS) $(OBJ_CLI)  -L. -lhelygen -o helygen_cli/helygen_cli
+pd5_cli : $(OBJ_CLI) libpd5.a
+	$(CC) $(CFLAGS) $(OBJ_CLI)  -L. -lpd5 -o pd5_cli/pd5_cli
 
-meth_pcr : $(OBJ_METH) libhelygen.a
-	$(CC) $(CFLAGS) $(OBJ_METH)  -L. -lhelygen -o meth_pcr/meth_pcr
+meth_pcr : $(OBJ_METH) libpd5.a
+	$(CC) $(CFLAGS) $(OBJ_METH)  -L. -lpd5 -o meth_pcr/meth_pcr
 
-second_site : $(OBJ_SS) libhelygen.a
-	$(CC) $(CFLAGS) $(OBJ_SS)  -L. -lhelygen -o second_site/second_site
+second_site : $(OBJ_SS) libpd5.a
+	$(CC) $(CFLAGS) $(OBJ_SS)  -L. -lpd5 -o second_site/second_site
 
-basic_app : $(OBJ_BA) libhelygen.a
-	$(CC) $(CFLAGS) $(OBJ_BA)  -L. -lhelygen -o basic_app/basic_app
+basic_app : $(OBJ_BA) libpd5.a
+	$(CC) $(CFLAGS) $(OBJ_BA)  -L. -lpd5 -o basic_app/basic_app
 
 
 .PHONY: clean
 
 clean:
-	rm -f *.o *.lo a.out libhelygen.a helygen_cli/*.o helygen_ssr/*.o meth_pcr/*.o second_site/*.o basic_app/*.o
+	rm -f *.o *.lo a.out libpd5.a pd5_cli/*.o pd5_ssr/*.o meth_pcr/*.o second_site/*.o basic_app/*.o
 
