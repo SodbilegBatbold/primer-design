@@ -10,7 +10,7 @@ OBJ_CLI = pd5_cli/pd5_cli.o
 
 OBJ_METH = meth_pcr/meth_pcr.o
 
-OBJ_SSR = pd5_ssr/sputnik_pd5.o pd5_ssr/sputnik.o pd5_ssr/pd5_ssr.o
+OBJ_SSR = pd5_ssr/sputnik_ssr.o pd5_ssr/sputnik.o pd5_ssr/pd5_ssr.o
 
 OBJ_SS = second_site/second_site.o
 

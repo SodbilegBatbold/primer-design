@@ -1,1 +1,1 @@
-g++ -Wall helygen_cli.cpp ../primer.cpp ../sequence_utils.cpp ../dimerisation.cpp ../annealing_temperature.cpp ../primer_pair.cpp ../DNAfind.cpp ../oligotm.c ../constraints.cpp ../display_utils.cpp -g -o helygen_cli 
+g++ -Wall pd5_cli.cpp ../primer.cpp ../sequence_utils.cpp ../dimerisation.cpp ../annealing_temperature.cpp ../primer_pair.cpp ../DNAfind.cpp ../oligotm.c ../constraints.cpp ../display_utils.cpp -g -o helygen_cli 
