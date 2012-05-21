@@ -1,11 +1,11 @@
 /********************************************************************
  
- HELYGEN: a general purpose library for primer design.
+ PD5: a general purpose library for primer design.
  
- helygen_basic.cpp
+ basic_app.cpp
  
  Created by:	Michael C. Riley
-				Amanda Clare
+ 		Amanda Clare
  
  Date:			05/11/2011
  
@@ -48,29 +48,29 @@ int main(int argc, char** argv)
 
 	if(argc != 2) {
 	  cout << argv[0] << ": Please provide a DNA string as argument" << endl;
-	  exit(1);
+	  exit(0);
 	}
-	
+
 	// Set parameters
 	pcr1.set_target_location(200, 500);
 	pcr1.set_primer_length_range(20, 20);
-	
+
 	// Get candidate primers (argv[1] = dna template)
-	pcr1.generate_candidates(argv[1]);  
-	
+	pcr1.generate_candidates(argv[1]);
+
 	// Analyse candidates and display
 	pcr1.candidate_analysis();
 	pcr1.show_individual_candidates();
-	
+
 	// Sort individual candidates and display
 	pcr1.sort_individual_candidates("HAIRPIN, SELF_DIMER, TEMPERATURE");
 	pcr1.show_individual_candidates();
-	
+
 	// Select and sort primer pairs
 	pcr1.sort_pair_candidates("TM_DIFF, F_DIMER, R_DIMER, MOO_SORT");
-	
+
 	// Display best 6 candidate pairs
-	pcr1.show_best_pair_candidates(6); 
-	
+	pcr1.show_best_pair_candidates(6);
+
 	return(1);
 }	
