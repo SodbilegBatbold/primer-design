@@ -532,7 +532,7 @@ int new_process(char* template_sequence,
 
     // Analyse candidates and display
     pcr1.candidate_analysis();
-    pcr1.show_individual_candidates();
+    //pcr1.show_individual_candidates();
 
     // Sort individual candidates and display
     pcr1.sort_individual_candidates("HAIRPIN, SELF_DIMER, TEMPERATURE");
@@ -545,16 +545,6 @@ int new_process(char* template_sequence,
 
     // For testing only: Display best 6 candidate pairs
     pcr1.show_best_pair_candidates(6);
-
-
-
-
-
-
-
-
-
-
 
 
       switch (output_type) 
@@ -574,8 +564,8 @@ int new_process(char* template_sequence,
 
     display_utils display;
     char * product = NULL;
-    /*
-    display.extract_product(seq, &fwd.candidate[bestFwd], &rev.candidate[bestRev], product);
+
+    //display.extract_product(seq, &fwd.candidate[bestFwd], &rev.candidate[bestRev], product);
 
     switch (output_type) 
     {
@@ -583,33 +573,35 @@ int new_process(char* template_sequence,
     case TXT: {
       // Forward
       if(seqName) {
-	std::cout << "Name: " << seqName << std::endl;
+	      cout << "Name: " << seqName << endl;
       }
-      std::cout << "Forward primer" << std::endl;
-      std::cout << "Sequence: " << fwd.candidate[bestFwd].sequence << std::endl;
-      std::cout << "Size: " << strlen(fwd.candidate[bestFwd].sequence) << std::endl;
-      std::cout << "Location 5',3': " << fwd.candidate[bestFwd].location_5_prime_end + 1 << "," << fwd.candidate[bestFwd].location_5_prime_end + strlen(fwd.candidate[bestFwd].sequence) << std::endl;
-      std::cout << "Hairpin score: " << fwd.candidate[bestFwd].hairpin << std::endl;
-      std::cout << "Self dimer score: " << fwd.candidate[bestFwd].self_dimer << std::endl;
-      std::cout << "Temperature: " << fwd.candidate[bestFwd].annealing_temperature << std::endl;
+      cout << "Forward primer" << endl;
+      cout << "Sequence: " << pcr1.forward.candidate[bestFwd].sequence << endl;
+      cout << "Size: " << strlen(pcr1.forward.candidate[bestFwd].sequence) << endl;
+      cout << "Location 5',3': " << pcr1.forward.candidate[bestFwd].location_5_prime_end + 1 << ","
+           << pcr1.forward.candidate[bestFwd].location_5_prime_end + strlen(pcr1.forward.candidate[bestFwd].sequence) << endl;
+      cout << "Hairpin score: " << pcr1.forward.candidate[bestFwd].hairpin << endl;
+      cout << "Self dimer score: " << pcr1.forward.candidate[bestFwd].self_dimer << endl;
+      cout << "Temperature: " << pcr1.forward.candidate[bestFwd].annealing_temperature << endl;
       // Reverse
-      std::cout << "Reverse primer" << std::endl;
-      std::cout << "Sequence: " << revseq  << std::endl;
-      std::cout << "Size: " << strlen(revseq)  << std::endl;
-      std::cout << "Location 5',3': " << rev.candidate[bestRev].location_5_prime_end + 1 << "," << rev.candidate[bestRev].location_5_prime_end + 1 - strlen(revseq)<< std::endl;
-      std::cout << "Hairpin score: " << rev.candidate[bestRev].hairpin  << std::endl;
-      std::cout << "Self dimer score: " << rev.candidate[bestRev].self_dimer << std::endl;
-      std::cout << "Temperature: " << rev.candidate[bestRev].annealing_temperature << std::endl;
+      cout << "Reverse primer" << endl;
+      cout << "Sequence: " << revseq  << endl;
+      cout << "Size: " << strlen(revseq)  << endl;
+      cout << "Location 5',3': " << pcr1.reverse.candidate[bestRev].location_5_prime_end + 1 << ","
+           << pcr1.reverse.candidate[bestRev].location_5_prime_end + 1 - strlen(revseq)<< endl;
+      cout << "Hairpin score: " << pcr1.reverse.candidate[bestRev].hairpin  << endl;
+      cout << "Self dimer score: " << pcr1.reverse.candidate[bestRev].self_dimer << endl;
+      cout << "Temperature: " << pcr1.reverse.candidate[bestRev].annealing_temperature << endl;
 
       // Primer dimer
-      std::cout << "Pair details" << std::endl;
-      std::cout << "Primer dimer score (fwd): " << fwd.candidate[bestFwd].forward_dimer  << std::endl;
-      std::cout << "Primer dimer score (rev): " << fwd.candidate[bestFwd].reverse_dimer << std::endl;
-      std::cout << "NSB score: " << fwd.candidate[bestFwd].seqsim_matches << std::endl;
+      cout << "Pair details" << endl;
+      cout << "Primer dimer score (fwd): " << pcr1.forward.candidate[bestFwd].forward_dimer  << endl;
+      cout << "Primer dimer score (rev): " << pcr1.forward.candidate[bestFwd].reverse_dimer << endl;
+      cout << "NSB score: " << pcr1.forward.candidate[bestFwd].seqsim_matches << endl;
 
       // Product
-      std::cout << "Product length: " << strlen(product) << std::endl;
-      std::cout << "Product: " << product << std::endl;
+      cout << "Product length: " << strlen(product) << endl;
+      cout << "Product: " << product << std::endl;
       break;
     }
     case HTML: {
@@ -618,27 +610,27 @@ int new_process(char* template_sequence,
       }
       // Forward
       std::cout << "<h3>Forward primer</h3>" << std::endl;
-      std::cout << "<p>Sequence: " << fwd.candidate[bestFwd].sequence << "<br />" << std::endl;
-      std::cout << "Size: " << strlen(fwd.candidate[bestFwd].sequence) << "<br />" << std::endl;
-      std::cout << "Location 5': " << fwd.candidate[bestFwd].location_5_prime_end + 1 << "<br />" << std::endl;
-      std::cout << "Hairpin score: " << fwd.candidate[bestFwd].hairpin << "<br />" << std::endl;
-      std::cout << "Self dimer score: " << fwd.candidate[bestFwd].self_dimer << "<br />" << std::endl;
-      std::cout << "Temperature: " << fwd.candidate[bestFwd].annealing_temperature << "</p>" << std::endl;
+      std::cout << "<p>Sequence: " << pcr1.forward.candidate[bestFwd].sequence << "<br />" << std::endl;
+      std::cout << "Size: " << strlen(pcr1.forward.candidate[bestFwd].sequence) << "<br />" << std::endl;
+      std::cout << "Location 5': " << pcr1.forward.candidate[bestFwd].location_5_prime_end + 1 << "<br />" << std::endl;
+      std::cout << "Hairpin score: " << pcr1.forward.candidate[bestFwd].hairpin << "<br />" << std::endl;
+      std::cout << "Self dimer score: " << pcr1.forward.candidate[bestFwd].self_dimer << "<br />" << std::endl;
+      std::cout << "Temperature: " << pcr1.forward.candidate[bestFwd].annealing_temperature << "</p>" << std::endl;
 
       // Reverse
       std::cout << "<h3>Reverse primer</h3>" << std::endl;
-      std::cout << "<p>Sequence: " << rev.candidate[bestRev].sequence << "<br />" << std::endl;
-      std::cout << "Size: " << strlen(rev.candidate[bestRev].sequence) << "<br />" << std::endl;
-      std::cout << "Location 5': " << rev.candidate[bestRev].location_5_prime_end + 1 << "<br />" << std::endl;
-      std::cout << "Hairpin score: " << rev.candidate[bestRev].hairpin << "<br />" << std::endl;
-      std::cout << "Self dimer score: " << rev.candidate[bestRev].self_dimer << "<br />" << std::endl;
-      std::cout << "Temperature: " << rev.candidate[bestRev].annealing_temperature << "</p>" << std::endl;
+      std::cout << "<p>Sequence: " << pcr1.reverse.candidate[bestRev].sequence << "<br />" << std::endl;
+      std::cout << "Size: " << strlen(pcr1.reverse.candidate[bestRev].sequence) << "<br />" << std::endl;
+      std::cout << "Location 5': " << pcr1.reverse.candidate[bestRev].location_5_prime_end + 1 << "<br />" << std::endl;
+      std::cout << "Hairpin score: " << pcr1.reverse.candidate[bestRev].hairpin << "<br />" << std::endl;
+      std::cout << "Self dimer score: " << pcr1.reverse.candidate[bestRev].self_dimer << "<br />" << std::endl;
+      std::cout << "Temperature: " << pcr1.reverse.candidate[bestRev].annealing_temperature << "</p>" << std::endl;
 
       // Primer dimer
       std::cout << "<h3>Pair details</h3>" << std::endl;
-      std::cout << "<p>Primer dimer score (fwd): " << fwd.candidate[bestFwd].forward_dimer  << "<br />" << std::endl;
-      std::cout << "Primer dimer score (rev): " << fwd.candidate[bestFwd].reverse_dimer << "<br />" << std::endl;
-      std::cout << "NSB score: " << fwd.candidate[bestFwd].seqsim_matches << "</p>" << std::endl;
+      std::cout << "<p>Primer dimer score (fwd): " << pcr1.forward.candidate[bestFwd].forward_dimer  << "<br />" << std::endl;
+      std::cout << "Primer dimer score (rev): " << pcr1.forward.candidate[bestFwd].reverse_dimer << "<br />" << std::endl;
+      std::cout << "NSB score: " << pcr1.forward.candidate[bestFwd].seqsim_matches << "</p>" << std::endl;
 
       // Product
       std::cout << "<p>Product length: " << strlen(product) << "<br />" << std::endl;
@@ -646,7 +638,7 @@ int new_process(char* template_sequence,
 
       // Location
       char * fancy_template = NULL;
-      display.html_colour_sequence(seq, &fwd.candidate[bestFwd], &rev.candidate[bestRev], fancy_template);
+      display.html_colour_sequence(seq, &forward.candidate[bestFwd], &rev.candidate[bestRev], fancy_template);
       //std::cout << "<p>Template: " << seq << "</p>" << std::endl;
       std::cout << "<p>Locations of primers within template: " << fancy_template << "</p>" << std::endl;
       free(fancy_template);
@@ -658,24 +650,24 @@ int new_process(char* template_sequence,
 	std::cout << seqName << ",";
       }
       // Forward
-      std::cout << fwd.candidate[bestFwd].sequence << ",";
-      std::cout << strlen(fwd.candidate[bestFwd].sequence) << ",";
-      std::cout << fwd.candidate[bestFwd].location_5_prime_end + 1 << "," << fwd.candidate[bestFwd].location_5_prime_end + strlen(fwd.candidate[bestFwd].sequence) << ",";
-      std::cout << fwd.candidate[bestFwd].hairpin << ",";
-      std::cout << fwd.candidate[bestFwd].self_dimer << ",";
-      std::cout << fwd.candidate[bestFwd].annealing_temperature << ",";
+      std::cout << pcr1.forward.candidate[bestFwd].sequence << ",";
+      std::cout << strlen(pcr1.forward.candidate[bestFwd].sequence) << ",";
+      std::cout << pcr1.forward.candidate[bestFwd].location_5_prime_end + 1 << "," << fwd.candidate[bestFwd].location_5_prime_end + strlen(fwd.candidate[bestFwd].sequence) << ",";
+      std::cout << pcr1.forward.candidate[bestFwd].hairpin << ",";
+      std::cout << pcr1.forward.candidate[bestFwd].self_dimer << ",";
+      std::cout << pcr1.forward.candidate[bestFwd].annealing_temperature << ",";
       // Reverse
       std::cout << revseq  << ",";
       std::cout << strlen(revseq)  << ",";
-      std::cout << rev.candidate[bestRev].location_5_prime_end + 1 << "," << rev.candidate[bestRev].location_5_prime_end + 1 - strlen(revseq)<< ",";
-      std::cout << rev.candidate[bestRev].hairpin  << ",";
-      std::cout << rev.candidate[bestRev].self_dimer << ",";
-      std::cout << rev.candidate[bestRev].annealing_temperature << ",";
+      std::cout << pcr1.reverse.candidate[bestRev].location_5_prime_end + 1 << "," << rev.candidate[bestRev].location_5_prime_end + 1 - strlen(revseq)<< ",";
+      std::cout << pcr1.reverse.candidate[bestRev].hairpin  << ",";
+      std::cout << pcr1.reverse.candidate[bestRev].self_dimer << ",";
+      std::cout << pcr1.reverse.candidate[bestRev].annealing_temperature << ",";
 
       // Primer dimer
-      std::cout << fwd.candidate[bestFwd].forward_dimer  << ",";
-      std::cout << fwd.candidate[bestFwd].reverse_dimer << ",";
-      std::cout << fwd.candidate[bestFwd].seqsim_matches << ",";
+      std::cout << pcr1.forward.candidate[bestFwd].forward_dimer  << ",";
+      std::cout << pcr1.forward.candidate[bestFwd].reverse_dimer << ",";
+      std::cout << pcr1.forward.candidate[bestFwd].seqsim_matches << ",";
 
       // Product
       std::cout << strlen(product) << ",";
@@ -789,7 +781,7 @@ int main(int argc, char** argv)
 	abort();
       }
     }
-  process(seq, seqFile, fwdargs, revargs, output_type, nsbfile);
+  new_process(seq, seqFile, fwdargs, revargs, output_type, nsbfile);
 
   exit(0);
 }

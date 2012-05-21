@@ -39,6 +39,21 @@
  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  
  *******************************************************************/
+ 
+ /** \mainpage PD5 software library for primer design applications
+ 
+ \section intro_sec Introduction
+ 
+ The PD5 software library is a versatile collection of software modules suitable for use in primer 
+ design applications. It was developed in response to a growing need for increasingly complex primer
+ design applications.
+ 
+ The main class for designing primer pairs is primer_pair. The primer class can be used
+ where an individual primer needs to be assessed or designed. However, the analysis classes (dimerisation, 
+ annealing_temperature, DNAfind) are designed so that they can be used in isolation
+ 
+ */
+
 
 /** \file primer_pair.h
  \brief Main classes primer pair design
@@ -183,20 +198,4 @@ private:
 	
 };
 
-
-#endif
-
-/** \mainpage PD5 software library for primer design applications
- 
- \section intro_sec Introduction
- 
- The PD5 software library is a versatile collection of software modules suitable for use in primer 
- design applications. It was developed in response to a growing need for increasingly complex primer
- design applications.
- 
- The main class for designing primer pairs is primer_pair. The primer class can be used
- where an individual primer needs to be assessed or designed. However, the analysis classes (dimerisation, 
- annealing_temperature, DNAfind) are designed so that they can be used in isolation
- 
- */
- 
+#endif 

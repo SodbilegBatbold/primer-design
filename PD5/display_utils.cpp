@@ -54,15 +54,15 @@ display_utils::display_utils() {
 }
 
 int display_utils::extract_product(const char* template_seq, primer_data *fwd, primer_data *rev, char * &product) {
-  unsigned int begin = fwd->location_5_prime_end;
-  unsigned int end   = rev->location_5_prime_end;
-  unsigned int len   = 1 + end - begin;
+  int begin = fwd->location_5_prime_end;
+  int end   = rev->location_5_prime_end;
+  int len   = 1 + end - begin;
 
-  if (template_seq == 0 || strlen(template_seq) == 0 || strlen(template_seq) < begin || strlen(template_seq) < (begin+len-1)) {
+  if (template_seq == 0 || strlen(template_seq) == 0 || (int)strlen(template_seq) < begin || (int)strlen(template_seq) < (begin+len-1)) {
     return 0; 
   } else {
     product = (char *)(malloc (len + 1));
-    for (int i=0; i< len; i++){ 
+    for (int i = 0; i < len; i++){ 
       product[i] = template_seq[begin+i];
     }
     product[len] = '\0';
