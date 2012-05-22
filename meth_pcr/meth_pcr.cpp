@@ -18,9 +18,9 @@
 #include <cstdio>
 #include <cstdlib>
 #include <time.h>
-#include "../primer_pair.h"
-#include "../DNAfind.h"
-#include "../sequence_utils.h"
+#include "../pd5/primer_pair.h"
+#include "../pd5/DNAfind.h"
+#include "../pd5/sequence_utils.h"
 
 using namespace std;
 

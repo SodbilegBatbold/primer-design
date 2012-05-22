@@ -1,8 +1,8 @@
-Helygen Basic Application
+Basic Application built using PD5 classes
 
 basic_app.cpp is a simple application for primer design that can be used as a starting point for more specific apps.
 
-To build in directory /helygen/basic_app/ use command: -
+To build in directory /primer_design/basic_app/ use command: -
 
    ./build_basic_app
    

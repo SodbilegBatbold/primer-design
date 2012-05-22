@@ -1,1 +1,1 @@
-g++ -Wall basic_app.cpp ../primer.cpp ../sequence_utils.cpp ../dimerisation.cpp ../annealing_temperature.cpp ../primer_pair.cpp ../DNAfind.cpp ../oligotm.c ../constraints.cpp -g -o basic_app 
+g++ -Wall basic_app.cpp ../pd5/primer.cpp ../pd5/sequence_utils.cpp ../pd5/dimerisation.cpp ../pd5/annealing_temperature.cpp ../pd5/primer_pair.cpp ../pd5/DNAfind.cpp ../pd5/oligotm.c ../pd5/constraints.cpp -g -o basic_app 
