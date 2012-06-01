@@ -40,12 +40,6 @@
  
  *******************************************************************/
 
-/** \file sequence_utils.h
- \brief Utilities for sequence analysis
- 
- 
- */
-
 
 #ifndef CONSTRAINTS_H
 #define CONSTRAINTS_H
