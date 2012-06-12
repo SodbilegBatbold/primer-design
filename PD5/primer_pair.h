@@ -122,8 +122,8 @@ public:
 	~primer_pair(){};
 	
 	// Make two instances of the primer class
-	primer forward;
-	primer reverse;
+	primer forward_primer;
+	primer reverse_primer;
 	
 	// Array of optimum pair results
 	primer_pair_data pair_candidate[38];
@@ -135,6 +135,7 @@ public:
 	int set_primer_length_range(int shortest_length, int longest_length);
 	
 	/** Sets the maximum, minimum and optimum annealing temperatures for primers
+		Default 50, 55, 60
 	 */
 	int set_Tm_range(double minimum, double optimum, double maximum);
 	

@@ -44,7 +44,6 @@
 
 #include <string.h>
 #include "display_utils.h"
-#include "primer.h"
 
 #define TRUE 1
 #define FALSE 0
@@ -70,7 +69,50 @@ int display_utils::extract_product(const char* template_seq, primer_data *fwd, p
   }
 }
 
+int display_utils::html_colour_sequence(const char* template_seq, primer_pair_data *primers, char * &output) 
+{
+    int fwd_5_prime = primers->location_forward_5_prime_end;
+    int fwd_3_prime = fwd_5_prime + strlen(primers->forward_sequence);
+    int rev_5_prime = primers->location_reverse_5_prime_end;
+    int rev_3_prime = rev_5_prime - strlen(primers->reverse_sequence) + 1;
+    char bold_start_tag[] = "<font color=\"FF0000\">";
+    char bold_end_tag[]   = "</font>";
+    int size_of_output = strlen(template_seq) + (2*strlen(bold_start_tag)) + (2*strlen(bold_end_tag)) + 1;
+    output = (char*) malloc(size_of_output);
+    
+    char *output_loc = output;
+	
+    strncpy(output_loc, template_seq, fwd_5_prime);
+	
+    output_loc += fwd_5_prime;
+    strncpy(output_loc, bold_start_tag, strlen(bold_start_tag));
+	
+    output_loc += strlen(bold_start_tag);
+    strncpy(output_loc, template_seq + fwd_5_prime, strlen(primers->forward_sequence));
+	
+    output_loc += strlen(primers->forward_sequence);	
+    strncpy(output_loc, bold_end_tag, strlen(bold_end_tag));
+	
+    output_loc += strlen(bold_end_tag);
+    strncpy(output_loc, template_seq + fwd_3_prime, rev_3_prime - fwd_3_prime);
+		
+    output_loc += rev_3_prime - fwd_3_prime;
+    strncpy(output_loc, bold_start_tag, strlen(bold_start_tag));
+	
+    output_loc += strlen(bold_start_tag);
+    strncpy(output_loc, template_seq + rev_3_prime, strlen(primers->reverse_sequence));
+	
+    output_loc += strlen(primers->reverse_sequence);
+    strncpy(output_loc, bold_end_tag, strlen(bold_end_tag));
 
+    output_loc += strlen(bold_end_tag);
+    strncpy(output_loc, template_seq + rev_5_prime + 1, strlen(template_seq) - rev_5_prime + 1);
+
+    output_loc = output + size_of_output - 1;	
+    *output_loc = '\0';
+	
+    return strlen(output);
+}
 
 
 int display_utils::html_colour_sequence(const char* template_seq, primer_data *fwd, primer_data *rev, char * &output) {

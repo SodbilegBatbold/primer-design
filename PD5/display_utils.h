@@ -51,6 +51,8 @@
 #include <cstdio>
 #include <cstdlib>
 #include "primer.h"
+#include "primer_pair.h"
+
 
 #define TRUE 1
 #define FALSE 0
@@ -70,6 +72,8 @@ class display_utils
   ~display_utils() {};
   
   int extract_product(const char* template_seq, primer_data *fwd, primer_data *rev, char * &product);
+  
+  int html_colour_sequence(const char* template_seq, primer_pair_data *primers, char * &output);
   int html_colour_sequence(const char* template_seq, primer_data *fwd, primer_data *rev, char * &output);
 
 };

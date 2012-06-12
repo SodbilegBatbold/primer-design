@@ -53,7 +53,7 @@
 
 primer_pair::primer_pair(void)
 {
-	reverse.reverse_primer = TRUE;
+	reverse_primer.reverse_primer = TRUE;
 	
 	upstream_flank_length = 100;
 	downstream_flank_length = 100;
@@ -85,8 +85,8 @@ int primer_pair::set_target_location(int begin, int end)
 	
 	// We actually set the regions where the 5' end of the primers can be located
 	
-	forward.set_primer_location_range(target_5_prime - upstream_flank_length, target_5_prime);
-	reverse.set_primer_location_range(target_3_prime, target_3_prime + downstream_flank_length);
+	forward_primer.set_primer_location_range(target_5_prime - upstream_flank_length, target_5_prime);
+	reverse_primer.set_primer_location_range(target_3_prime, target_3_prime + downstream_flank_length);
 	
 	return(TRUE);
 }
@@ -100,8 +100,8 @@ int primer_pair::set_flank_lengths(int upstream_flank_length, int downstream_fla
 	
 	if(target_5_prime && target_3_prime)
 	{
-		forward.set_primer_location_range(target_5_prime - upstream_flank_length, target_5_prime);
-		reverse.set_primer_location_range(target_3_prime, target_3_prime + downstream_flank_length);
+		forward_primer.set_primer_location_range(target_5_prime - upstream_flank_length, target_5_prime);
+		reverse_primer.set_primer_location_range(target_3_prime, target_3_prime + downstream_flank_length);
 	}
 	
 	return(TRUE);
@@ -132,7 +132,7 @@ int primer_pair::pair_dimerisation(void)
 	dimerisation pair_dimer;
 	
 	// Uses primer_data
-	pair_dimer.pair_dimer(forward.candidate[0].sequence, reverse.candidate[0].sequence);
+	pair_dimer.pair_dimer(forward_primer.candidate[0].sequence, reverse_primer.candidate[0].sequence);
 	
 	// Uses primer_pair_data
 	//pair_dimer.pair_dimer(pair_candidate[0].forward_sequence, pair_candidate[0].reverse_sequence);
@@ -145,42 +145,42 @@ int primer_pair::set_primer_length_range(int shortest_length, int longest_length
 	// This sets both primers to have the same length range
 	// Use set_primer_length_range() individually for differing ranges
 	
-	forward.set_primer_length_range(shortest_length, longest_length);
-	reverse.set_primer_length_range(shortest_length, longest_length);
+	forward_primer.set_primer_length_range(shortest_length, longest_length);
+	reverse_primer.set_primer_length_range(shortest_length, longest_length);
 		
 	return(TRUE);
 }
 
 int primer_pair::generate_candidates(const char* template_sequence)
 {
-	forward.generate_candidate_primers(template_sequence);
-	reverse.generate_candidate_primers(template_sequence);
+	forward_primer.generate_candidate_primers(template_sequence);
+	reverse_primer.generate_candidate_primers(template_sequence);
 	
 	return(TRUE);
 }
 
 int primer_pair::candidate_analysis(void)
 {
-	if(forward.candidates_found)
+	if(forward_primer.candidates_found)
 	{
-		for(int idx = 0; idx < forward.candidates_found; idx++)
+		for(int idx = 0; idx < forward_primer.candidates_found; idx++)
 		{
-			forward.hairpin(idx);
-			forward.self_dimer(idx);
-			forward.candidate[idx].annealing_temperature = forward.primer3_Tm(forward.candidate[idx].sequence);
+			forward_primer.hairpin(idx);
+			forward_primer.self_dimer(idx);
+			forward_primer.candidate[idx].annealing_temperature = forward_primer.primer3_Tm(forward_primer.candidate[idx].sequence);
 		}
 	}
 	else {
 		// No forward candidates error
 	}
 	
-	if(reverse.candidates_found)
+	if(reverse_primer.candidates_found)
 	{
-		for(int idx = 0; idx < reverse.candidates_found; idx++)
+		for(int idx = 0; idx < reverse_primer.candidates_found; idx++)
 		{
-			reverse.hairpin(idx);
-			reverse.self_dimer(idx);
-			reverse.candidate[idx].annealing_temperature = reverse.primer3_Tm(reverse.candidate[idx].sequence);
+			reverse_primer.hairpin(idx);
+			reverse_primer.self_dimer(idx);
+			reverse_primer.candidate[idx].annealing_temperature = reverse_primer.primer3_Tm(reverse_primer.candidate[idx].sequence);
 		}
 	}
 	else {
@@ -309,11 +309,11 @@ int primer_pair::sort_moo(int data_size)
 
 int primer_pair::sort_individual_candidates(const char* priority_list)
 {	
-	forward.set_priorities(priority_list);
-	forward.sort_candidates();
+	forward_primer.set_priorities(priority_list);
+	forward_primer.sort_candidates();
 	
-	reverse.set_priorities(priority_list);
-	reverse.sort_candidates();
+	reverse_primer.set_priorities(priority_list);
+	reverse_primer.sort_candidates();
 	
 	return(TRUE);
 }
@@ -333,21 +333,21 @@ int primer_pair::sort_pair_candidates(const char* priority_list)
 	{
 		for(int rev_index = 0; rev_index < number_of_forward_candidates; rev_index++)
 		{
-			strcpy(pair_candidate[pair_idx].forward_sequence, forward.candidate[fwd_index].sequence);
-			strcpy(pair_candidate[pair_idx].reverse_sequence, reverse.candidate[rev_index].sequence);
+			strcpy(pair_candidate[pair_idx].forward_sequence, forward_primer.candidate[fwd_index].sequence);
+			strcpy(pair_candidate[pair_idx].reverse_sequence, reverse_primer.candidate[rev_index].sequence);
 			pair_candidate[pair_idx].forward_index = fwd_index;
 			pair_candidate[pair_idx].reverse_index = rev_index;
-			pair_candidate[pair_idx].location_forward_5_prime_end = forward.candidate[fwd_index].location_5_prime_end;
-			pair_candidate[pair_idx].location_reverse_5_prime_end = reverse.candidate[rev_index].location_5_prime_end;
-			pair_candidate[pair_idx].forward_hairpin_score = forward.candidate[fwd_index].hairpin;
-			pair_candidate[pair_idx].reverse_hairpin_score = reverse.candidate[rev_index].hairpin;
-			pair_candidate[pair_idx].forward_self_dimer_score = forward.candidate[fwd_index].self_dimer;  
-			pair_candidate[pair_idx].reverse_self_dimer_score = reverse.candidate[rev_index].self_dimer; 
-			pair_candidate[pair_idx].forward_annealing_temperature = forward.candidate[fwd_index].annealing_temperature; 
-			pair_candidate[pair_idx].reverse_annealing_temperature = reverse.candidate[rev_index].annealing_temperature;
+			pair_candidate[pair_idx].location_forward_5_prime_end = forward_primer.candidate[fwd_index].location_5_prime_end;
+			pair_candidate[pair_idx].location_reverse_5_prime_end = reverse_primer.candidate[rev_index].location_5_prime_end;
+			pair_candidate[pair_idx].forward_hairpin_score = forward_primer.candidate[fwd_index].hairpin;
+			pair_candidate[pair_idx].reverse_hairpin_score = reverse_primer.candidate[rev_index].hairpin;
+			pair_candidate[pair_idx].forward_self_dimer_score = forward_primer.candidate[fwd_index].self_dimer;
+			pair_candidate[pair_idx].reverse_self_dimer_score = reverse_primer.candidate[rev_index].self_dimer;
+			pair_candidate[pair_idx].forward_annealing_temperature = forward_primer.candidate[fwd_index].annealing_temperature;
+			pair_candidate[pair_idx].reverse_annealing_temperature = reverse_primer.candidate[rev_index].annealing_temperature;
 			
 			pair_candidate[pair_idx].annealing_temperature_difference = 
-			fabs(forward.candidate[fwd_index].annealing_temperature - reverse.candidate[rev_index].annealing_temperature);
+			fabs(forward_primer.candidate[fwd_index].annealing_temperature - reverse_primer.candidate[rev_index].annealing_temperature);
 			
 			pair_idx++;
 		}
@@ -415,8 +415,8 @@ int primer_pair::sort_pair_candidates(const char* priority_list)
 
 int primer_pair::show_individual_candidates(void)
 {
-	forward.show_all_single_candidates();
-	reverse.show_all_single_candidates();
+	forward_primer.show_all_single_candidates();
+	reverse_primer.show_all_single_candidates();
 	
 	return(TRUE);
 }
@@ -509,24 +509,24 @@ int primer_pair::set_Tm_range(double minimum, double optimum, double maximum)
 		return(FALSE);
 	else
 	{
-		forward.min_Tm = minimum;
-		reverse.min_Tm = minimum;
+		forward_primer.min_Tm = minimum;
+		reverse_primer.min_Tm = minimum;
 	}
 	
 	if(optimum > maximum || optimum < minimum)
 		return(FALSE);
 	else
 	{
-		forward.optimum_Tm = optimum;
-		reverse.optimum_Tm = optimum;
+		forward_primer.optimum_Tm = optimum;
+		reverse_primer.optimum_Tm = optimum;
 	}
 	
 	if(maximum > 100.0)
 		return(FALSE);
 	else
 	{
-		forward.max_Tm = maximum;
-		reverse.max_Tm = maximum;
+		forward_primer.max_Tm = maximum;
+		reverse_primer.max_Tm = maximum;
 	}
 	
 	return(TRUE);

@@ -4,7 +4,9 @@
  
  Created by Michael C. Riley on 28/07/2010.
  Edited by Amanda Clare, 2011.
- *  Copyright 2011 Aberystwyth University. All rights reserved.
+ Last edit by MCR 12/06/2012
+ 
+ *  Copyright 2011, 2012 Aberystwyth University. All rights reserved.
  
 \***********************************************************************/
 
@@ -54,9 +56,11 @@ void usage() {
   std::cout << "-h, --help" << std::endl;
   std::cout << "      Display this message." << std::endl;
   std::cout << "-f, --fwd fwd_args" << std::endl;
-  std::cout << "      fwd_args should be a comma-spearated string of 4 integers, representing the target region and primer sizes: min_target_start,max_target_stop,min_primer_length,max_primer_length. For example \"1,500,20,40\"." << std::endl;
+  std::cout << "      fwd_args should be a comma-separated string of 4 integers, representing the target region and primer sizes: min_target_start,max_target_stop,min_primer_length,max_primer_length. For example \"1,500,20,40\"." << std::endl;
   std::cout << "-r, --rev rev_args" << std::endl;
-  std::cout << "      rev_args should be a comma-spearated string of 4 integers, representing the target region and primer sizes: min_target_start,max_target_stop,min_primer_length,max_primer_length. For example \"1000,900,20,40\"." << std::endl;
+  std::cout << "      rev_args should be a comma-separated string of 4 integers, representing the target region and primer sizes: min_target_start,max_target_stop,min_primer_length,max_primer_length. For example \"1000,900,20,40\"." << std::endl;
+  std::cout << "-t, --tm tm_args" << std::endl;
+  std::cout << "      tm_args should be a comma-separated string of 3 integers, representing the annealing temperature range: min_temperature,optimum_temperature,max_temperature. For example \"50,55,60\"." << std::endl;
   std::cout << "-s, --seq sequence" << std::endl;
   std::cout << "      Template sequence in which to find primers" << std::endl;
   std::cout << "-S, --Seqfile filename" << std::endl;
@@ -91,25 +95,51 @@ int splitargs(char *str, vector<int> &args) {
 /**
  * Reads template sequence from a fasta-formatted file.
  */
-int readTemplate(char* seqFile,char** seqP, char** seqName){ 
+int readTemplate(char* seqFile, char** seqP, char** seqName){ 
   ifstream fin(seqFile);
   char buffer[256];
   *seqP = new char[7000];
-  *seqName = new char[100];	  
-  while(!fin.getline(buffer, 255).eof()) {
+  *seqName = new char[100];
+  
+  while(fin.getline(buffer, 255)) 
+  {
     if(buffer[0] == 0x3E)  // fasta header
-      {
-	strcpy(*seqName, strtok(buffer,"> \t\n"));
-      }
-    else {
-      strcat(*seqP, buffer);
+    {
+		strcpy(*seqName, strtok(buffer,"> \t\n\r"));
     }
+    else 
+	{
+		strcat(*seqP, strtok(buffer,"> \t\n\r"));
+    }
+	
     fin.clear();
   }
   return 1;
 }
 
+int extract_product(const char* template_seq, primer_pair_data *myprimers, char * &product) 
+{  
+  int begin = myprimers->location_forward_5_prime_end;
+  int end   = myprimers->location_reverse_5_prime_end;
+  int length = 1 + end - begin;
+  
+  cout << "extract product length " << length << endl;
 
+  if (template_seq == 0 || strlen(template_seq) == 0 || (int)strlen(template_seq) < begin || (int)strlen(template_seq) < (begin + length - 1)) 
+  {
+    return 0;
+  } 
+  else 
+  {
+    product = (char *)(malloc (length + 1));
+    for (int i = 0; i < length; i++)
+	{
+      product[i] = template_seq[begin + i];
+    }
+    product[length] = 0;
+    return 1;
+  }
+}
 
 
 /**
@@ -118,6 +148,7 @@ int readTemplate(char* seqFile,char** seqP, char** seqName){
  * @param seqFile a filename of a file containing the template sequence
  * @param fwdargs_s the single string representing the parameters for the forward %primer
  * @param revargs_s the single string representing the parameters for the reverse %primer
+ * @param tm_args_s the single string representing the parameters for the annealing temperature
  * @param output_type the type of output required (text or html, see OutputType for possible values)
  * @param nsbfile the filename of a fasta file in which to search for non-specific binding
  * \sa OutputType
@@ -125,7 +156,8 @@ int readTemplate(char* seqFile,char** seqP, char** seqName){
 int new_process(char* template_sequence,
 		char *seqFile, 
 		char *fwdargs_s, 
-		char *revargs_s, 
+		char *revargs_s,
+		char *tm_args_s,		
 		OutputType output_type, 
 		char* nsbfile)
 {
@@ -165,7 +197,7 @@ int new_process(char* template_sequence,
 
   if(seqFile != NULL) 
   {
-    readTemplate(seqFile,&template_sequence, &seqName);
+    readTemplate(seqFile, &template_sequence, &seqName);
   }
 
   /* If all ok, make a pair of primers */
@@ -174,10 +206,46 @@ int new_process(char* template_sequence,
   {
     primer_pair pcr1;
 
-    // Set parameters
-    pcr1.set_target_location(200, 500);
-    pcr1.set_primer_length_range(20, 20);
-
+	// Get and set parameters
+	//pcr1.set_target_location(200, 500);
+    //pcr1.set_primer_length_range(20, 20);
+	
+	if (revargs_s != NULL) 
+	{
+		std::vector<int> revargs;
+		splitargs(revargs_s, revargs);
+		
+		pcr1.reverse_primer.set_primer_location_range(revargs[0]-1, revargs[1]-1);
+		pcr1.reverse_primer.set_primer_length_range(revargs[2], revargs[3]);  
+    } 
+	else 
+	{
+		pcr1.reverse_primer.set_primer_location_range(999, 999);
+		pcr1.reverse_primer.set_primer_length_range(18, 30);
+    }
+	
+	if (fwdargs_s != NULL) 
+	{
+		std::vector<int> fwdargs;
+		splitargs(fwdargs_s, fwdargs);
+	  
+		pcr1.forward_primer.set_primer_location_range(fwdargs[0]-1, fwdargs[1]-1);
+		pcr1.forward_primer.set_primer_length_range(fwdargs[2], fwdargs[3]);
+    } 
+	else 
+	{
+		pcr1.forward_primer.set_primer_location_range(0, 499);
+		pcr1.forward_primer.set_primer_length_range(18, 30);
+    }
+	
+	if(tm_args_s != NULL)  // else uses default settings 50, 55, 60
+	{
+		vector<int> tm_args;
+		splitargs(tm_args_s, tm_args);
+		
+		pcr1.set_Tm_range(tm_args[0], tm_args[1], tm_args[2]);	
+	}
+  
     // Get candidate primers
     pcr1.generate_candidates(template_sequence);
 
@@ -197,13 +265,15 @@ int new_process(char* template_sequence,
     // For testing only: Display best 6 candidate pairs
     pcr1.show_best_pair_candidates(6);
 
-	int best = 0; // 0 is the index for the best candidate
+	int best = 0; // 0 is the index for the best candidate primer pair
 
     display_utils display;
-    //char * product = NULL;
-	char product[] = "AGTCGTCGAGCTCGATGCTAGCTCGATCGAT";
+    char * product = NULL;
+	//char product[] = "AGTCGTCGAGCTCGATGCTAGCTCGATCGAT";
 
-    //display.extract_product(template_sequence, &fwd.candidate[bestFwd], &rev.candidate[bestRev], product);
+    extract_product(template_sequence, &pcr1.pair_candidate[best], product)?
+		cerr << "Ok\n":
+		cerr << "Fail\n";
 
 	
     switch (output_type) 
@@ -248,28 +318,28 @@ int new_process(char* template_sequence,
 	std::cout << "<h3>Name</h3><p>" << seqName << "</p>" << std::endl;
       }
       // Forward
-      /*std::cout << "<h3>Forward primer</h3>" << std::endl;
-      std::cout << "<p>Sequence: " << pcr1.forward.candidate[bestFwd].sequence << "<br />" << std::endl;
-      std::cout << "Size: " << strlen(pcr1.forward.candidate[bestFwd].sequence) << "<br />" << std::endl;
-      std::cout << "Location 5': " << pcr1.forward.candidate[bestFwd].location_5_prime_end + 1 << "<br />" << std::endl;
-      std::cout << "Hairpin score: " << pcr1.forward.candidate[bestFwd].hairpin << "<br />" << std::endl;
-      std::cout << "Self dimer score: " << pcr1.forward.candidate[bestFwd].self_dimer << "<br />" << std::endl;
-      std::cout << "Temperature: " << pcr1.forward.candidate[bestFwd].annealing_temperature << "</p>" << std::endl;
+      std::cout << "<h3>Forward primer</h3>" << std::endl;
+      std::cout << "<p>Sequence: " << pcr1.pair_candidate[best].forward_sequence << "<br />" << std::endl;
+      std::cout << "Size: " << strlen(pcr1.pair_candidate[best].forward_sequence) << "<br />" << std::endl;
+      std::cout << "Location 5': " << pcr1.pair_candidate[best].location_forward_5_prime_end + 1 << "<br />" << std::endl;
+      std::cout << "Hairpin score: " << pcr1.pair_candidate[best].forward_hairpin_score << "<br />" << std::endl;
+      std::cout << "Self dimer score: " << pcr1.pair_candidate[best].forward_self_dimer_score << "<br />" << std::endl;
+      std::cout << "Temperature: " << pcr1.pair_candidate[best].forward_annealing_temperature << "</p>" << std::endl;
 
       // Reverse
       std::cout << "<h3>Reverse primer</h3>" << std::endl;
-      std::cout << "<p>Sequence: " << pcr1.reverse.candidate[bestRev].sequence << "<br />" << std::endl;
-      std::cout << "Size: " << strlen(pcr1.reverse.candidate[bestRev].sequence) << "<br />" << std::endl;
-      std::cout << "Location 5': " << pcr1.reverse.candidate[bestRev].location_5_prime_end + 1 << "<br />" << std::endl;
-      std::cout << "Hairpin score: " << pcr1.reverse.candidate[bestRev].hairpin << "<br />" << std::endl;
-      std::cout << "Self dimer score: " << pcr1.reverse.candidate[bestRev].self_dimer << "<br />" << std::endl;
-      std::cout << "Temperature: " << pcr1.reverse.candidate[bestRev].annealing_temperature << "</p>" << std::endl;
+      std::cout << "<p>Sequence: " << pcr1.pair_candidate[best].reverse_sequence << "<br />" << std::endl;
+      std::cout << "Size: " << strlen(pcr1.pair_candidate[best].reverse_sequence) << "<br />" << std::endl;
+      std::cout << "Location 5': " << pcr1.pair_candidate[best].location_reverse_5_prime_end + 1 << "<br />" << std::endl;
+      std::cout << "Hairpin score: " << pcr1.pair_candidate[best].reverse_hairpin_score << "<br />" << std::endl;
+      std::cout << "Self dimer score: " << pcr1.pair_candidate[best].reverse_self_dimer_score << "<br />" << std::endl;
+      std::cout << "Temperature: " << pcr1.pair_candidate[best].reverse_annealing_temperature << "</p>" << std::endl;
 
       // Primer dimer
       std::cout << "<h3>Pair details</h3>" << std::endl;
-      std::cout << "<p>Primer dimer score (fwd): " << pcr1.forward.candidate[bestFwd].forward_dimer  << "<br />" << std::endl;
-      std::cout << "Primer dimer score (rev): " << pcr1.forward.candidate[bestFwd].reverse_dimer << "<br />" << std::endl;
-      std::cout << "NSB score: " << pcr1.forward.candidate[bestFwd].seqsim_matches << "</p>" << std::endl;
+      std::cout << "<p>Primer dimer score (fwd): " << pcr1.pair_candidate[best].forward_pair_dimer_score  << "<br />" << std::endl;
+      std::cout << "Primer dimer score (rev): " << pcr1.pair_candidate[best].reverse_pair_dimer_score << "<br />" << std::endl;
+      std::cout << "NSB score: " << pcr1.pair_candidate[best].number_of_pcr_products << "</p>" << std::endl;
 
       // Product
       std::cout << "<p>Product length: " << strlen(product) << "<br />" << std::endl;
@@ -277,40 +347,42 @@ int new_process(char* template_sequence,
 
       // Location
       char * fancy_template = NULL;
-      display.html_colour_sequence(seq, &forward.candidate[bestFwd], &rev.candidate[bestRev], fancy_template);
-      //std::cout << "<p>Template: " << seq << "</p>" << std::endl;
+      display.html_colour_sequence(template_sequence, &pcr1.pair_candidate[best], fancy_template);
+      std::cout << "<p>Template: " << template_sequence << "</p>" << std::endl;
       std::cout << "<p>Locations of primers within template: " << fancy_template << "</p>" << std::endl;
-      free(fancy_template);*/
+      free(fancy_template);
       break;
     }
     case CSV: {
-      //std::cout << "Fwd sequence, Fwd size, Fwd loc 5', Fwd loc 3', Fwd hairpin, Fwd self dimer, Fwd temp, Rev sequence, Rev size, Rev loc 5', Rev loc 3', Rev hairpin, Rev self dimer, Rev temp, Pair dimer (fwd), Pair dimer (rev), Pair NSB, Product len, Product" << endl;
+      std::cout << "Fwd sequence, Fwd size, Fwd loc 5', Fwd loc 3', Fwd hairpin, Fwd self dimer, Fwd temp, Rev sequence, Rev size, Rev loc 5', Rev loc 3', Rev hairpin, Rev self dimer, Rev temp, Pair dimer (fwd), Pair dimer (rev), Pair NSB, Product len, Product" << endl;
       if(seqName) {
 	std::cout << seqName << ",";
       }
       // Forward
-      /*std::cout << pcr1.forward.candidate[bestFwd].sequence << ",";
-      std::cout << strlen(pcr1.forward.candidate[bestFwd].sequence) << ",";
-      std::cout << pcr1.forward.candidate[bestFwd].location_5_prime_end + 1 << "," << fwd.candidate[bestFwd].location_5_prime_end + strlen(fwd.candidate[bestFwd].sequence) << ",";
-      std::cout << pcr1.forward.candidate[bestFwd].hairpin << ",";
-      std::cout << pcr1.forward.candidate[bestFwd].self_dimer << ",";
-      std::cout << pcr1.forward.candidate[bestFwd].annealing_temperature << ",";
+      std::cout << pcr1.pair_candidate[best].forward_sequence << ",";
+      std::cout << strlen(pcr1.pair_candidate[best].forward_sequence) << ",";
+      std::cout << pcr1.pair_candidate[best].location_forward_5_prime_end + 1 << "," 
+		<< pcr1.pair_candidate[best].location_forward_5_prime_end + strlen(pcr1.pair_candidate[best].forward_sequence) << ",";
+      std::cout << pcr1.pair_candidate[best].forward_hairpin_score << ",";
+      std::cout << pcr1.pair_candidate[best].forward_self_dimer_score << ",";
+      std::cout << pcr1.pair_candidate[best].forward_annealing_temperature << ",";
       // Reverse
-      std::cout << revseq  << ",";
-      std::cout << strlen(revseq)  << ",";
-      std::cout << pcr1.reverse.candidate[bestRev].location_5_prime_end + 1 << "," << rev.candidate[bestRev].location_5_prime_end + 1 - strlen(revseq)<< ",";
-      std::cout << pcr1.reverse.candidate[bestRev].hairpin  << ",";
-      std::cout << pcr1.reverse.candidate[bestRev].self_dimer << ",";
-      std::cout << pcr1.reverse.candidate[bestRev].annealing_temperature << ",";
+      std::cout << pcr1.pair_candidate[best].reverse_sequence  << ",";
+      std::cout << strlen(pcr1.pair_candidate[best].reverse_sequence)  << ",";
+      std::cout << pcr1.pair_candidate[best].location_reverse_5_prime_end + 1 << "," 
+		<< pcr1.pair_candidate[best].location_reverse_5_prime_end + 1 - strlen(pcr1.pair_candidate[best].reverse_sequence)<< ",";
+      std::cout << pcr1.pair_candidate[best].reverse_hairpin_score  << ",";
+      std::cout << pcr1.pair_candidate[best].reverse_self_dimer_score << ",";
+      std::cout << pcr1.pair_candidate[best].reverse_annealing_temperature << ",";
 
       // Primer dimer
-      std::cout << pcr1.forward.candidate[bestFwd].forward_dimer  << ",";
-      std::cout << pcr1.forward.candidate[bestFwd].reverse_dimer << ",";
-      std::cout << pcr1.forward.candidate[bestFwd].seqsim_matches << ",";
+      std::cout << pcr1.pair_candidate[best].forward_pair_dimer_score  << ",";
+      std::cout << pcr1.pair_candidate[best].reverse_pair_dimer_score << ",";
+      std::cout << pcr1.pair_candidate[best].number_of_pcr_products << ",";
 
       // Product
       std::cout << strlen(product) << ",";
-      std::cout << product << std::endl;*/
+      std::cout << product << std::endl;
 
       break;
     }
@@ -337,6 +409,7 @@ int main(int argc, char** argv)
   char *seqFile            = NULL;
   char *revargs            = NULL;
   char *fwdargs            = NULL;
+  char *tm_args            = NULL;
   char *output_type_string = NULL;
   char *nsbfile            = NULL;
   OutputType output_type   = TXT; 
@@ -351,6 +424,7 @@ int main(int argc, char** argv)
 	  {"output",   no_argument,   0, 'o'},
 	  {"fwd",  required_argument, 0, 'f'},
 	  {"rev",  required_argument, 0, 'r'},
+	  {"tm",  required_argument, 0, 't'},
 	  {"seq",  required_argument, 0, 's'},
 	  {"Seqfile",  required_argument, 0, 'S'},
 	  {"nsbfile",  required_argument, 0, 'n'},
@@ -359,7 +433,7 @@ int main(int argc, char** argv)
       /* getopt_long stores the option index here. */
       int option_index = 0;
       
-      c = getopt_long (argc, argv, "ho:f:r:s:S:n:",
+      c = getopt_long (argc, argv, "ho:f:r:t:s:S:n:",
 		       long_options, &option_index);
      
       /* Detect the end of the options. */
@@ -388,6 +462,10 @@ int main(int argc, char** argv)
       case 'r':
 	revargs = optarg;
 	break;
+	
+		case 't':
+			tm_args = optarg;
+			break;
 	
       case 's':
 	seq = optarg;
@@ -420,7 +498,8 @@ int main(int argc, char** argv)
 	abort();
       }
     }
-  new_process(seq, seqFile, fwdargs, revargs, output_type, nsbfile);
+	
+	new_process(seq, seqFile, fwdargs, revargs, tm_args, output_type, nsbfile);
 
   exit(1);
 }
