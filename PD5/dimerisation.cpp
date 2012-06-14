@@ -99,7 +99,7 @@ bool dimerisation::compare_sequences(const char* a_seq, const char* b_seq, doubl
 int dimerisation::hairpin(const char* sequence)
 {	
 	int len = strlen(sequence);
-	char tail[dimer_tail_length];
+	char tail[dimer_tail_length + 1];
 	double score;
 	int i, j;
 	
@@ -150,7 +150,7 @@ int dimerisation::hairpin(const char* sequence)
 int dimerisation::self_dimer(const char* a_sequence, ofstream &fout)
 {		
 	int a_len = strlen(a_sequence);
-	char tail[16];	
+	char tail[dimer_tail_length + 1];	
 	int i, j;
 	double score;
 	
@@ -205,7 +205,7 @@ int dimerisation::self_dimer(const char* a_sequence, ofstream &fout)
 int dimerisation::self_dimer(const char* a_sequence)
 {	
 	int a_len = strlen(a_sequence);
-	char tail[16];	
+	char tail[dimer_tail_length + 1];	
 	int i, j;
 	double score;
 	
@@ -300,7 +300,7 @@ int dimerisation::pair_dimer(const char* a_sequence, const char* b_sequence)
 {
 	int a_len = strlen(a_sequence);
 	int b_len = strlen(b_sequence);
-	char tail[16];	
+	char tail[dimer_tail_length + 1];	
 	int i, j;
 	double score;
 	
@@ -390,7 +390,7 @@ int dimerisation::primer_dimer_V2(const char* a_sequence, const char* b_sequence
 {
 	int a_len = strlen(a_sequence);
 	int b_len = strlen(b_sequence);
-	char tail[16];	
+	char tail[dimer_tail_length + 1];	
 	int i, j;
 	double score;
 	
@@ -479,7 +479,7 @@ int dimerisation::primer_dimer_V2(const char* a_sequence, const char* b_sequence
 {
 	int a_len = strlen(a_sequence);
 	int b_len = strlen(b_sequence);
-	char tail[16];	
+	char tail[dimer_tail_length + 1];	
 	int i, j;
 	double score;
 	
