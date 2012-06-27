@@ -9,7 +9,7 @@
 
 #include <cstdio>
 #include <ctime>
-#include "../pd5/DNAfind.h"
+#include "../PD5/DNAfind.h"
 
 using namespace std;
 

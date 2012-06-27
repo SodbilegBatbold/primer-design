@@ -18,9 +18,9 @@
 #include <cstdio>
 #include <cstdlib>
 #include <time.h>
-#include "../pd5/primer_pair.h"
-#include "../pd5/DNAfind.h"
-#include "../pd5/sequence_utils.h"
+#include "../PD5/primer_pair.h"
+#include "../PD5/DNAfind.h"
+#include "../PD5/sequence_utils.h"
 
 using namespace std;
 
@@ -147,8 +147,8 @@ int main(int argc, char** argv)
 	pcr1.set_target_location(800, 1100);
 	pcr1.set_primer_length_range(20, 30);
 	pcr1.set_flank_lengths(150, 150);
-	pcr1.forward.optimum_primer_length = 25;
-	pcr1.reverse.optimum_primer_length = 25;
+	pcr1.forward_primer.optimum_primer_length = 25;
+	pcr1.reverse_primer.optimum_primer_length = 25;
 	//set_primer3_method(tm_method_type method);
 	
 	if(!pcr1.set_Tm_range(50.0, 55.0, 60.0))
@@ -158,8 +158,8 @@ int main(int argc, char** argv)
 	}
 	
 	// Methylation specific params
-	pcr1.forward.no_C_primer = TRUE;
-	pcr1.reverse.no_G_primer = TRUE;
+	pcr1.forward_primer.no_C_primer = TRUE;
+	pcr1.reverse_primer.no_G_primer = TRUE;
 	
 	// Get candidate primers (bisulphite_sequence is the dna template we wish to use)
 	pcr1.generate_candidates(bisulphite_sequence);  
@@ -167,10 +167,10 @@ int main(int argc, char** argv)
 	// Analyse candidates and display
 	
 	// To compare with Methprimer we need to use Primer3's default settings, not the recommended settings.
-	pcr1.forward.set_primer3_method((tm_method_type) 0);
-	pcr1.forward.set_primer3_salt_correction_method((salt_correction_type) 0);
-	pcr1.reverse.set_primer3_method((tm_method_type) 0);
-	pcr1.reverse.set_primer3_salt_correction_method((salt_correction_type) 0);
+	pcr1.forward_primer.set_primer3_method((tm_method_type) 0);
+	pcr1.forward_primer.set_primer3_salt_correction_method((salt_correction_type) 0);
+	pcr1.reverse_primer.set_primer3_method((tm_method_type) 0);
+	pcr1.reverse_primer.set_primer3_salt_correction_method((salt_correction_type) 0);
 	
 	pcr1.candidate_analysis();
 	//pcr1.show_individual_candidates();

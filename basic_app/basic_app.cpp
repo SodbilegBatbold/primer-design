@@ -40,7 +40,7 @@
  *******************************************************************/
 
 
-#include "../pd5/primer_pair.h"
+#include "../PD5/primer_pair.h"
 
 int main(int argc, char** argv)
 {	
