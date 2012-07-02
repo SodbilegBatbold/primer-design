@@ -1,9 +1,0 @@
-#!/bin/sh
-
-# build.sh
-# 
-#
-# Created by Mhr on 17/02/2012.
-# Copyright 2012 University of Wales, Aberystwyth. All rights reserved.
-
-g++ second_site.cpp ../pd5/DNAfind.cpp ../pd5/sequence_utils.cpp ../pd5/dimerisation.cpp -o second_site

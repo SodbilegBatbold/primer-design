@@ -1,1 +1,0 @@
-g++ -Wall meth_pcr.cpp ../pd5/constraints.cpp ../pd5/primer.cpp ../pd5/sequence_utils.cpp ../pd5/dimerisation.cpp ../pd5/annealing_temperature.cpp ../pd5/primer_pair.cpp ../pd5/DNAfind.cpp ../pd5/oligotm.c  -g -o meth_pcr 
