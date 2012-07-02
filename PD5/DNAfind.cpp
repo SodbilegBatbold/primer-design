@@ -885,7 +885,7 @@ int DNAfind::search_for_pcr_products_II(const char *forward_sequence,
 	char buffer[2056];
 	bool chr_for_processing = FALSE;
 	int number_of_products_found = 0;
-	char *chromosome;
+	char *chromosome = NULL;
 	bool FASTA_SEQUENCE = FALSE;
 
 #ifdef DNAFIND_DEBUG
