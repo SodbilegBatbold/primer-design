@@ -76,7 +76,7 @@
 #define PRIMER_PAIR_H
 
 #include "primer.h"
-#include "DNAfind.h"
+#include "dna_find.h"
 
 #define NO_TEMPLATE_ERROR -32
 

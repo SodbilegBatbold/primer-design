@@ -48,9 +48,6 @@
 #include <cmath> // for fabs
 
 #include "primer.h"
-#include "dimerisation.h"
-#include "sequence_utils.h"
-#include "annealing_temperature.h"
 
 #define TRUE 1
 #define FALSE 0
@@ -86,6 +83,7 @@ primer::primer()
 	min_Tm = 50.0;
 	
 	seq_to_avoid = NULL;
+	homopolymeric_run_length_limit = 5; //< popularly < 4-5 nt (Buck et al, BioTechniques 27:528-536 (September 1999))
 
 	
 	// Default sorting priorities (can have up to 10)
@@ -354,6 +352,24 @@ int primer::test_candidate(const char* sequence)
 
 	return(Good_primer);
 	
+}
+
+int primer::homopolymeric_run_detection(const char* sequence)
+{
+	int sequence_length = strlen(sequence);
+	int i, homopolymeric_length = 0;
+	
+	for(i = 1; i < sequence_length; i++)
+	{
+		if(sequence[i - 1] == sequence[i])
+			homopolymeric_length++;
+		else
+			homopolymeric_length = 0;
+		
+		if(homopolymeric_length >= homopolymeric_run_length_limit)
+			return(TRUE);
+	}
+	return(FALSE);
 }
 
 int primer::show_candidate(int i)

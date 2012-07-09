@@ -85,7 +85,7 @@ class sequence_utils
  public:
 
 	sequence_utils()
-	{		
+	{
 	};
 	
 	~sequence_utils(){};
@@ -134,6 +134,7 @@ private:
 	static int blast_results(const char* filename, int length, double expectation);
 	static int blast_results(const char* filename, int length, double expectation, ofstream &fout);
 	static int blast_db_results(const char* filename, int length, double expectation);
+	
 };
 
 

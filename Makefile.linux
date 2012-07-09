@@ -2,7 +2,7 @@
 
 #COMMONOBJS = annealing_temperature.o DNAfind.o primer.o dimerisation.o primer_pair.o oligotm.o sequence_utils.o display_utils.o constraints.o
 
-LCOMMONOBJS = PD5/annealing_temperature.lo PD5/DNAfind.lo PD5/primer.lo PD5/dimerisation.lo PD5/primer_pair.lo PD5/oligotm.lo PD5/sequence_utils.lo PD5/display_utils.lo PD5/constraints.lo
+LCOMMONOBJS = pd5/annealing_temperature.lo pd5/DNAfind.lo pd5/primer.lo pd5/dimerisation.lo pd5/primer_pair.lo pd5/oligotm.lo pd5/sequence_utils.lo pd5/display_utils.lo 
 
 
 OBJ_CLI = pd5_cli/pd5_cli.o
@@ -50,5 +50,5 @@ basic_app : $(OBJ_BA) libpd5.a
 .PHONY: clean
 
 clean:
-	rm -f *.o *.lo a.out libpd5.a PD5/*.o pd5_cli/*.o pd5_ssr/*.o basic_app/*.o PD5/*.lo pd5_cli/*.lo pd5_ssr/*.lo basic_app/*.lo
+	rm -f *.o *.lo a.out libpd5.a pd5/*.o pd5_cli/*.o pd5_ssr/*.o basic_app/*.o pd5/*.lo pd5_cli/*.lo pd5_ssr/*.lo basic_app/*.lo
 

@@ -1,1 +1,1 @@
-g++ -Wall pd5_cli.cpp ../PD5/primer.cpp ../PD5/sequence_utils.cpp ../PD5/dimerisation.cpp ../PD5/annealing_temperature.cpp ../PD5/primer_pair.cpp ../PD5/DNAfind.cpp ../PD5/oligotm.c ../PD5/constraints.cpp ../PD5/display_utils.cpp -g -o pd5_cli 
+g++ -Wall pd5_cli.cpp ../pd5/primer.cpp ../pd5/sequence_utils.cpp ../pd5/dimerisation.cpp ../pd5/annealing_temperature.cpp ../pd5/primer_pair.cpp ../pd5/dna_find.cpp ../pd5/oligotm.c ../pd5/display_utils.cpp -g -o pd5_cli 

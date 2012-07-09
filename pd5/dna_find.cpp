@@ -44,7 +44,7 @@
  
  */
 
-#include "DNAfind.h"
+#include "dna_find.h"
 
 #define REVERSE 0;
 #define FORWARD 1;

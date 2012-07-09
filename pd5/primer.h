@@ -64,7 +64,6 @@
 #include "annealing_temperature.h"
 #include "dimerisation.h"
 #include "constraints.h"
-//#include "optimisation.h"
 
 #define TRUE 1
 #define FALSE 0
@@ -193,6 +192,8 @@ public:
 	}
 					
 	int generate_candidate_primers(const char* template_sequence);
+	
+	int homopolymeric_run_detection(const char* sequence);
 
 	/**
 	 *\defgroup CandidateDisplay Candidate display
@@ -351,6 +352,7 @@ private:
 	int sort_Tm_ascending(int data_size);
 	int sort_Tm_descending(int data_size);
 	
+	int homopolymeric_run_length_limit; //< Default = 5
 	
 
 };
