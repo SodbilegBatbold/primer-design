@@ -18,8 +18,8 @@
 #include <getopt.h>
 #include <vector>
 //#include "../pd5/primer.h"
-#include "../PD5/primer_pair.h"
-#include "../PD5/display_utils.h"
+#include "../pd5/primer_pair.h"
+#include "../pd5/display_utils.h"
 //#include "../pd5/sequence_utils.h"
 //#include "../pd5/DNAfind.h"
 
@@ -56,9 +56,9 @@ void usage() {
   std::cout << "-h, --help" << std::endl;
   std::cout << "      Display this message." << std::endl;
   std::cout << "-f, --fwd fwd_args" << std::endl;
-  std::cout << "      fwd_args should be a comma-separated string of 4 integers, representing the target region and primer sizes: min_target_start,max_target_stop,min_primer_length,max_primer_length. For example \"1,500,20,40\"." << std::endl;
+  std::cout << "      fwd_args should be a comma-separated string of 5 integers, representing the target region and primer sizes: min_target_start,max_target_stop,min_primer_length,optimum_primer_length,max_primer_length. For example \"1,500,20,23,40\"." << std::endl;
   std::cout << "-r, --rev rev_args" << std::endl;
-  std::cout << "      rev_args should be a comma-separated string of 4 integers, representing the target region and primer sizes: min_target_start,max_target_stop,min_primer_length,max_primer_length. For example \"1000,900,20,40\"." << std::endl;
+  std::cout << "      rev_args should be a comma-separated string of 5 integers, representing the target region and primer sizes: min_target_start,max_target_stop,min_primer_length,optimum_primer_length,max_primer_length. For example \"1000,900,20,23,40\"." << std::endl;
   std::cout << "-t, --tm tm_args" << std::endl;
   std::cout << "      tm_args should be a comma-separated string of 3 integers, representing the annealing temperature range: min_temperature,optimum_temperature,max_temperature. For example \"50,55,60\"." << std::endl;
   std::cout << "-s, --seq sequence" << std::endl;
@@ -216,12 +216,14 @@ int new_process(char* template_sequence,
 		splitargs(revargs_s, revargs);
 		
 		pcr1.reverse_primer.set_primer_location_range(revargs[0]-1, revargs[1]-1);
-		pcr1.reverse_primer.set_primer_length_range(revargs[2], revargs[3]);  
+		pcr1.reverse_primer.set_primer_length_range(revargs[2], revargs[4]); 
+		pcr1.reverse_primer.optimum_primer_length = revargs[3];
     } 
 	else 
 	{
 		pcr1.reverse_primer.set_primer_location_range(999, 999);
 		pcr1.reverse_primer.set_primer_length_range(18, 30);
+		pcr1.reverse_primer.optimum_primer_length = 20;
     }
 	
 	if (fwdargs_s != NULL) 
@@ -230,12 +232,14 @@ int new_process(char* template_sequence,
 		splitargs(fwdargs_s, fwdargs);
 	  
 		pcr1.forward_primer.set_primer_location_range(fwdargs[0]-1, fwdargs[1]-1);
-		pcr1.forward_primer.set_primer_length_range(fwdargs[2], fwdargs[3]);
+		pcr1.forward_primer.set_primer_length_range(fwdargs[2], fwdargs[4]);
+		pcr1.forward_primer.optimum_primer_length = fwdargs[3];
     } 
 	else 
 	{
 		pcr1.forward_primer.set_primer_location_range(0, 499);
 		pcr1.forward_primer.set_primer_length_range(18, 30);
+		pcr1.forward_primer.optimum_primer_length = 20;
     }
 	
 	if(tm_args_s != NULL)  // else uses default settings 50, 55, 60
@@ -415,6 +419,7 @@ int main(int argc, char** argv)
   OutputType output_type   = TXT; 
 
   //cout << "Args: " << argc << endl;
+	if(!argv[1])usage();
 
   while(1)
     {
