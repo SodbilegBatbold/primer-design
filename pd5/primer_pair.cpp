@@ -58,6 +58,7 @@ primer_pair::primer_pair(void)
 	upstream_flank_length = 100;
 	downstream_flank_length = 100;
 	
+	// Init target begin/end locations
 	target_5_prime = 0;
 	target_3_prime = 0;
 	

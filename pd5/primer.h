@@ -265,9 +265,21 @@ public:
 	bool no_G_primer;				///< Candidate primers should contain no Gs
 	bool no_C_primer;				///< Candidate primers should contain no Cs 
 	bool tail_complementarity_check; ///< Used in the test_candidates method to opt for a tail complentarity check
-       
-	char* seq_to_avoid;             ///< A sequence that must not be present in the primer 
-
+    
+	int set_sequence_to_avoid(const char* subsequence)
+	{
+		strcpy(seq_to_avoid, subsequence);
+		avoid_subsequence_check = TRUE;
+		return(TRUE);
+	}
+	
+	bool homopolymeric_run_check; ///< Returns true if it find homopolymeric runs >= homopolymeric_run_length_limit
+	int set_homopolymeric_run_length_limit(int limit) 
+	{
+		homopolymeric_run_length_limit = limit; ///< Default is 5
+		return(TRUE);
+	}
+	
 	// Auto selection parameters
 	int yeast_nsb_limit;
 	/**
@@ -352,6 +364,9 @@ private:
 	int sort_Tm_ascending(int data_size);
 	int sort_Tm_descending(int data_size);
 	
+	bool avoid_subsequence_check;		///< Set to TRUE to avoid including seq_to_avoid in primer sequence
+	char* seq_to_avoid;             ///< A sequence that must not be present in the primer 
+
 	int homopolymeric_run_length_limit; //< Default = 5
 	
 

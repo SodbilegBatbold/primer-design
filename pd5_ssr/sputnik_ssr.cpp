@@ -77,7 +77,9 @@ int sputnik_ssr::find_primers(char* seq, int start, int end, int repeat_len) {
   revP->length_range_longest          = 30;
   revP->optimum_primer_length         = revP->length_range_shortest;
   revP->optimum_Tm = 57;
-  revP->seq_to_avoid                  = repeat;
+  //revP->seq_to_avoid                  = repeat;
+	revP->set_sequence_to_avoid(repeat);
+	
   int okrev = revP->generate_candidates(seq);
   if(! okrev) {
     return 0;
@@ -135,7 +137,8 @@ int sputnik_ssr::find_primers(char* seq, int start, int end, int repeat_len) {
   fwdP->optimum_Tm = revP->candidate[bestRev].annealing_temperature;
   fwdP->required_GC_content   = sequence_utils::GC_content(revseq);
   fwdP->GC_tolerance          = 0;
-  fwdP->seq_to_avoid          = repeat;
+  //fwdP->seq_to_avoid          = repeat;
+	fwdP->set_sequence_to_avoid(repeat);
 
   int okfwd = fwdP->generate_candidates(seq);
   if(! okfwd) {

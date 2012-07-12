@@ -1641,39 +1641,96 @@ int auto_process(const char* gene, const char* orf, const char* genome_file_name
 	return(1);	
 }
 
-/*int new_process(const char* gene, const char* orf)
+int check_sequence_contents(const char* sequence)
 {
-	primrose_pair my_primers;
+	long length = strlen(sequence);
+	int letter[256];
+	long letter_count[256];
+	int tail = 0;
+	int i, j;
+	bool found = FALSE;
 	
-	int start = start_codon_location(orf);
+	for(i = 0; i < length ; i++)
+	{
+		found = FALSE;
+		
+		for(j = 0; j < tail; j++)
+		{
+			if((int)sequence[i] == letter[j])
+			{
+				letter_count[j]++;
+				found = TRUE;
+			}			
+		}
+		if(!found)
+		{
+			letter[tail] = (int)sequence[i];
+			letter_count[tail] = 1;
+			tail++;
+		}
+	}
+	
+	for(j = 0; j < tail; j++)
+	{
+		cout << (char)letter[j] << " = " << letter_count[j] << endl;
+	}
+		
+	return(1);
+}
+
+int lactis_process(const char* gene, const char* orf_sequence)
+{
+	primer_pair pcr1;
+	
+	int start = start_codon_location(orf_sequence);
+	
+	if(start < 995) 
+	{
+		cout << "Start location not found \n";
+		return(0);
+	}
 	
 	// set both primers parameters
 	
-	my_primers.forward_start_location_range_begin;
-	my_primers.forward_start_location_range_end;
-	my_primers.forward_length_range_shortest;
-	my_primers.forward_length_range_longest;
+	pcr1.forward_primer.start_location_range_begin = 0;
+	pcr1.forward_primer.start_location_range_end = 500;
+	pcr1.forward_primer.downstream_search = TRUE;
 	//my_primers.forward_required_GC_content;
 	//my_primers.forward_GC_tolerance;
 	
-	my_primers.reverse_start_location_range_begin = start - 1; // Primer B starts 
-	my_primers.reverse_start_location_range_end = start - 1;   // immediately before start codon
-	my_primers.reverse_length_range_shortest = 30;
-	my_primers.reverse_length_range_longest = 60;
+	pcr1.reverse_primer.start_location_range_begin = start - 1; // Primer B starts 
+	pcr1.reverse_primer.start_location_range_end = start - 1;   // immediately before start codon
 	//my_primers.reverse_required_GC_content;
 	//my_primers.reverse_GC_tolerance;
 	
-	// Abort this! It is not possible to determine the forward primer parameters
-	// until after the reverse primer has been selected (07/04/2011)
+	pcr1.set_primer_length_range(30, 60); // both primers have same length range
 	
-}*/
+	//cout << orf_sequence << endl; 
+	//check_sequence_contents(orf_sequence);
+	
+	//pcr1.generate_candidates(orf_sequence);
+	
+	pcr1.reverse_primer.generate_candidate_primers(orf_sequence);
+	
+	// Analyse candidates and display
+	//pcr1.candidate_analysis();
+	//pcr1.show_individual_candidates();
+	
+	//cout << pcr1.reverse_primer.candidate[0].sequence << endl;
+	
+	cout << "PrimerBs found = " << pcr1.reverse_primer.candidates_found << endl;
+
+	if(pcr1.reverse_primer.candidates_found == 0)return(0);
+	
+	return(1);
+}
 
 int main(int argc, char** argv)
 {
 	char genebuffer[32];
 	char buffer[4000];
-	char orf[50000];
-	char query_gene[32];
+	char orf_sequence[50000];
+	char query_gene_id[32];
 	char header_id[32];
 	bool found;
 	int error;
@@ -1681,9 +1738,12 @@ int main(int argc, char** argv)
 	char output_file_name[32];
 	//char genes_1000_all[128] = "pombe_1000_all.fa";
 	//char genome_file_name[128] = "pombe_genome_09052011.fasta";
-	char genes_1000_all[128] = "orf_genomic_1000_all.fasta";
-	char genome_file_name[128] = "s_cere_genome.fa";
-	
+	//char genes_1000_all[128] = "orf_genomic_1000_all.fasta";
+	//char genome_file_name[128] = "s_cere_genome.fa";
+	char genes_1000_all[128] = "lactis_220612_1000_all.fa";
+	//char genome_file_name[128] = "l_lactis.fa";
+	int count0s = 0;
+
    	cout << "Precise_Deletion: Primer design\n";
 	cout << "Version 1.2, 22nd November 2011\n";
 	
@@ -1722,9 +1782,9 @@ int main(int argc, char** argv)
 		
 		if(token)
 		{
-			strcpy(query_gene, token);
+			strcpy(query_gene_id, token);
 		
-			if(!(query_gene[0] == 37)) // 37 = % => comment
+			if(!(query_gene_id[0] == 37)) // 37 = % => comment
 			{
 				fin.open(genes_1000_all);
 				
@@ -1735,7 +1795,7 @@ int main(int argc, char** argv)
 				}
 				
 				found = FALSE;
-				orf[0] = 0; 
+				orf_sequence[0] = 0; 
 				
 				while(fin.getline(buffer, 2055))
 				{
@@ -1743,9 +1803,9 @@ int main(int argc, char** argv)
 					{
 						if(found)break;
 						strcpy(header_id, strtok(buffer,"> \t\n"));
-						if(!strcmp(header_id, query_gene))found = TRUE;			
+						if(!strcmp(header_id, query_gene_id))found = TRUE;			
 					}
-					else if(found) strcat(orf, buffer);
+					else if(found) strcat(orf_sequence, buffer);
 					
 					//if(i++ > 1000)break;
 				}  
@@ -1753,19 +1813,21 @@ int main(int argc, char** argv)
 				
 				if(!found)
 				{
-					cout << "Could not find " << query_gene << endl;
+					cout << "Could not find " << query_gene_id << endl;
 					//initialization_error = TRUE;
 					//return(FALSE);
 				}
 				else
 				{
-					cout << "Found " << header_id << endl;
+					//cout << "Found " << header_id << endl;
 					
 					sprintf(output_file_name, "%s.xml", header_id);
-					fout.open(output_file_name);
+					//fout.open(output_file_name);
 					
-					error = auto_process(header_id, orf, genome_file_name, fout);
-					//error = new_process(header_id, orf);
+					//error = auto_process(header_id, orf_sequence, genome_file_name, fout);
+					error = lactis_process(header_id, orf_sequence);
+					
+					if(!error)count0s++;
 					
 					switch(error)
 					{
@@ -1786,6 +1848,8 @@ int main(int argc, char** argv)
 	
 	fin.close();
 	ferr.close();
+	
+	cout << "Zero reverse primers = " << count0s << endl;
 	
     return(1);
 }

@@ -52,6 +52,8 @@
 #define TRUE 1
 #define FALSE 0
 
+//#define TESTING
+
 primer::primer()
 {
 	reverse_primer = FALSE;
@@ -82,7 +84,10 @@ primer::primer()
 	max_Tm = 60.0;
 	min_Tm = 50.0;
 	
+	avoid_subsequence_check = FALSE;
 	seq_to_avoid = NULL;
+	
+	homopolymeric_run_check = TRUE;
 	homopolymeric_run_length_limit = 5; //< popularly < 4-5 nt (Buck et al, BioTechniques 27:528-536 (September 1999))
 
 	
@@ -167,7 +172,7 @@ int primer::generate_candidate_primers(const char* template_sequence)
 		if(reverse_primer)
 		{
 	#ifdef TESTING
-			std::cout << "Reverse\n";
+			std::cout << "Reverse downstream\n";
 	#endif
 			
 			for(i = start_location_range_begin; i >= start_location_range_end; i--)
@@ -195,7 +200,7 @@ int primer::generate_candidate_primers(const char* template_sequence)
 		else
 		{
 	#ifdef TESTING
-			std::cout << " Forward\n";
+			std::cout << " Forward downstream\n";
 	#endif
 			
 			for(i = start_location_range_begin; i <= start_location_range_end; i++)
@@ -226,7 +231,7 @@ int primer::generate_candidate_primers(const char* template_sequence)
 		if(reverse_primer)
 		{
 #ifdef TESTING
-			std::cout << "Reverse\n";
+			std::cout << "Reverse upstream\n";
 #endif
 			
 			for(i = start_location_range_end; i <= start_location_range_begin; i++)
@@ -237,6 +242,9 @@ int primer::generate_candidate_primers(const char* template_sequence)
 						possible_candidate[k] = sequence_utils::nucleotide_complement(template_sequence[i - k]);
 					
 					possible_candidate[k] = 0;  // end the string
+#ifdef TESTING
+					std::cout << possible_candidate << endl;
+#endif
 					
 					// CANDIDATE TESTING
 					if(test_candidate(possible_candidate))
@@ -254,7 +262,7 @@ int primer::generate_candidate_primers(const char* template_sequence)
 		else
 		{
 #ifdef TESTING
-			std::cout << " Forward\n";
+			std::cout << " Forward upstream\n";
 #endif
 			
 			for(i = start_location_range_end; i >= start_location_range_begin; i--)
@@ -341,14 +349,17 @@ int primer::test_candidate(const char* sequence)
 	if(sequence_utils::nucleotide_content(ANYNUCLEOTIDE, sequence) > 0)
 	  Good_primer = FALSE;
 	
-	if(seq_to_avoid) 
+	if(avoid_subsequence_check) 
 	{
 	  if(strstr(sequence, seq_to_avoid)) 
 	    Good_primer = FALSE;
 	}
 	
-	if(homopolymeric_run_detection(sequence))
-		Good_primer = FALSE;
+	if(homopolymeric_run_check)
+	{
+		if(homopolymeric_run_detection(sequence))
+			Good_primer = FALSE;
+	}
 
 	return(Good_primer);
 	
