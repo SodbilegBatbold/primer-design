@@ -167,23 +167,61 @@ int start_codon_location(const char* orf)
 	return(start_location);	
 }
 
+/**
+	prokaryote start codons can be ATG, GTG, TTG
+*/
+
+int start_codon_location_for_prokaryotes(const char* orf)
+{
+	int start_location = 0;
+	char start_codon[16] = {"ATG"};
+	
+	if(orf[1000] == start_codon[0] || orf[1000] == start_codon[1] || orf[1000] == start_codon[2])
+	{
+		if(orf[1001] == start_codon[1] && orf[1002] == start_codon[2])
+		{
+#ifdef TESTING
+			cout << "Start location good\n";
+#endif
+			return(1000);
+		}
+	}
+	
+	for(int i = 995; i < 1005; i++)
+	{
+	   	if(orf[1000] == start_codon[0] || orf[1000] == start_codon[1] || orf[1000] == start_codon[2])
+		{
+			if(orf[1001] == start_codon[1] && orf[1002] == start_codon[2])
+			{
+				start_location = i;
+				break;
+			}
+		}
+	}
+	
+	return(start_location);	
+}
+
 int stop_codon_location(int start_codon_location, const char* orf)
 {
 	int stop_codon_location = 0;
+	bool fnd = 0;
 	
 	// Find the stop codon
 	
 	for(unsigned int i = start_codon_location; i < strlen(orf); i += 3)
 	{   if(orf[i] == 84)
 		{
-			if(orf[i+1] == 65 && orf[i+2] == 71){stop_codon_location = i; break;}
-			else if(orf[i+1] == 65 && orf[i+2] == 65){stop_codon_location = i; break;}
-			else if(orf[i+1] == 71 && orf[i+2] == 65){stop_codon_location = i; break;}
+			if(orf[i+1] == 65 && orf[i+2] == 71){stop_codon_location = i; fnd = 1; break;}
+			else if(orf[i+1] == 65 && orf[i+2] == 65){stop_codon_location = i; fnd = 1; break;}
+			else if(orf[i+1] == 71 && orf[i+2] == 65){stop_codon_location = i; fnd = 1; break;}
 		}
-   	}	
+   	}
 	
-	return(stop_codon_location);
-	
+	if(fnd)
+		return(stop_codon_location);
+	else 
+		return(0);
 }
 
 /***********************************************************************\
@@ -1678,11 +1716,13 @@ int check_sequence_contents(const char* sequence)
 	return(1);
 }
 
-int lactis_process(const char* gene, const char* orf_sequence)
+int lactis_process(const char* gene, const char* orf_sequence, const char* plasmid_sequence)
 {
-	primer_pair pcr1;
+	int i = 0;
 	
-	int start = start_codon_location(orf_sequence);
+// Check or find start codon
+	
+	int start = start_codon_location_for_prokaryotes(orf_sequence);
 	
 	if(start < 995) 
 	{
@@ -1690,37 +1730,60 @@ int lactis_process(const char* gene, const char* orf_sequence)
 		return(0);
 	}
 	
-	// set both primers parameters
+//  Make PCR1 primers
 	
-	pcr1.forward_primer.start_location_range_begin = 0;
-	pcr1.forward_primer.start_location_range_end = 500;
-	pcr1.forward_primer.downstream_search = TRUE;
-	//my_primers.forward_required_GC_content;
-	//my_primers.forward_GC_tolerance;
+	primer_pair pcr1;
 	
-	pcr1.reverse_primer.start_location_range_begin = start - 1; // Primer B starts 
-	pcr1.reverse_primer.start_location_range_end = start - 1;   // immediately before start codon
-	//my_primers.reverse_required_GC_content;
-	//my_primers.reverse_GC_tolerance;
-	
+	pcr1.forward_primer.set_primer_location_range(0, 500);
+	pcr1.forward_primer.downstream_search = TRUE;	
+	pcr1.reverse_primer.set_primer_location_range(start - 1, start - 1); // Primer B starts immediately before start codon
+	pcr1.reverse_primer.homopolymeric_run_check = FALSE;	
 	pcr1.set_primer_length_range(30, 60); // both primers have same length range
+		
+	pcr1.generate_candidates(orf_sequence);
+	pcr1.candidate_analysis();	
+	pcr1.sort_individual_candidates("HAIRPIN, SELF_DIMER, TEMPERATURE");
+	pcr1.sort_pair_candidates("TM_DIFF, F_DIMER, R_DIMER, MOO_SORT");
 	
-	//cout << orf_sequence << endl; 
-	//check_sequence_contents(orf_sequence);
+	// Display best 6 candidate pairs
+	//pcr1.show_best_pair_candidates(6);
 	
-	//pcr1.generate_candidates(orf_sequence);
-	
-	pcr1.reverse_primer.generate_candidate_primers(orf_sequence);
-	
-	// Analyse candidates and display
-	//pcr1.candidate_analysis();
-	//pcr1.show_individual_candidates();
-	
-	//cout << pcr1.reverse_primer.candidate[0].sequence << endl;
-	
-	cout << "PrimerBs found = " << pcr1.reverse_primer.candidates_found << endl;
 
-	if(pcr1.reverse_primer.candidates_found == 0)return(0);
+//  Make PCR2 primers
+		
+	primer_pair pcr2;
+	
+// pCS1966 0-4740, ermAM 2623-3360 & oroP 3786-4709
+	pcr2.forward_primer.set_primer_location_range(2123, 2623);
+	pcr2.reverse_primer.set_primer_location_range(4709, 4740);
+	pcr2.set_primer_length_range(18, 20);
+	
+	pcr2.generate_candidates(plasmid_sequence);
+	pcr2.candidate_analysis();	
+	pcr2.sort_individual_candidates("HAIRPIN, SELF_DIMER, TEMPERATURE");
+	pcr2.sort_pair_candidates("TM_DIFF, F_DIMER, R_DIMER, MOO_SORT");
+	
+	// Display best 6 candidate pairs
+	//pcr2.show_best_pair_candidates(6);
+	
+
+//	Make C and R sequences
+	
+// 	C = 45 nt upstream of the stop codon and include stop
+//  R = 40 nt downstream of the stop codon not including the stop codon
+	char sequence_C[50];
+	char sequence_R[50];
+	int stop = stop_codon_location(start, orf_sequence);
+	
+	cout << "Stop = " << stop << endl;
+	
+   	for(i = 0; i < 45; i++) sequence_C[i] = orf_sequence[i + stop - 42];
+   	sequence_C[45] = 0;
+	
+   	for(i = 0; i < 40; i++) sequence_R[i] = orf_sequence[i + stop +3];
+    sequence_R[40] = 0;
+	
+	cout << "C = " << sequence_C << " and R = " << sequence_R << endl;
 	
 	return(1);
 }
@@ -1728,8 +1791,9 @@ int lactis_process(const char* gene, const char* orf_sequence)
 int main(int argc, char** argv)
 {
 	char genebuffer[32];
-	char buffer[4000];
+	char buffer[4001];
 	char orf_sequence[50000];
+	char plasmid_sequence[5000];
 	char query_gene_id[32];
 	char header_id[32];
 	bool found;
@@ -1754,6 +1818,25 @@ int main(int argc, char** argv)
 	}
 	
 	ofstream fout;
+	
+	// Get plasmid sequence
+	
+	ifstream plasmid("./pCS1966.fa");
+	if(!plasmid.is_open()) cout << "file opening error\n";
+	
+	plasmid_sequence[0] = 0; // init for strcat
+	
+	while(plasmid.getline(buffer, 4000))
+	{
+		if(buffer[0] != 0x3E)
+		{
+			token = strtok(buffer, " \t\n\r");
+			if(token != NULL)strcat(plasmid_sequence, token);
+		}
+	}	
+	plasmid.close();
+	
+	//cout << plasmid_sequence << endl << strlen(plasmid_sequence) << endl;
 	
 	// Open file with the list of genes to be primer'ed
 	
@@ -1825,7 +1908,7 @@ int main(int argc, char** argv)
 					//fout.open(output_file_name);
 					
 					//error = auto_process(header_id, orf_sequence, genome_file_name, fout);
-					error = lactis_process(header_id, orf_sequence);
+					error = lactis_process(header_id, orf_sequence, plasmid_sequence);
 					
 					if(!error)count0s++;
 					

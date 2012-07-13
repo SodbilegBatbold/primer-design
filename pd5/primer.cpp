@@ -191,7 +191,7 @@ int primer::generate_candidate_primers(const char* template_sequence)
 						candidate[n].primer_length = strlen(possible_candidate);
 						strcpy(candidate[n++].sequence, possible_candidate);
 					}
-					
+					if(n >= max_number_candidates)break;
 				}
 				if(n >= max_number_candidates)break;
 				
@@ -219,8 +219,7 @@ int primer::generate_candidate_primers(const char* template_sequence)
 						candidate[n].primer_length = strlen(possible_candidate);
 						strcpy(candidate[n++].sequence, possible_candidate);
 					}
-					
-					
+					if(n >= max_number_candidates)break;					
 				}
 				if(n >= max_number_candidates)break;
 			}
