@@ -69,6 +69,8 @@ primer_pair::primer_pair(void)
 	forward_pair_dimer_weighting = 1.0;
 	reverse_pair_dimer_weighting = 1.0;
 	Tm_diff_weighting = 1.0;
+	
+	pair_candidates_exist = FALSE;
 }
 
 int primer_pair::set_target_location(int begin, int end)
@@ -319,20 +321,15 @@ int primer_pair::sort_individual_candidates(const char* priority_list)
 	return(TRUE);
 }
 
-int primer_pair::sort_pair_candidates(const char* priority_list)
+int primer_pair::make_pair_candidates(int number_of_forward_candidates, int number_of_reverse_candidates)
 {
-	// Get the best 6 of each forward and reverse primers
-	// and make 36 primer pairs for sorting
-	int i;
-	int number_of_forward_candidates = 6;
-	int number_of_reverse_candidates = 6;
-	int number_of_pair_candidates = (number_of_forward_candidates * number_of_reverse_candidates);
+	number_of_pair_candidates = (number_of_forward_candidates * number_of_reverse_candidates);
 	
 	int pair_idx = 0;
 	
 	for(int fwd_index = 0; fwd_index < number_of_forward_candidates; fwd_index++)
 	{
-		for(int rev_index = 0; rev_index < number_of_forward_candidates; rev_index++)
+		for(int rev_index = 0; rev_index < number_of_reverse_candidates; rev_index++)
 		{
 			strcpy(pair_candidate[pair_idx].forward_sequence, forward_primer.candidate[fwd_index].sequence);
 			strcpy(pair_candidate[pair_idx].reverse_sequence, reverse_primer.candidate[rev_index].sequence);
@@ -354,6 +351,57 @@ int primer_pair::sort_pair_candidates(const char* priority_list)
 		}
 	}
 	
+	pair_candidates_exist = TRUE;
+	return(TRUE);
+}
+
+int primer_pair::sort_pair_candidates(const char* priority_list)
+{
+	// If not already done, get the best 6 of each forward and reverse primers
+	// and make 36 primer pairs for sorting
+	int i;
+	int number_of_forward_candidates;
+	int number_of_reverse_candidates;
+	
+	if(!pair_candidates_exist)
+	{
+		forward_primer.candidates_found > 5? 
+			number_of_forward_candidates = 6: 
+			number_of_forward_candidates = forward_primer.candidates_found;
+		
+		reverse_primer.candidates_found > 5? 
+			number_of_reverse_candidates = 6: 
+			number_of_reverse_candidates = reverse_primer.candidates_found;
+		
+		number_of_pair_candidates = (number_of_forward_candidates * number_of_reverse_candidates);
+		
+		int pair_idx = 0;
+		
+		for(int fwd_index = 0; fwd_index < number_of_forward_candidates; fwd_index++)
+		{
+			for(int rev_index = 0; rev_index < number_of_reverse_candidates; rev_index++)
+			{
+				strcpy(pair_candidate[pair_idx].forward_sequence, forward_primer.candidate[fwd_index].sequence);
+				strcpy(pair_candidate[pair_idx].reverse_sequence, reverse_primer.candidate[rev_index].sequence);
+				pair_candidate[pair_idx].forward_index = fwd_index;
+				pair_candidate[pair_idx].reverse_index = rev_index;
+				pair_candidate[pair_idx].location_forward_5_prime_end = forward_primer.candidate[fwd_index].location_5_prime_end;
+				pair_candidate[pair_idx].location_reverse_5_prime_end = reverse_primer.candidate[rev_index].location_5_prime_end;
+				pair_candidate[pair_idx].forward_hairpin_score = forward_primer.candidate[fwd_index].hairpin;
+				pair_candidate[pair_idx].reverse_hairpin_score = reverse_primer.candidate[rev_index].hairpin;
+				pair_candidate[pair_idx].forward_self_dimer_score = forward_primer.candidate[fwd_index].self_dimer;
+				pair_candidate[pair_idx].reverse_self_dimer_score = reverse_primer.candidate[rev_index].self_dimer;
+				pair_candidate[pair_idx].forward_annealing_temperature = forward_primer.candidate[fwd_index].annealing_temperature;
+				pair_candidate[pair_idx].reverse_annealing_temperature = reverse_primer.candidate[rev_index].annealing_temperature;
+				
+				pair_candidate[pair_idx].annealing_temperature_difference = 
+				fabs(forward_primer.candidate[fwd_index].annealing_temperature - reverse_primer.candidate[rev_index].annealing_temperature);
+				
+				pair_idx++;
+			}
+		}
+	}
+	
 	// Analyse pairs
 	
 	for(i = 0; i < number_of_pair_candidates; i++)
@@ -361,7 +409,9 @@ int primer_pair::sort_pair_candidates(const char* priority_list)
 		pair_candidate[i].pair_dimerisation();
 		
 		// Initialising 
-		pair_candidate[i].number_of_pcr_products = 0;		
+		//pair_candidate[i].number_of_pcr_products = 0;
+		//pair_candidate[i].number_of_pcr_products = search_for_pcr_products(pcr1.pair_candidate[i].forward_sequence, pcr1.pair_candidate[i].reverse_sequence);
+		
 	}
 	
 	// Organise sort priorities

@@ -1716,9 +1716,31 @@ int check_sequence_contents(const char* sequence)
 	return(1);
 }
 
-int lactis_process(const char* gene, const char* orf_sequence, const char* plasmid_sequence)
+int lactis_process(const char* gene, 
+				   const char* orf_sequence, 
+				   const char* plasmid_sequence, 
+				   const char* genome_file_name,
+				   const char* plasmid_file_name,
+				   ofstream &fout)
 {
 	int i = 0;
+	int j = 0;
+		
+	DNAfind genome_template(genome_file_name);
+	
+	if(!genome_template.set_max_mismatches(0)) 
+		cout << "Could not set max_mismatches\n";
+	
+	if(!genome_template.set_tail_length(12)) 
+		cout << "Could not set tail length\n";
+	
+	DNAfind plasmid_template(plasmid_file_name);
+	
+	if(!plasmid_template.set_max_mismatches(0)) 
+		cout << "Could not set max_mismatches\n";
+	
+	if(!plasmid_template.set_tail_length(8)) 
+		cout << "Could not set tail length\n";
 	
 // Check or find start codon
 	
@@ -1732,6 +1754,8 @@ int lactis_process(const char* gene, const char* orf_sequence, const char* plasm
 	
 //  Make PCR1 primers
 	
+	//int temp_products = 0;
+	
 	primer_pair pcr1;
 	
 	pcr1.forward_primer.set_primer_location_range(0, 500);
@@ -1741,31 +1765,80 @@ int lactis_process(const char* gene, const char* orf_sequence, const char* plasm
 	pcr1.set_primer_length_range(30, 60); // both primers have same length range
 		
 	pcr1.generate_candidates(orf_sequence);
-	pcr1.candidate_analysis();	
+	pcr1.candidate_analysis();
+	
 	pcr1.sort_individual_candidates("HAIRPIN, SELF_DIMER, TEMPERATURE");
+	
+	cout << "Fwd Candidates = " << pcr1.forward_primer.candidates_found << endl;
+	cout << "Rev Candidates = " << pcr1.reverse_primer.candidates_found << endl;
+	
+	int fwd_candidates, rev_candidates;
+	
+	if(pcr1.forward_primer.candidates_found > 5) 
+		fwd_candidates = 6;
+	else
+		fwd_candidates = pcr1.forward_primer.candidates_found;
+	
+	if(pcr1.reverse_primer.candidates_found > 5)
+		rev_candidates = 6;
+	else
+		rev_candidates = pcr1.reverse_primer.candidates_found;
+	
+	cout << "Actual cands " << fwd_candidates << ", " << rev_candidates << endl;
+	
+	pcr1.make_pair_candidates(fwd_candidates, rev_candidates);
+	
+	for(i = 0; i < pcr1.number_of_pair_candidates; i++)
+	{
+		cout << pcr1.pair_candidate[i].forward_sequence << ", " << pcr1.pair_candidate[i].reverse_sequence << endl;
+		pcr1.pair_candidate[i].number_of_pcr_products  =  genome_template.search_for_pcr_products(pcr1.pair_candidate[i].forward_sequence, pcr1.pair_candidate[i].reverse_sequence);
+		//pcr1.pair_candidate[i].number_of_pcr_products += plasmid_template.search_for_pcr_products(pcr1.pair_candidate[i].forward_sequence, pcr1.pair_candidate[i].reverse_sequence);
+		
+		cout << "Pair " << i << ": " << pcr1.pair_candidate[i].number_of_pcr_products << endl;
+	}	
+
+	
+	
+	//temp_products = genome_template.search_for_pcr_products(pcr1.pair_candidate[0].forward_sequence, pcr1.pair_candidate[0].reverse_sequence);
+	//cout << "Products = " << temp_products << endl;
+	
 	pcr1.sort_pair_candidates("TM_DIFF, F_DIMER, R_DIMER, MOO_SORT");
 	
-	// Display best 6 candidate pairs
-	//pcr1.show_best_pair_candidates(6);
+	// Display best N candidate pairs
+	int N = 6;
+	pcr1.show_best_pair_candidates(N);
 	
+	//Make PCR1 product
+	char pcr1_product[1000];
+	j = 0;
+	
+	for(i = pcr1.pair_candidate[0].location_forward_5_prime_end; i < start; i++)
+	{
+		if(j >= 1000)
+		{
+			cout << "Error: pcr1 product over 1000 bases\n";
+			return(0);
+		}
+		pcr1_product[j++] = orf_sequence[i];	
+	}
+	pcr1_product[j] = 0;
 
-//  Make PCR2 primers
+//  Make plasmid primers
 		
-	primer_pair pcr2;
+	primer_pair plasmid;
 	
 // pCS1966 0-4740, ermAM 2623-3360 & oroP 3786-4709
-	pcr2.forward_primer.set_primer_location_range(2123, 2623);
-	pcr2.reverse_primer.set_primer_location_range(4709, 4740);
-	pcr2.set_primer_length_range(18, 20);
+	plasmid.forward_primer.set_primer_location_range(2573, 2623);
+	plasmid.reverse_primer.set_primer_location_range(4709, 4740);
+	plasmid.set_primer_length_range(18, 20);
 	
-	pcr2.generate_candidates(plasmid_sequence);
-	pcr2.candidate_analysis();	
-	pcr2.sort_individual_candidates("HAIRPIN, SELF_DIMER, TEMPERATURE");
-	pcr2.sort_pair_candidates("TM_DIFF, F_DIMER, R_DIMER, MOO_SORT");
+	plasmid.generate_candidates(plasmid_sequence);
+	plasmid.candidate_analysis();	
+	plasmid.sort_individual_candidates("HAIRPIN, SELF_DIMER, TEMPERATURE");
+	plasmid.sort_pair_candidates("TM_DIFF, F_DIMER, R_DIMER, MOO_SORT");
 	
 	// Display best 6 candidate pairs
-	//pcr2.show_best_pair_candidates(6);
-	
+	//plasmid.show_best_pair_candidates(6);
 
 //	Make C and R sequences
 	
@@ -1773,9 +1846,10 @@ int lactis_process(const char* gene, const char* orf_sequence, const char* plasm
 //  R = 40 nt downstream of the stop codon not including the stop codon
 	char sequence_C[50];
 	char sequence_R[50];
+	char rc_sequence_C[50];
 	int stop = stop_codon_location(start, orf_sequence);
 	
-	cout << "Stop = " << stop << endl;
+	//cout << "Stop = " << stop << endl;
 	
    	for(i = 0; i < 45; i++) sequence_C[i] = orf_sequence[i + stop - 42];
    	sequence_C[45] = 0;
@@ -1783,29 +1857,368 @@ int lactis_process(const char* gene, const char* orf_sequence, const char* plasm
    	for(i = 0; i < 40; i++) sequence_R[i] = orf_sequence[i + stop +3];
     sequence_R[40] = 0;
 	
-	cout << "C = " << sequence_C << " and R = " << sequence_R << endl;
+	//cout << "C = " << sequence_C << " and R = " << sequence_R << endl;
+	
+
+	
+	// Get PCR1 product/PCR2 forward primer homology sequence
+	char pcr1_homology[45];
+#define PCR1_INIT_HOMOLOGY_LENGTH 25	
+#define PCR1_HOMOLOGY_LENGTH 40
+	
+	for(i = 0; i < PCR1_INIT_HOMOLOGY_LENGTH; i++) 
+		pcr1_homology[i] = pcr1_product[strlen(pcr1_product) - PCR1_INIT_HOMOLOGY_LENGTH + i];
+	
+	pcr1_homology[PCR1_INIT_HOMOLOGY_LENGTH] = 0; // terminate string
+	
+	// The homology sequence is only 25 bases unless the GC content < 40%, then make it 40 bases:
+	
+	int GC_number = 0;
+	int pcr1_homology_length = strlen(pcr1_homology);
+	
+	for(i = 0; i < pcr1_homology_length; i++)
+		if(pcr1_homology[i] == 67 || pcr1_homology[i] == 71) GC_number++;
+	
+	double GC_content = (double)GC_number/(double)pcr1_homology_length;
+	
+	if(GC_content < 0.4)
+	{
+		for(i = 0; i < PCR1_HOMOLOGY_LENGTH; i++) 
+			pcr1_homology[i] = pcr1_product[strlen(pcr1_product) - PCR1_HOMOLOGY_LENGTH + i];
+		pcr1_homology[PCR1_HOMOLOGY_LENGTH] = 0;
+	}
+	
+	// Make Reverse complement Primer C
+	reverse_complement(sequence_C, rc_sequence_C);
+	
+	//  Make PCR2 primers
+	cout << "PCR2 primers\n";
+	
+	//chimara.forward_primer = B*RE and chimaera.reverse_primer = C'D. B* is actually 25/40 bases from the 3' end of the 
+	// pcr1 product sense strand, which is the reverse comp of pcr1.reverse_primer (aka Primer B).
+	
+	primer_pair pcr2;
+
+	for(i = 0; i < 6; i++)
+	{
+		// Make pcr2 forward   	
+		strcpy(pcr2.forward_primer.candidate[i].sequence, pcr1_homology);
+		strcat(pcr2.forward_primer.candidate[i].sequence, sequence_R);
+		strcat(pcr2.forward_primer.candidate[i].sequence, plasmid.pair_candidate[i].forward_sequence);  
+		
+		// Make pcr2 reverse 	   	
+		strcpy(pcr2.reverse_primer.candidate[i].sequence, rc_sequence_C);
+		strcat(pcr2.reverse_primer.candidate[i].sequence, plasmid.pair_candidate[i].reverse_sequence);
+		
+	}
+	
+	// Need to tell primer class how many candidates have been manually set
+	pcr2.forward_primer.candidates_found = 6;
+	pcr2.reverse_primer.candidates_found = 6;
+	
+	pcr2.candidate_analysis();
+	pcr2.sort_individual_candidates("HAIRPIN, SELF_DIMER, TEMPERATURE");
+	
+	pcr2.make_pair_candidates(6, 6);
+	
+	
+	pcr2.sort_pair_candidates("TM_DIFF, F_DIMER, R_DIMER, MOO_SORT");
+	
+	// Display best 6 candidate pairs
+	pcr2.show_best_pair_candidates(6);
+	
+	// Make cassette sequence
+	// When we know which pcr2 candidates are to be used, only then can we determine the cassette
+	// This requires specific chimaera handling code. For now we can use the plasmid components (D & E) of the pcr2
+	// primers and find the plasmid sequence between them
+	
+	char primer_E[25];
+	char primer_D[25];
+	char rc_reverse_tail[25];
+	int fwd_length = strlen(pcr2.pair_candidate[0].forward_sequence);
+	int rev_length = strlen(pcr2.pair_candidate[0].reverse_sequence);
+	int BR_length;
+	
+	// Length of the B*R component of the chimaera
+	fwd_length > 90? BR_length = 80: BR_length = 65; 		
+	
+	for(i = 0; i < fwd_length - BR_length; i++) primer_E[i] = pcr2.pair_candidate[0].forward_sequence[BR_length + i];
+		primer_E[fwd_length - BR_length] = 0;
+	
+	for(i = 0; i < rev_length - 45; i++) primer_D[i] = pcr2.pair_candidate[0].reverse_sequence[45 + i];
+	primer_D[rev_length - 45] = 0;
+	
+	//cout << primer_E << ", " << primer_D << endl;
+	
+	int fwd_loc = findstring(primer_E, plasmid_sequence);
+	
+	reverse_complement(primer_D, rc_reverse_tail);
+	
+	int rev_loc = findstring(rc_reverse_tail, plasmid_sequence) + strlen(primer_D);
+	
+	//cout << "Fwd loc = " << fwd_loc << " and " << rev_loc << endl;
+		
+	char cassette_sequence[5000];	
+	
+	j = 0;
+	
+	for(i = fwd_loc; i <= rev_loc; i++) cassette_sequence[j++] = plasmid_sequence[i];
+	cassette_sequence[j] = 0;
+	
+	//cout << cassette_sequence << endl;
+	
+	
+	// RESULTS
+	// **************************************
+	time_t mtime;
+	time(&mtime);
+	char mytime[64];
+	
+	strcpy(mytime, ctime(&mtime));	
+	mytime[strlen(mytime) - 1] = 0;	
+	
+#define PCR1_BEST 0
+#define PCR2_BEST 0
+	
+	if(XML)
+	{
+		
+		//#ifndef BEOWULF		
+		fout << "<organism>\n\t<name>Lactococcus lactis</name>\n";
+		//#endif
+		fout << "\t<geneForDeletion>\n\t\t<name>" << gene << "</name>\n\t\t<date>" << mytime << "</date>\n";
+		fout << "\t\t<class>" << PCR_RESULTS_CLASS << "</class>\n";
+		
+		// PCR1	
+		fout << "\t\t<primerPair>\n";
+		fout << "\t\t\t<name>PCR1</name>\n";
+		
+		fout << "\t\t\t<forwardPrimer>\n";
+		fout << "\t\t\t\t<sequence>"       << pcr1.pair_candidate[PCR1_BEST].forward_sequence << "</sequence>\n";
+		fout << "\t\t\t\t<hairpinScore>"   << pcr1.pair_candidate[PCR1_BEST].forward_hairpin_score << "</hairpinScore>\n";
+		fout << "\t\t\t\t<selfDimerScore>" << pcr1.pair_candidate[PCR1_BEST].forward_self_dimer_score << "</selfDimerScore>\n";
+		/*fout << "\t\t\t\t<bindingSites>\n";
+		fout << "\t\t\t\t\t<yeast>" << primer_a.candidate[idxP_A].yeast_matches << "</yeast>\n";
+		fout << "\t\t\t\t\t<ura3>" << primer_a.candidate[idxP_A].plasmid_matches << "</ura3>\n";
+		fout << "\t\t\t\t</bindingSites>\n";*/
+		fout << "\t\t\t\t<annealingTemperature>" << pcr1.pair_candidate[PCR1_BEST].forward_annealing_temperature << "</annealingTemperature>\n";
+		fout << "\t\t\t</forwardPrimer>\n";
+		
+		fout << "\t\t\t<reversePrimer>\n";
+		fout << "\t\t\t\t<sequence>"       << pcr1.pair_candidate[PCR1_BEST].reverse_sequence << "</sequence>\n";
+		fout << "\t\t\t\t<hairpinScore>"   << pcr1.pair_candidate[PCR1_BEST].reverse_hairpin_score << "</hairpinScore>\n";
+		fout << "\t\t\t\t<selfDimerScore>" << pcr1.pair_candidate[PCR1_BEST].reverse_self_dimer_score << "</selfDimerScore>\n";
+		/*fout << "\t\t\t\t<bindingSites>\n";
+		fout << "\t\t\t\t\t<yeast>" << primer_b.candidate[idxP_B].yeast_matches << "</yeast>\n";
+		fout << "\t\t\t\t\t<ura3>" << primer_b.candidate[idxP_B].plasmid_matches << "</ura3>\n";
+		fout << "\t\t\t\t</bindingSites>\n";*/
+		fout << "\t\t\t\t<annealingTemperature>" << pcr1.pair_candidate[PCR1_BEST].reverse_annealing_temperature << "</annealingTemperature>\n";
+		fout << "\t\t\t</reversePrimer>\n";
+		
+		fout << "\t\t\t<primerDimerForward>" << pcr1.pair_candidate[PCR1_BEST].forward_pair_dimer_score << "</primerDimerForward>\n";
+		fout << "\t\t\t<primerDimerReverse>" << pcr1.pair_candidate[PCR1_BEST].reverse_pair_dimer_score << "</primerDimerReverse>\n";
+		
+		fout << "\t\t\t<numberOfProducts>"   << pcr1.pair_candidate[PCR1_BEST].number_of_pcr_products << "</numberOfProducts>\n";
+		
+		fout << "\t\t\t<product>"       << pcr1_product << "</product>\n";
+		fout << "\t\t\t<productLength>" << strlen(pcr1_product) << "</productLength>\n";
+		
+		fout << "\t\t</primerPair>\n";
+		
+		// PCR2
+		fout << "\t\t<primerPair>\n";
+		fout << "\t\t\t<name>PCR2</name>\n";
+		
+		fout << "\t\t\t<forwardPrimer>\n";
+		fout << "\t\t\t\t<sequence>"       << pcr2.pair_candidate[PCR2_BEST].forward_sequence << "</sequence>\n";
+		fout << "\t\t\t\t<hairpinScore>"   << pcr2.pair_candidate[PCR2_BEST].forward_hairpin_score << "</hairpinScore>\n";
+		fout << "\t\t\t\t<selfDimerScore>" << pcr2.pair_candidate[PCR2_BEST].forward_self_dimer_score << "</selfDimerScore>\n";
+		/*fout << "\t\t\t\t<bindingSites>\n";  
+		fout << "\t\t\t\t\t<yeast>" << PCR2_forward_data_p->yeast_matches << "</yeast>\n";
+		fout << "\t\t\t\t\t<ura3>" << PCR2_forward_data_p->plasmid_matches << "</ura3>\n";		
+		fout << "\t\t\t\t</bindingSites>\n";*/
+		fout << "\t\t\t\t<annealingTemperature>" << pcr2.pair_candidate[PCR2_BEST].forward_annealing_temperature << "</annealingTemperature>\n";
+		
+		fout << "\t\t\t</forwardPrimer>\n";
+		
+		fout << "\t\t\t<reversePrimer>\n";
+		fout << "\t\t\t\t<sequence>"       << pcr2.pair_candidate[PCR2_BEST].reverse_sequence << "</sequence>\n";
+		fout << "\t\t\t\t<hairpinScore>"   << pcr2.pair_candidate[PCR2_BEST].reverse_hairpin_score << "</hairpinScore>\n";
+		fout << "\t\t\t\t<selfDimerScore>" << pcr2.pair_candidate[PCR2_BEST].reverse_self_dimer_score << "</selfDimerScore>\n";
+		/*fout << "\t\t\t\t<bindingSites>\n";  
+		fout << "\t\t\t\t\t<yeast>" << PCR2_reverse_data_p->yeast_matches << "</yeast>\n";
+		fout << "\t\t\t\t\t<ura3>" << PCR2_reverse_data_p->plasmid_matches << "</ura3>\n";
+		fout << "\t\t\t\t</bindingSites>\n";*/
+		fout << "\t\t\t\t<annealingTemperature>" << pcr2.pair_candidate[PCR2_BEST].reverse_annealing_temperature << "</annealingTemperature>\n";
+		
+		fout << "\t\t\t</reversePrimer>\n";
+		
+		fout << "\t\t\t<primerDimerForward>" << pcr2.pair_candidate[PCR2_BEST].forward_pair_dimer_score << "</primerDimerForward>\n";
+		fout << "\t\t\t<primerDimerReverse>" << pcr2.pair_candidate[PCR2_BEST].reverse_pair_dimer_score << "</primerDimerReverse>\n";
+		
+		//fout << "\t\t\t<numberOfProducts>" << pcr2.pair_candidate[PCR2_BEST].number_of_pcr_products << "</numberOfProducts>\n";
+		fout << "\t\t\t<primer_B*>" << pcr1_homology << "</primer_B*>\n";
+		fout << "\t\t\t<primer_R>" << sequence_R  << "</primer_R>\n";
+		fout << "\t\t\t<primer_E>" << primer_E << "</primer_E>\n";
+		fout << "\t\t\t<primer_C>" << sequence_C  << "</primer_C>\n";
+		fout << "\t\t\t<primer_D>" << primer_D << "</primer_D>\n";
+		fout << "\t\t\t<product>" << pcr1_homology << sequence_R << cassette_sequence << sequence_C << "</product>\n";
+		fout << "\t\t\t<productLength>" << strlen(pcr1_homology) + strlen(sequence_R) + strlen(cassette_sequence) + strlen(sequence_C) << "</productLength>\n";
+		
+		
+		fout << "\t\t</primerPair>\n";
+		// PCR3
+		fout << "\t\t<pcr3Product>" << pcr1_product << sequence_R << cassette_sequence << sequence_C << "</pcr3Product>\n";
+		fout << "\t\t<pcr3ProductLength>" << strlen(pcr1_product) + strlen(sequence_R) + strlen(cassette_sequence) + strlen(sequence_C) << "</pcr3ProductLength>\n"; 
+		
+		// CONFIRMATION RESULTS
+		fout << "\t\t<confirmationData>\n" << " cnf_results " << "\t\t</confirmationData>\n";
+		
+		fout << "\t</geneForDeletion>\n";
+		//#ifndef BEOWULF
+		fout << "</organism>\n";
+		//#endif
+	}
+	/*else
+	{
+		sprintf(output,"%s.results", gene);
+		ofstream fout(output);
+		
+		fout << gene << " RESULTS SUMMARY - " << ctime(&mtime) << "==================================================\n\n";
+		fout << "Name - No.: Sequence, Hpin, Sdimer, F dimer, R dimer, Yeast NSB, URA3 NSB, Location\n";
+		fout << "Primer B - ";
+		primer_b.show_candidate(idxP_B, fout);
+		fout << "Primer A - ";
+		primer_a.show_candidate(idxP_A, fout);
+		fout << endl;
+		
+		fout << "Primer C: " << Primer_C << endl;
+		fout << "Primer R: " << Primer_R << endl;	
+		fout << "Primer D: " << primer_d[idxP_D].sequence << endl;
+		fout << "Primer E: " << primer_e[idxP_E].sequence << endl;
+		
+		fout << "PCR1 product: " << PCR1_product << endl;
+		fout << "PCR1 product location: " << primer_a.candidate[idxP_A].location_5_prime_end << " to " << start - 1 << endl;
+		fout << "PCR1 product length: " << start - primer_a.candidate[idxP_A].location_5_prime_end << endl;
+		
+		fout << "PCR2 forward primer: " << PCR2_forward << endl;
+		fout << "PCR2 reverse primer: " << PCR2_reverse << endl;
+		
+		fout << "PCR2 product: " << PCR1_homology << Primer_R << URA3_sequence << Primer_C << endl;
+		fout << "PCR2 product length: " << strlen(PCR1_homology) + strlen(Primer_R) + strlen(URA3_sequence) + strlen(Primer_C) << endl;
+		
+		fout << "PCR3 product: " << PCR1_product << Primer_R << URA3_sequence << Primer_C << endl;
+		fout << "PCR3 product length: " << strlen(PCR1_product) + strlen(Primer_R) + strlen(URA3_sequence) + strlen(Primer_C) << endl;
+		
+		fout << endl << gene << " CONFIRMATION PRIMERS\n============================\n\n";
+		//confirmation_primers(gene, primer_d[idxP_D].sequence, primer_e[idxP_E].sequence, Primer_R, RC_Primer_C, fout);
+		fout << cnf_results << endl;
+		
+		fout << endl << gene << " FULL RESULTS\n====================\n\n"; 
+		fout << "PRIMER B\n";
+		fout << "Hairpin \n";
+		primer_b.hairpin(idxP_B, fout);
+		fout << "\nSelf dimer \n";
+		primer_b.self_dimer(idxP_B, fout);
+		
+		reverse_complement(primer_b.candidate[idxP_B].sequence, RC_Primer_B);
+		fout << "\nBLAST results - Yeast\n";
+		//primer_b.blast_yeast(RC_Primer_B, "RC_primer_B", fout);
+		fout << "==============\n";
+		
+		fout << "BLAST results - URA3\n";
+		//primer_b.blast_plasmid(RC_Primer_B, "RC_primer_B", fout);
+		fout << "==============\n";
+		
+		fout << "PRIMER A\n";
+		fout << "Hairpin \n";
+		primer_a.hairpin(idxP_A, fout);
+		fout << "\nSelf dimer \n";
+		primer_a.self_dimer(idxP_A, fout);
+		fout << "\nPrimer dimer A/B\n";
+		primer_a.primer_dimer_2(idxP_A, primer_b.candidate[idxP_B].sequence, fout);
+		
+		reverse_complement(primer_a.candidate[idxP_A].sequence, RC_Primer_A);
+		fout << "\nBLAST results - Yeast\n";
+		//primer_a.blast_yeast(RC_Primer_A, "RC_primer_A", fout);
+		fout << "==============\n";
+		
+		fout << "BLAST results - URA3\n";
+		//primer_a.blast_plasmid(RC_Primer_A, "RC_primer_A", fout);
+		fout << "==============\n";
+		
+		fout << "PCR2 FORWARD\n";
+		fout << "Hairpin\n";
+		///PCR_analysis.hairpin(PCR2_forward, PCR2_forward_data, fout);				
+		pcr2f.hairpin(0, fout);				
+		fout << "\nSelf dimer\n";
+		///PCR_analysis.self_dimer(PCR2_forward, PCR2_forward_data, fout);
+		pcr2f.self_dimer(0, fout);
+		
+		reverse_complement(PCR2_forward, RC_PCR2_forward);
+		
+		fout << "\nBLAST results - Yeast\n";
+		//PCR_analysis.blast_yeast(RC_Primer_temp, "PCR2_forward", fout);
+		fout << "==============\n";
+		
+		fout << "BLAST results - URA3\n";
+		//PCR_analysis.blast_plasmid(RC_Primer_temp, "PCR2_forward", fout);
+		fout << "==============\n";
+		
+		fout << "PCR2 REVERSE\n";
+		fout << "Hairpin\n";
+		///PCR_analysis.hairpin(PCR2_reverse, PCR2_reverse_data, fout);	
+		pcr2r.hairpin(0, fout);	
+		fout << "\nSelf dimer\n";
+		///PCR_analysis.self_dimer(PCR2_reverse, PCR2_reverse_data, fout);	
+		pcr2f.self_dimer(0, fout);	
+		fout << "\nPrimer dimer - reverse/forward\n";
+		///PCR_analysis.primer_dimer_2(PCR2_reverse, PCR2_forward, PCR2_reverse_data, fout);
+		pcr2r.primer_dimer_2(0, PCR2_forward, fout);
+		
+		reverse_complement(PCR2_reverse, RC_PCR2_reverse);
+		
+		fout << "\nBLAST results - Yeast\n";	
+		//PCR_analysis.blast_yeast(RC_Primer_temp, "PCR2_reverse", fout);
+		fout << "==============\n";
+		
+		fout << "BLAST results - URA3\n";
+		//PCR_analysis.blast_plasmid(RC_Primer_temp, "PCR2_reverse", fout);
+		fout << "==============\n";
+		
+		fout << endl << gene << " SUPPLEMENTARY\n=====================\n\n"; 
+		
+		fout << "Primer B candidates\n";
+		primer_b.show_all_candidates(fout);
+		
+		fout << "\nPrimer A candidates\n";
+		primer_a.show_all_candidates(fout);
+		
+		fout.close();
+	}*/
 	
 	return(1);
 }
 
 int main(int argc, char** argv)
 {
-	char genebuffer[32];
-	char buffer[4001];
-	char orf_sequence[50000];
-	char plasmid_sequence[5000];
-	char query_gene_id[32];
-	char header_id[32];
-	bool found;
+	char genebuffer[32] = {NULL};
+	char buffer[4001] = {NULL};
+	char orf_sequence[50000] = {NULL};
+	char plasmid_sequence[5000] = {NULL};
+	char query_gene_id[32] = {NULL};
+	char header_id[32] = {NULL};
+	bool found = FALSE;
 	int error;
 	char *token;
-	char output_file_name[32];
+	char output_file_name[32] = {NULL};
 	//char genes_1000_all[128] = "pombe_1000_all.fa";
 	//char genome_file_name[128] = "pombe_genome_09052011.fasta";
 	//char genes_1000_all[128] = "orf_genomic_1000_all.fasta";
 	//char genome_file_name[128] = "s_cere_genome.fa";
 	char genes_1000_all[128] = "lactis_220612_1000_all.fa";
-	//char genome_file_name[128] = "l_lactis.fa";
+	char genome_file_name[128] = "l_lactis.fa";
+	char plasmid_file_name[128] = "pCS1966.fa";
 	int count0s = 0;
 
    	cout << "Precise_Deletion: Primer design\n";
@@ -1905,10 +2318,10 @@ int main(int argc, char** argv)
 					//cout << "Found " << header_id << endl;
 					
 					sprintf(output_file_name, "%s.xml", header_id);
-					//fout.open(output_file_name);
+					fout.open(output_file_name);
 					
 					//error = auto_process(header_id, orf_sequence, genome_file_name, fout);
-					error = lactis_process(header_id, orf_sequence, plasmid_sequence);
+					error = lactis_process(header_id, orf_sequence, plasmid_sequence, genome_file_name, plasmid_file_name, fout);
 					
 					if(!error)count0s++;
 					

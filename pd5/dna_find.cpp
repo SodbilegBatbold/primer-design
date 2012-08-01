@@ -883,6 +883,7 @@ int DNAfind::search_for_pcr_products_II(const char *forward_sequence,
 	
 	char header_id[32];
 	char buffer[2056];
+	char *token;
 	bool chr_for_processing = FALSE;
 	int number_of_products_found = 0;
 	char *chromosome = NULL;
@@ -897,7 +898,7 @@ int DNAfind::search_for_pcr_products_II(const char *forward_sequence,
 	
 	/** IMPORTANT:
 	 When searching for binding sites and secondary products we need to find not where the primers
-	 match, but where they bind, which is the reverse complement of the primer. However
+	 match, but where they bind, which is the reverse complement of the primer.
 	 */
 	
 	while(fin.getline(buffer, 2055))
@@ -913,8 +914,8 @@ int DNAfind::search_for_pcr_products_II(const char *forward_sequence,
 				free(chromosome);
 				chr_for_processing = FALSE;
 			}
-			
-			strcpy(header_id, strtok(buffer, " >\n\t\r"));
+			token = strtok(buffer, " >\n\t\r");
+			if(token)strcpy(header_id, token);
 			chr_for_processing = TRUE;
 			
 #ifdef DNAFIND_DEBUG			
@@ -923,14 +924,23 @@ int DNAfind::search_for_pcr_products_II(const char *forward_sequence,
 		}
 		else if(FASTA_SEQUENCE)
 		{
-			chromosome = (char*)realloc(chromosome, strlen(chromosome) + strlen(buffer) + 1);
-			strcat(chromosome, buffer);
+			token = strtok(buffer, " >\n\t\r");
+			if(*token)
+			{
+				chromosome = (char*)realloc(chromosome, strlen(chromosome) + strlen(token) + 1);
+				strcat(chromosome, token);
+			}
 		}
 		else 
 		{
-			chromosome = (char*) malloc(strlen(buffer) + 1);
-			strcpy(chromosome, buffer);
-			FASTA_SEQUENCE = TRUE;
+			token = strtok(buffer, " >\n\t\r");
+			if(*token)
+			{
+				chromosome = (char*) malloc(strlen(token) + 1);
+				strcpy(chromosome, token);
+			
+				FASTA_SEQUENCE = TRUE;
+			}
 		}
 	} 
 	
@@ -1006,7 +1016,7 @@ int DNAfind::search_for_pcr_products(const char *forward_primer,
 	/** Read genome.fa and process each chromosome
 	 */
 	fin.clear();
-	fin.seekg(0, ios::beg);
+	fin.seekg(ios::beg);
 	
 	while(getline(fin, t_buffer))
 	{	

@@ -154,6 +154,10 @@ public:
 	int sort_r_pair_dimer(int data_size);
 	
 	int sort_individual_candidates(const char* priority_list);
+	
+	int make_pair_candidates(int number_of_forward_candidates, int number_of_reverse_candidates);
+	int number_of_pair_candidates;
+	
 	int sort_pair_candidates(const char* priority_list);
 	int show_individual_candidates(void);
 	int show_best_pair_candidates(int var);
@@ -196,6 +200,8 @@ private:
 	int downstream_flank_length;
 	int target_5_prime;
 	int target_3_prime;
+	
+	bool pair_candidates_exist;
 	
 };
 

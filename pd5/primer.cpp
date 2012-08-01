@@ -185,7 +185,7 @@ int primer::generate_candidate_primers(const char* template_sequence)
 					possible_candidate[k] = 0;  // end the string
 					
 					// CANDIDATE TESTING
-					if(test_candidate(possible_candidate))
+					if(test_candidate(possible_candidate, i + strlen(possible_candidate), template_sequence))
 					{
 						candidate[n].location_5_prime_end = i + 1; // +1 for physical location
 						candidate[n].primer_length = strlen(possible_candidate);
@@ -213,7 +213,7 @@ int primer::generate_candidate_primers(const char* template_sequence)
 					possible_candidate[k] = 0;  // end the string
 					
 					// CANDIDATE TESTING
-					if(test_candidate(possible_candidate))
+					if(test_candidate(possible_candidate, i + strlen(possible_candidate), template_sequence))
 					{
 						candidate[n].location_5_prime_end = i + 1; // +1 for physical location
 						candidate[n].primer_length = strlen(possible_candidate);
@@ -246,7 +246,7 @@ int primer::generate_candidate_primers(const char* template_sequence)
 #endif
 					
 					// CANDIDATE TESTING
-					if(test_candidate(possible_candidate))
+					if(test_candidate(possible_candidate, i + strlen(possible_candidate), template_sequence))
 					{
 						candidate[n].location_5_prime_end = i + 1; // +1 for physical location
 						candidate[n].primer_length = strlen(possible_candidate);
@@ -274,7 +274,7 @@ int primer::generate_candidate_primers(const char* template_sequence)
 					possible_candidate[k] = 0;  // end the string
 					
 					// CANDIDATE TESTING
-					if(test_candidate(possible_candidate))
+					if(test_candidate(possible_candidate, i + strlen(possible_candidate), template_sequence))
 					{
 						candidate[n].location_5_prime_end = i + 1; // +1 for physical location
 						candidate[n].primer_length = strlen(possible_candidate);
@@ -298,10 +298,13 @@ int primer::generate_candidate_primers(const char* template_sequence)
 }
 
 
-int primer::test_candidate(const char* sequence)
+int primer::test_candidate(const char* sequence, int location_3_prime_end, const char* template_sequence)
 {
 	bool Good_primer = TRUE;
 	int tail_end = strlen(sequence) - 1;
+	int i = 0;
+	char poly_sequence[32] = {NULL}; // sequence on template about the 3' end of each primer. Used for homopolymeric run detection
+	int poly_sequence_req_length = 11;
 	
 	//std::cout << "End is " << sequence[strlen(sequence) - 1] << std::endl;
 	if(GC_clamping)
@@ -311,7 +314,7 @@ int primer::test_candidate(const char* sequence)
 		
 		int tail_GC_content = 0;
 		
-		for(int i = tail_end - 4; i < tail_end; i++)
+		for(i = tail_end - 4; i < tail_end; i++)
 		{
 			if(sequence[i] == nucleotide_G || sequence[i] == nucleotide_C)
 				tail_GC_content++;
@@ -356,7 +359,13 @@ int primer::test_candidate(const char* sequence)
 	
 	if(homopolymeric_run_check)
 	{
-		if(homopolymeric_run_detection(sequence))
+		//if(homopolymeric_run_detection(sequence))
+			//Good_primer = FALSE;
+		
+		for(i = 0; i < poly_sequence_req_length; i++) poly_sequence[i] = template_sequence[location_3_prime_end + i - 6];
+		poly_sequence[poly_sequence_req_length] = 0;
+		
+		if(homopolymeric_run_detection(poly_sequence))
 			Good_primer = FALSE;
 	}
 
@@ -366,6 +375,8 @@ int primer::test_candidate(const char* sequence)
 
 int primer::homopolymeric_run_detection(const char* sequence)
 {
+	if(sequence == NULL)return(FALSE);
+	
 	int sequence_length = strlen(sequence);
 	int i, homopolymeric_length = 0;
 	

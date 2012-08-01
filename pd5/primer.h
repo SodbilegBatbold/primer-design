@@ -107,6 +107,7 @@ public:
 	{
 	// initialise vars
 		sequence[0] = 0;
+		location_5_prime_end = 0;
 		primer_length = 0;
 		sticky_tail = FALSE;
 		tail_check = 0;
@@ -349,7 +350,7 @@ private:
 // Candidate generation
 	//char complement[22];
 	
-	int test_candidate(const char* sequence);
+	int test_candidate(const char* sequence, int location_3_prime_end, const char* template_sequence);
 	int sort_yeast_matches(int data_size);
 	int sort_plasmid_matches(int data_size);
 	int sort_self_dimer(int data_size);
