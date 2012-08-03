@@ -357,8 +357,9 @@ int primer_pair::make_pair_candidates(int number_of_forward_candidates, int numb
 
 int primer_pair::sort_pair_candidates(const char* priority_list)
 {
-	// If not already done, get the best 6 of each forward and reverse primers
-	// and make 36 primer pairs for sorting
+	// If not already done, get the best 6 (or less if 6 not available) 
+	// of each forward and reverse primers and make 36 primer pairs for sorting
+	
 	int i;
 	int number_of_forward_candidates;
 	int number_of_reverse_candidates;

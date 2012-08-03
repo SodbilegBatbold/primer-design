@@ -1716,6 +1716,72 @@ int check_sequence_contents(const char* sequence)
 	return(1);
 }
 
+/*
+ The Whitehead Inst. uses the following parameters for their confirmation primers used with S. cerevisiae: -
+ 
+ Primer length: 17 - 28 bases
+ Primer Tm: 65 degrees C +/- 2 degrees C
+ GC content: 30 - 70% (although Tm will have a large part in determining this)
+ Primer A located 200 - 400 bases upstream of target ORF
+ Primer B located downstream of primer A within the ORF to give a product of 300 - 1000 bases 
+ Primer C located upstream of primer D within the ORF to give a product of 300 - 1000 bases
+ Primer D located 200 - 400 bases downstream of target ORF
+ 
+ Although it is not actually stated, their products for A & B are usual about half the length of the products of C & D.
+ 
+*/
+
+int lactis_confirmation_primers(const char* orf_sequence,
+								const char* genome_file_name,
+								char* cnf_results)
+{
+	int orf_length = strlen(orf_sequence);
+	int fwd_candidates, rev_candidates;
+	DNAfind genome_template(genome_file_name);
+	
+	if(!genome_template.set_max_mismatches(0)) 
+		cout << "Could not set max_mismatches\n";
+	
+	if(!genome_template.set_tail_length(12)) 
+		cout << "Could not set tail length\n";
+	
+	primer_pair confirmation;
+	
+	confirmation.set_target_location(800, orf_length - 800);
+	confirmation.set_flank_lengths(200, 200);
+	confirmation.set_primer_length_range(17, 28);
+	confirmation.set_Tm_range(60, 65, 70);
+	
+	confirmation.candidate_analysis();
+	confirmation.sort_individual_candidates("HAIRPIN, SELF_DIMER, TEMPERATURE");	
+	
+	if(confirmation.forward_primer.candidates_found > 5) 
+		fwd_candidates = 6;
+	else
+		fwd_candidates = confirmation.forward_primer.candidates_found;
+	
+	if(confirmation.reverse_primer.candidates_found > 5)
+		rev_candidates = 6;
+	else
+		rev_candidates = confirmation.reverse_primer.candidates_found;
+	
+	cout << "Actual cands " << fwd_candidates << ", " << rev_candidates << endl;
+	
+	confirmation.make_pair_candidates(fwd_candidates, rev_candidates);
+	
+	for(int i = 0; i < confirmation.number_of_pair_candidates; i++)
+	{
+		//cout << pcr1.pair_candidate[i].forward_sequence << ", " << pcr1.pair_candidate[i].reverse_sequence << endl;
+		confirmation.pair_candidate[i].number_of_pcr_products  =  
+			genome_template.search_for_pcr_products(confirmation.pair_candidate[i].forward_sequence, 
+													confirmation.pair_candidate[i].reverse_sequence);
+		
+		cout << "Pair " << i << ": " << confirmation.pair_candidate[i].number_of_pcr_products << endl;
+	}
+	
+	return(TRUE);	
+}
+
 int lactis_process(const char* gene, 
 				   const char* orf_sequence, 
 				   const char* plasmid_sequence, 
@@ -1769,8 +1835,8 @@ int lactis_process(const char* gene,
 	
 	pcr1.sort_individual_candidates("HAIRPIN, SELF_DIMER, TEMPERATURE");
 	
-	cout << "Fwd Candidates = " << pcr1.forward_primer.candidates_found << endl;
-	cout << "Rev Candidates = " << pcr1.reverse_primer.candidates_found << endl;
+	//cout << "Fwd Candidates = " << pcr1.forward_primer.candidates_found << endl;
+	//cout << "Rev Candidates = " << pcr1.reverse_primer.candidates_found << endl;
 	
 	int fwd_candidates, rev_candidates;
 	
@@ -1784,17 +1850,17 @@ int lactis_process(const char* gene,
 	else
 		rev_candidates = pcr1.reverse_primer.candidates_found;
 	
-	cout << "Actual cands " << fwd_candidates << ", " << rev_candidates << endl;
+	//cout << "Actual cands " << fwd_candidates << ", " << rev_candidates << endl;
 	
 	pcr1.make_pair_candidates(fwd_candidates, rev_candidates);
 	
 	for(i = 0; i < pcr1.number_of_pair_candidates; i++)
 	{
-		cout << pcr1.pair_candidate[i].forward_sequence << ", " << pcr1.pair_candidate[i].reverse_sequence << endl;
+		//cout << pcr1.pair_candidate[i].forward_sequence << ", " << pcr1.pair_candidate[i].reverse_sequence << endl;
 		pcr1.pair_candidate[i].number_of_pcr_products  =  genome_template.search_for_pcr_products(pcr1.pair_candidate[i].forward_sequence, pcr1.pair_candidate[i].reverse_sequence);
-		//pcr1.pair_candidate[i].number_of_pcr_products += plasmid_template.search_for_pcr_products(pcr1.pair_candidate[i].forward_sequence, pcr1.pair_candidate[i].reverse_sequence);
+		pcr1.pair_candidate[i].number_of_pcr_products += plasmid_template.search_for_pcr_products(pcr1.pair_candidate[i].forward_sequence, pcr1.pair_candidate[i].reverse_sequence);
 		
-		cout << "Pair " << i << ": " << pcr1.pair_candidate[i].number_of_pcr_products << endl;
+		//cout << "Pair " << i << ": " << pcr1.pair_candidate[i].number_of_pcr_products << endl;
 	}	
 
 	
@@ -1806,7 +1872,7 @@ int lactis_process(const char* gene,
 	
 	// Display best N candidate pairs
 	int N = 6;
-	pcr1.show_best_pair_candidates(N);
+	//pcr1.show_best_pair_candidates(N);
 	
 	//Make PCR1 product
 	char pcr1_product[1000];
@@ -1892,7 +1958,7 @@ int lactis_process(const char* gene,
 	reverse_complement(sequence_C, rc_sequence_C);
 	
 	//  Make PCR2 primers
-	cout << "PCR2 primers\n";
+	//cout << "PCR2 primers\n";
 	
 	//chimara.forward_primer = B*RE and chimaera.reverse_primer = C'D. B* is actually 25/40 bases from the 3' end of the 
 	// pcr1 product sense strand, which is the reverse comp of pcr1.reverse_primer (aka Primer B).
@@ -1925,7 +1991,7 @@ int lactis_process(const char* gene,
 	pcr2.sort_pair_candidates("TM_DIFF, F_DIMER, R_DIMER, MOO_SORT");
 	
 	// Display best 6 candidate pairs
-	pcr2.show_best_pair_candidates(6);
+	//pcr2.show_best_pair_candidates(6);
 	
 	// Make cassette sequence
 	// When we know which pcr2 candidates are to be used, only then can we determine the cassette
@@ -1966,6 +2032,21 @@ int lactis_process(const char* gene,
 	cassette_sequence[j] = 0;
 	
 	//cout << cassette_sequence << endl;
+	
+	// Confirmation primers
+	/*
+	char cnf_results[20000] = "None";
+	
+	if(XML)
+	{
+		if(!xml_confirmation_primers(gene, primer_d[idxP_D].sequence, primer_e[idxP_E].sequence, Primer_R, RC_Primer_C, cnf_results))
+			return(CONF_PRIMER_ERROR);
+	}
+	else 
+	{
+		if(!confirmation_primers(gene, primer_d[idxP_D].sequence, primer_e[idxP_E].sequence, Primer_R, RC_Primer_C, cnf_results))
+			return(CONF_PRIMER_ERROR);
+	}*/
 	
 	
 	// RESULTS
@@ -2072,7 +2153,7 @@ int lactis_process(const char* gene,
 		fout << "\t\t<pcr3ProductLength>" << strlen(pcr1_product) + strlen(sequence_R) + strlen(cassette_sequence) + strlen(sequence_C) << "</pcr3ProductLength>\n"; 
 		
 		// CONFIRMATION RESULTS
-		fout << "\t\t<confirmationData>\n" << " cnf_results " << "\t\t</confirmationData>\n";
+		fout << "\t\t<confirmationData>\n" << " cnf_results to be done (2/7/12)" << "\t\t</confirmationData>\n";
 		
 		fout << "\t</geneForDeletion>\n";
 		//#ifndef BEOWULF
@@ -2202,16 +2283,16 @@ int lactis_process(const char* gene,
 
 int main(int argc, char** argv)
 {
-	char genebuffer[32] = {NULL};
-	char buffer[4001] = {NULL};
-	char orf_sequence[50000] = {NULL};
-	char plasmid_sequence[5000] = {NULL};
-	char query_gene_id[32] = {NULL};
-	char header_id[32] = {NULL};
+	char genebuffer[32];
+	char buffer[4001];
+	char orf_sequence[50000];
+	char plasmid_sequence[5000];
+	char query_gene_id[32];
+	char header_id[32];
 	bool found = FALSE;
 	int error;
 	char *token;
-	char output_file_name[32] = {NULL};
+	char output_file_name[32];
 	//char genes_1000_all[128] = "pombe_1000_all.fa";
 	//char genome_file_name[128] = "pombe_genome_09052011.fasta";
 	//char genes_1000_all[128] = "orf_genomic_1000_all.fasta";
@@ -2222,7 +2303,7 @@ int main(int argc, char** argv)
 	int count0s = 0;
 
    	cout << "Precise_Deletion: Primer design\n";
-	cout << "Version 1.2, 22nd November 2011\n";
+	cout << "Version 1.3, 1st August 2012\n";
 	
 	if(!(argv[1] && argv[2]))
 	{

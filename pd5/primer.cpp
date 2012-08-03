@@ -303,7 +303,7 @@ int primer::test_candidate(const char* sequence, int location_3_prime_end, const
 	bool Good_primer = TRUE;
 	int tail_end = strlen(sequence) - 1;
 	int i = 0;
-	char poly_sequence[32] = {NULL}; // sequence on template about the 3' end of each primer. Used for homopolymeric run detection
+	char poly_sequence[32]; // sequence on template about the 3' end of each primer. Used for homopolymeric run detection
 	int poly_sequence_req_length = 11;
 	
 	//std::cout << "End is " << sequence[strlen(sequence) - 1] << std::endl;
