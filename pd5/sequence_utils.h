@@ -120,13 +120,13 @@ class sequence_utils
 	static int nucleotide_content(int nucleotide, const char* sequence);
 
 	static int nucleotide_complement(int nucleotide);
-	char* reverse_complement(const char* sequence);
-	static int reverse_complement(const char* a_string, char* b_string);
+	//char* reverse_complement(const char* sequence);
+	static int reverse_complement(const char* orig_string, char* out_string);
 	
 private:
 
 	static char complement[22]; 
-	char *rc_sequence;
+	//char *rc_sequence;
 	
 	
 // Sequence analysis	

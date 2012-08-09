@@ -52,6 +52,8 @@
 #define TRUE 1
 #define FALSE 0
 
+#define LOCATION_ERROR 0
+
 //#define TESTING
 
 primer::primer()
@@ -87,13 +89,14 @@ primer::primer()
 	avoid_subsequence_check = FALSE;
 	seq_to_avoid = NULL;
 	
-	homopolymeric_run_check = TRUE;
+	homopolymeric_run_check = FALSE;
+	homopolymeric_run_nr_tail_check = TRUE;
 	homopolymeric_run_length_limit = 5; //< popularly < 4-5 nt (Buck et al, BioTechniques 27:528-536 (September 1999))
 
 	
 	// Default sorting priorities (can have up to 10)
-	priority[0] = PLASMID_MATCH;
-	priority[1] = YEAST_MATCH;
+	priority[0] = BINDING_B;
+	priority[1] = BINDING_A;
 	priority[2] = SELF_DIMER;
 	priority[3] = SORT_END;
 	priority[4] = SORT_END;
@@ -166,7 +169,11 @@ int primer::generate_candidate_primers(const char* template_sequence)
 	int n = 0;
 	char possible_candidate[length_range_longest + 1];
 	
-		
+	// Check for invalid primer location region
+	if((unsigned int)start_location_range_begin > strlen(template_sequence))return(LOCATION_ERROR);
+	if((unsigned int)(start_location_range_end + length_range_longest) > strlen(template_sequence))return(LOCATION_ERROR);
+	   
+	// Find possible primers and test
 	if(downstream_search) // default search is in the upstream direction
 	{
 		if(reverse_primer)
@@ -357,17 +364,27 @@ int primer::test_candidate(const char* sequence, int location_3_prime_end, const
 	    Good_primer = FALSE;
 	}
 	
+/** Checks for homopolymeric runs within the primer sequence. If they exist it increases the likelihood
+ of secondary binding/products.
+ */	
 	if(homopolymeric_run_check)
 	{
-		//if(homopolymeric_run_detection(sequence))
-			//Good_primer = FALSE;
-		
+		if(homopolymeric_run_detection(sequence))
+			Good_primer = FALSE;
+	}
+
+/** Checks for homopolymeric runs on the template at the primer sequence 3' end. If they exist it increases the likelihood
+	 of mispriming. This should not be optional.
+	 */	
+	if(homopolymeric_run_nr_tail_check)
+	{		
 		for(i = 0; i < poly_sequence_req_length; i++) poly_sequence[i] = template_sequence[location_3_prime_end + i - 6];
 		poly_sequence[poly_sequence_req_length] = 0;
 		
 		if(homopolymeric_run_detection(poly_sequence))
 			Good_primer = FALSE;
 	}
+	
 
 	return(Good_primer);
 	
@@ -393,6 +410,19 @@ int primer::homopolymeric_run_detection(const char* sequence)
 	return(FALSE);
 }
 
+int primer::analyse_all_candidates(void)
+{
+	
+	for(int i = 0; i < candidates_found; i++)
+	{			
+		hairpin(i);
+		self_dimer(i);
+		calculate_temperature(i);
+	}
+	
+	return(0);
+}
+
 int primer::show_candidate(int i)
 {
 	std::cout << "Sequence, Hpin, Sdimer, F dimer, R dimer, Yeast NSB, URA3 NSB, Location\n";
@@ -404,8 +434,8 @@ int primer::show_candidate(int i)
 	std::cout << candidate[i].self_dimer << ", ";
 	std::cout << candidate[i].forward_dimer << ", ";
 	std::cout << candidate[i].reverse_dimer << ", ";
-	std::cout << candidate[i].yeast_matches << ", ";
-	std::cout << candidate[i].plasmid_matches << ", ";
+	std::cout << candidate[i].binding_A << ", ";
+	std::cout << candidate[i].binding_B << ", ";
 	std::cout << candidate[i].location_5_prime_end << ", ";
 	std::cout << std::endl;
 	
@@ -422,8 +452,8 @@ int primer::show_candidate(int i, ofstream &fout)
 	fout << candidate[i].self_dimer << ", ";
 	fout << candidate[i].forward_dimer << ", ";
 	fout << candidate[i].reverse_dimer << ", ";
-	fout << candidate[i].yeast_matches << ", ";
-	fout << candidate[i].plasmid_matches << ", ";
+	fout << candidate[i].binding_A << ", ";
+	fout << candidate[i].binding_B << ", ";
 	fout << candidate[i].location_5_prime_end << ", ";
 	fout << std::endl;
 	
@@ -443,8 +473,8 @@ int primer::show_all_candidates(void)
 		std::cout << candidate[i].self_dimer << ", ";
 		std::cout << candidate[i].forward_dimer << ", ";
 		std::cout << candidate[i].reverse_dimer << ", ";
-		std::cout << candidate[i].yeast_matches << ", ";
-		std::cout << candidate[i].plasmid_matches << ", ";
+		std::cout << candidate[i].binding_A << ", ";
+		std::cout << candidate[i].binding_B << ", ";
 		std::cout << candidate[i].location_5_prime_end << ", ";
 		std::cout << strlen(candidate[i].sequence) << ", ";
 		std::cout << candidate[i].products << ", ";
@@ -466,8 +496,8 @@ int primer::show_all_candidates(ofstream &fout)
 		fout << candidate[i].self_dimer << ", ";
 		fout << candidate[i].forward_dimer << ", ";
 		fout << candidate[i].reverse_dimer << ", ";
-		fout << candidate[i].yeast_matches << ", ";
-		fout << candidate[i].plasmid_matches << ", ";
+		fout << candidate[i].binding_A << ", ";
+		fout << candidate[i].binding_B << ", ";
 		fout << candidate[i].location_5_prime_end << ", ";
 		fout << std::endl;
 		
@@ -489,8 +519,8 @@ int primer::show_all_single_candidates(void)
 		std::cout << i << "\t";
 		std::cout << candidate[i].hairpin << "\t";
 		std::cout << candidate[i].self_dimer << "\t";
-		std::cout << candidate[i].yeast_matches << "\t";
-		std::cout << candidate[i].plasmid_matches << "\t";
+		std::cout << candidate[i].binding_A << "\t";
+		std::cout << candidate[i].binding_B << "\t";
 		std::cout << candidate[i].location_5_prime_end << "\t";
 		std::cout << strlen(candidate[i].sequence) << "\t";
 		std::cout << candidate[i].annealing_temperature << "\t";
@@ -515,7 +545,7 @@ int primer::auto_selection(void)
 		   (candidate[i].self_dimer    < 11) &&
 		   (candidate[i].forward_dimer    < 11) &&
 		   (candidate[i].reverse_dimer    < 11) &&
-		   (candidate[i].yeast_matches <= yeast_nsb_limit))
+		   (candidate[i].binding_A <= yeast_nsb_limit))
 		{
 #ifdef TESTING
 			std::cout << i << ": " << candidate[i].sequence << ", ";
@@ -525,8 +555,8 @@ int primer::auto_selection(void)
 			std::cout << candidate[i].self_dimer << ", ";
 			std::cout << candidate[i].forward_dimer << ", ";
 			std::cout << candidate[i].reverse_dimer << ", ";
-			std::cout << candidate[i].yeast_matches << ", ";
-			std::cout << candidate[i].plasmid_matches << ", ";
+			std::cout << candidate[i].binding_A << ", ";
+			std::cout << candidate[i].binding_B << ", ";
 			std::cout << std::endl;
 #endif
 			
@@ -587,7 +617,14 @@ int primer::set_priorities(const char* priority_list)
 		 {
 			 priority[priority_index] = TEMPERATURE;
 		 }
-		 else 
+		 else if(!strcmp(token, "BINDING_A"))
+		 {
+			 priority[priority_index] = BINDING_A;
+		 }
+		 else if(!strcmp(token, "BINDING_B"))
+		 {
+			 priority[priority_index] = BINDING_B;
+		 }else 
 		 {
 			 cout << "Priority list error\n";
 		 }
@@ -619,7 +656,7 @@ inline void swap(int *a, int *b)
 }
 
 
-int primer::sort_yeast_matches(int data_size)
+int primer::sort_binding_A(int data_size)
 {
 	bool swapped = TRUE;
 	
@@ -629,7 +666,7 @@ int primer::sort_yeast_matches(int data_size)
 		
 		for(int i = 0; i < data_size - 1; i++)
 		{
-			if(candidate[i].yeast_matches > candidate[i + 1].yeast_matches)
+			if(candidate[i].binding_A > candidate[i + 1].binding_A)
 			{
 				swap(candidate[i], candidate[i + 1]);
 				swapped = TRUE;
@@ -639,7 +676,7 @@ int primer::sort_yeast_matches(int data_size)
 	return(1);
 }
 
-int primer::sort_plasmid_matches(int data_size)
+int primer::sort_binding_B(int data_size)
 {
 	bool swapped = TRUE;
 	
@@ -649,7 +686,7 @@ int primer::sort_plasmid_matches(int data_size)
 		
 		for(int i = 0; i < data_size - 1; i++)
 		{
-			if(candidate[i].plasmid_matches > candidate[i + 1].plasmid_matches)
+			if(candidate[i].binding_B > candidate[i + 1].binding_B)
 			{
 				swap(candidate[i], candidate[i + 1]);
 				swapped = TRUE;
@@ -910,16 +947,16 @@ int primer::sort_candidates(void)
 		{
 			switch(priority[j])
 			{
-				case YEAST_MATCH:	
-					sort_yeast_matches(data_size);									
+				case BINDING_A:	
+					sort_binding_A(data_size);									
 					for(i = 0; i < data_size; i++)
-						if(candidate[i].yeast_matches >= 4)data_size = i;
+						if(candidate[i].binding_A >= 4)data_size = i;
 					break;
 					
-				case PLASMID_MATCH:	
-					sort_plasmid_matches(data_size);									
+				case BINDING_B:	
+					sort_binding_B(data_size);									
 					for(i = 0; i < data_size; i++)
-						if(candidate[i].plasmid_matches >= 1)data_size = i;
+						if(candidate[i].binding_B >= 1)data_size = i;
 					break;
 					
 				case SELF_DIMER:	

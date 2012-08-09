@@ -1,3 +1,4 @@
+
 /*************************************************\
  
  precise_auto.cpp (Ver 1.00 - 10/2/11)
@@ -43,14 +44,15 @@ using namespace std;
 
 
 // Error defines
-
-#define NO_PRIMER_B 0
-#define NO_PRIMERS_A_AND_B -1
-#define NO_PCR2_PRIMERS -2
+#define NO_PRIMER_A -1
+#define NO_PRIMER_B -2
+#define NO_PRIMERS_A_AND_B -9
 #define NO_PRIMER_D -3
 #define NO_PRIMER_E -4
-#define NO_URA3 -5
-#define CONF_PRIMER_ERROR -6
+#define NO_PCR2_FORWARD -5
+#define NO_PCR2_REVERSE -6
+#define NO_URA3 -7
+#define CONF_PRIMER_ERROR -8
 
 // TESTING
 //#define TESTING
@@ -1782,15 +1784,21 @@ int lactis_confirmation_primers(const char* orf_sequence,
 	return(TRUE);	
 }
 
-int lactis_process(const char* gene, 
+// POMBE VER
+#define BEST 0
+
+int precise_process(const char* gene, 
 				   const char* orf_sequence, 
 				   const char* plasmid_sequence, 
 				   const char* genome_file_name,
 				   const char* plasmid_file_name,
 				   ofstream &fout)
 {
+
 	int i = 0;
 	int j = 0;
+	
+
 		
 	DNAfind genome_template(genome_file_name);
 	
@@ -1820,35 +1828,70 @@ int lactis_process(const char* gene,
 	
 //  Make PCR1 primers
 	
-	//int temp_products = 0;
-	
 	primer_pair pcr1;
 	
+// Start by finding the best reverse primer
+	pcr1.reverse_primer.set_primer_location_range(start - 1, start - 1); // Primer B starts immediately before start codon
+	//pcr1.reverse_primer.homopolymeric_run_check = FALSE;
+	pcr1.reverse_primer.set_primer_length_range(30, 60);
+	pcr1.reverse_primer.optimum_primer_length = 40;
+	
+	pcr1.reverse_primer.generate_candidates(orf_sequence);
+	
+	pcr1.reverse_primer.analyse_all_candidates();	
+	pcr1.reverse_primer.set_priorities("HAIRPIN, SELF_DIMER, LENGTH");
+	pcr1.reverse_primer.sort_candidates();
+	
+	//pcr1.reverse_primer.show_all_single_candidates();
+	
+
+// Now set params for forward primer using reverse primer data	
 	pcr1.forward_primer.set_primer_location_range(0, 500);
 	pcr1.forward_primer.downstream_search = TRUE;	
-	pcr1.reverse_primer.set_primer_location_range(start - 1, start - 1); // Primer B starts immediately before start codon
-	pcr1.reverse_primer.homopolymeric_run_check = FALSE;	
-	pcr1.set_primer_length_range(30, 60); // both primers have same length range
-		
-	pcr1.generate_candidates(orf_sequence);
-	pcr1.candidate_analysis();
+	pcr1.forward_primer.set_primer_length_range(35, 45);
+	pcr1.forward_primer.homopolymeric_run_check = TRUE; // We can afford to be choosy with the forward primer and reduce potential secondary products	
 	
-	pcr1.sort_individual_candidates("HAIRPIN, SELF_DIMER, TEMPERATURE");
+// To get a close Tm we constrain GC content in fwd primer to be close to the best rev primer
+	pcr1.forward_primer.required_GC_content = sequence_utils::GC_content(pcr1.reverse_primer.candidate[0].sequence);
+	pcr1.forward_primer.GC_tolerance = 2;
+	
+	pcr1.forward_primer.generate_candidates(orf_sequence);
+	
+	pcr1.forward_primer.analyse_all_candidates();
+	
+	//cout << "Ideal temp = " << pcr1.reverse_primer.candidate[0].annealing_temperature << endl;
+	
+	pcr1.forward_primer.optimum_Tm = pcr1.reverse_primer.candidate[0].annealing_temperature;
+	pcr1.forward_primer.max_Tm = pcr1.reverse_primer.candidate[0].annealing_temperature + 10;
+	pcr1.forward_primer.min_Tm = pcr1.reverse_primer.candidate[0].annealing_temperature - 10;
+	
+	pcr1.forward_primer.set_priorities("HAIRPIN, SELF_DIMER, TEMPERATURE");
+	pcr1.forward_primer.sort_candidates();
+
+	//pcr1.forward_primer.show_all_single_candidates();
 	
 	//cout << "Fwd Candidates = " << pcr1.forward_primer.candidates_found << endl;
 	//cout << "Rev Candidates = " << pcr1.reverse_primer.candidates_found << endl;
+
+	cout << "Good pcr1 cands: " << pcr1.forward_primer.good_candidates << " and " << pcr1.reverse_primer.good_candidates << endl;
+
+// Check that we have pcr1 primers
+	if(pcr1.forward_primer.good_candidates < 1) return(NO_PRIMER_A);
+	if(pcr1.reverse_primer.good_candidates < 1) return(NO_PRIMER_B);
 	
+	
+// Make and test pairs	
 	int fwd_candidates, rev_candidates;
 	
-	if(pcr1.forward_primer.candidates_found > 5) 
+	if(pcr1.forward_primer.good_candidates > 5) 
 		fwd_candidates = 6;
 	else
-		fwd_candidates = pcr1.forward_primer.candidates_found;
+		fwd_candidates = pcr1.forward_primer.good_candidates;
 	
-	if(pcr1.reverse_primer.candidates_found > 5)
+	if(pcr1.reverse_primer.good_candidates > 5)
 		rev_candidates = 6;
 	else
-		rev_candidates = pcr1.reverse_primer.candidates_found;
+		rev_candidates = pcr1.reverse_primer.good_candidates;
 	
 	//cout << "Actual cands " << fwd_candidates << ", " << rev_candidates << endl;
 	
@@ -1868,11 +1911,11 @@ int lactis_process(const char* gene,
 	//temp_products = genome_template.search_for_pcr_products(pcr1.pair_candidate[0].forward_sequence, pcr1.pair_candidate[0].reverse_sequence);
 	//cout << "Products = " << temp_products << endl;
 	
-	pcr1.sort_pair_candidates("TM_DIFF, F_DIMER, R_DIMER, MOO_SORT");
+	pcr1.sort_pair_candidates("TM_DIFF, F_DIMER, R_DIMER, PRODUCTS, MOO_SORT");
 	
 	// Display best N candidate pairs
-	int N = 6;
-	//pcr1.show_best_pair_candidates(N);
+	//int N = 6;
+	//pcr1.show_best_pair_candidates(6);
 	
 	//Make PCR1 product
 	char pcr1_product[1000];
@@ -1893,15 +1936,54 @@ int lactis_process(const char* gene,
 		
 	primer_pair plasmid;
 	
-// pCS1966 0-4740, ermAM 2623-3360 & oroP 3786-4709
+// For Lactis: pCS1966 0-4740, ermAM 2623-3360 & oroP 3786-4709
 	plasmid.forward_primer.set_primer_location_range(2573, 2623);
 	plasmid.reverse_primer.set_primer_location_range(4709, 4740);
+	
+// For Pombe: pFS118 sequence is 7282 bases long, promoter 4932-4981 URA4 4982-5776, terminator 5797-6211
+	//plasmid.forward_primer.set_primer_location_range(4832, 4932);
+	//plasmid.reverse_primer.set_primer_location_range(6211, 6311);
+	
 	plasmid.set_primer_length_range(18, 20);
 	
 	plasmid.generate_candidates(plasmid_sequence);
-	plasmid.candidate_analysis();	
-	plasmid.sort_individual_candidates("HAIRPIN, SELF_DIMER, TEMPERATURE");
-	plasmid.sort_pair_candidates("TM_DIFF, F_DIMER, R_DIMER, MOO_SORT");
+	plasmid.candidate_analysis();
+	
+	/*cout << "Plasmid results \n";
+	plasmid.forward_primer.show_all_single_candidates();
+	plasmid.reverse_primer.show_all_single_candidates();*/
+	
+	plasmid.sort_individual_candidates("HAIRPIN, SELF_DIMER"); // Temps will be low here - not worth sorting?
+	
+// Check that we have pcr1 primers
+	if(plasmid.forward_primer.good_candidates < 1) return(NO_PRIMER_E);
+	if(plasmid.reverse_primer.good_candidates < 1) return(NO_PRIMER_D);
+	
+// Make and test pairs	
+	int plasmid_fwd_candidates, plasmid_rev_candidates;
+	
+	if(plasmid.forward_primer.good_candidates > 5) 
+		plasmid_fwd_candidates = 6;
+	else
+		plasmid_fwd_candidates = plasmid.forward_primer.good_candidates;
+	
+	if(plasmid.reverse_primer.good_candidates > 5)
+		plasmid_rev_candidates = 6;
+	else
+		plasmid_rev_candidates = plasmid.reverse_primer.good_candidates;
+	
+	plasmid.make_pair_candidates(plasmid_fwd_candidates, plasmid_rev_candidates);
+	
+	for(i = 0; i < plasmid.number_of_pair_candidates; i++)
+	{
+		//cout << pcr1.pair_candidate[i].forward_sequence << ", " << pcr1.pair_candidate[i].reverse_sequence << endl;
+		plasmid.pair_candidate[i].number_of_pcr_products  =  genome_template.search_for_pcr_products(plasmid.pair_candidate[i].forward_sequence, plasmid.pair_candidate[i].reverse_sequence);
+		plasmid.pair_candidate[i].number_of_pcr_products += plasmid_template.search_for_pcr_products(plasmid.pair_candidate[i].forward_sequence, plasmid.pair_candidate[i].reverse_sequence);
+		
+		//cout << "Pair " << i << ": " << pcr1.pair_candidate[i].number_of_pcr_products << endl;
+	}
+	
+	plasmid.sort_pair_candidates("TM_DIFF, F_DIMER, R_DIMER, PRODUCTS, MOO_SORT");
 	
 	// Display best 6 candidate pairs
 	//plasmid.show_best_pair_candidates(6);
@@ -1983,12 +2065,40 @@ int lactis_process(const char* gene,
 	pcr2.reverse_primer.candidates_found = 6;
 	
 	pcr2.candidate_analysis();
-	pcr2.sort_individual_candidates("HAIRPIN, SELF_DIMER, TEMPERATURE");
+	//pcr2.show_individual_candidates();
+	pcr2.sort_individual_candidates("HAIRPIN, SELF_DIMER");
+
+	cout << "Good pcr2 cands: " << pcr2.forward_primer.good_candidates << " and " << pcr2.reverse_primer.good_candidates << endl;
+
+	// Check that we have pcr1 primers
+	if(pcr2.forward_primer.good_candidates < 1) return(NO_PCR2_FORWARD);
+	if(pcr2.reverse_primer.good_candidates < 1) return(NO_PCR2_REVERSE);
 	
-	pcr2.make_pair_candidates(6, 6);
+	// Make and test pairs	
+	int pcr2_fwd_candidates, pcr2_rev_candidates;	
 	
+	if(pcr2.forward_primer.good_candidates > 5) 
+		pcr2_fwd_candidates = 6;
+	else
+		pcr2_fwd_candidates = pcr2.forward_primer.good_candidates;
 	
-	pcr2.sort_pair_candidates("TM_DIFF, F_DIMER, R_DIMER, MOO_SORT");
+	if(pcr2.reverse_primer.good_candidates > 5)
+		pcr2_rev_candidates = 6;
+	else
+		pcr2_rev_candidates = pcr2.reverse_primer.good_candidates;
+	
+	pcr2.make_pair_candidates(pcr2_fwd_candidates, pcr2_rev_candidates);
+	
+	for(i = 0; i < pcr2.number_of_pair_candidates; i++)
+	{
+		//cout << pcr2.pair_candidate[i].forward_sequence << ", " << pcr2.pair_candidate[i].reverse_sequence << endl;
+		pcr2.pair_candidate[i].number_of_pcr_products  =  genome_template.search_for_pcr_products(pcr2.pair_candidate[i].forward_sequence, pcr2.pair_candidate[i].reverse_sequence);
+		pcr2.pair_candidate[i].number_of_pcr_products += plasmid_template.search_for_pcr_products(pcr2.pair_candidate[i].forward_sequence, pcr2.pair_candidate[i].reverse_sequence);
+		
+		//cout << "Pair " << i << ": " << pcr2.pair_candidate[i].number_of_pcr_products << endl;
+	}
+	
+	pcr2.sort_pair_candidates("TM_DIFF, F_DIMER, R_DIMER, PRODUCTS, MOO_SORT");
 	
 	// Display best 6 candidate pairs
 	//pcr2.show_best_pair_candidates(6);
@@ -2286,20 +2396,28 @@ int main(int argc, char** argv)
 	char genebuffer[32];
 	char buffer[4001];
 	char orf_sequence[50000];
-	char plasmid_sequence[5000];
+	char plasmid_sequence[10000];
 	char query_gene_id[32];
 	char header_id[32];
 	bool found = FALSE;
 	int error;
 	char *token;
 	char output_file_name[32];
+	
+	// Pombe
 	//char genes_1000_all[128] = "pombe_1000_all.fa";
 	//char genome_file_name[128] = "pombe_genome_09052011.fasta";
+	//char plasmid_file_name[128] = "pFS118.fa";
+	
+	// S. cere
 	//char genes_1000_all[128] = "orf_genomic_1000_all.fasta";
 	//char genome_file_name[128] = "s_cere_genome.fa";
+	
+	// Lactis
 	char genes_1000_all[128] = "lactis_220612_1000_all.fa";
 	char genome_file_name[128] = "l_lactis.fa";
 	char plasmid_file_name[128] = "pCS1966.fa";
+	
 	int count0s = 0;
 
    	cout << "Precise_Deletion: Primer design\n";
@@ -2315,7 +2433,7 @@ int main(int argc, char** argv)
 	
 	// Get plasmid sequence
 	
-	ifstream plasmid("./pCS1966.fa");
+	ifstream plasmid(plasmid_file_name);
 	if(!plasmid.is_open()) cout << "file opening error\n";
 	
 	plasmid_sequence[0] = 0; // init for strcat
@@ -2402,17 +2520,18 @@ int main(int argc, char** argv)
 					fout.open(output_file_name);
 					
 					//error = auto_process(header_id, orf_sequence, genome_file_name, fout);
-					error = lactis_process(header_id, orf_sequence, plasmid_sequence, genome_file_name, plasmid_file_name, fout);
+					error = precise_process(header_id, orf_sequence, plasmid_sequence, genome_file_name, plasmid_file_name, fout);
 					
 					if(!error)count0s++;
 					
 					switch(error)
 					{
 						case NO_PRIMER_B: ferr << header_id << ": No primer B\n"; break;
-						case NO_PRIMERS_A_AND_B: ferr << header_id << ": No primer A\n"; break;
-						case NO_PCR2_PRIMERS: ferr << header_id << ": No PCR2 primers \n"; break;
-						case NO_PRIMER_D: ferr << header_id << ": No PCR2 primer D \n"; break;
-						case NO_PRIMER_E: ferr << header_id << ": No PCR2 primer E \n"; break;
+						case NO_PRIMER_A: ferr << header_id << ": No primer A\n"; break;
+						case NO_PCR2_FORWARD: ferr << header_id << ": No PCR2 forward primers \n"; break;
+						case NO_PCR2_REVERSE: ferr << header_id << ": No PCR2 reverse primers \n"; break;
+						case NO_PRIMER_D: ferr << header_id << ": No plasmid primer D \n"; break;
+						case NO_PRIMER_E: ferr << header_id << ": No plasmid primer E \n"; break;
 						case NO_URA3: ferr << header_id << ": Unable to open ura3_rc.fa \n"; break;
 						case CONF_PRIMER_ERROR : ferr << header_id << ": Confirmation primers error\n"; break;
 					}

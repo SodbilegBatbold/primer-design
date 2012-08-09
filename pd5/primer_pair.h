@@ -150,6 +150,7 @@ public:
 	int candidate_analysis(void);
 	
 	int sort_Tm_difference(int data_size);
+	int sort_products(int data_size);
 	int sort_f_pair_dimer(int data_size);
 	int sort_r_pair_dimer(int data_size);
 	

@@ -73,14 +73,14 @@
  * Priorities to be used when sorting candidate primers.
  */
 enum Priority { SORT_END, 
-				YEAST_MATCH, 
 				SELF_DIMER, 
 				HAIRPIN, 
 				LENGTH, 
 				F_DIMER, 
 				R_DIMER, 
 				MOO_SORT,
-				PLASMID_MATCH, 
+				BINDING_A, 
+				BINDING_B, 
 				PRODUCTS, 
 				SEQSIM_MATCH, 
 				TEMPERATURE,
@@ -116,8 +116,10 @@ public:
 		primer_dimer = 0;
 		forward_dimer = 0;
 		reverse_dimer = 0;
-		yeast_matches = 0;
-		plasmid_matches = 0;
+		//yeast_matches = 0;
+		//plasmid_matches = 0;
+		binding_A = 0;
+		binding_B = 0;
 		seqsim_matches = 0;
 		moo = 0.0;
 		products = 0;
@@ -128,8 +130,10 @@ public:
 	int location_5_prime_end; ///< Location of the 5' end. Locations begin at 0, not 1. 
 	double hairpin;           ///< The score for hairpin potential. 
 	double self_dimer;        ///< The score for self-dimer potential.  
-	int yeast_matches;        ///< The number of hits to the yeast genome 
-	int plasmid_matches;      ///< The number of hits to the plasmid 
+	//int yeast_matches;        ///< The number of hits to the yeast genome 
+	//int plasmid_matches;      ///< The number of hits to the plasmid 
+	int binding_A;	///< The number of binding hits to the A genome (1 > indicates secondary binding)
+	int binding_B;	///< The number of binding hits to the B genome (1 > indicates secondary binding)
 	int seqsim_matches;       ///< The number of sequence similarity hits 
 	double moo;				///< multi objective optimisation score
 	double annealing_temperature; ///< The calculated annealing temperature 
@@ -274,7 +278,8 @@ public:
 		return(TRUE);
 	}
 	
-	bool homopolymeric_run_check; ///< Returns true if it find homopolymeric runs >= homopolymeric_run_length_limit
+	bool homopolymeric_run_check; ///< Set to true to find homopolymeric runs >= homopolymeric_run_length_limit
+	bool homopolymeric_run_nr_tail_check; ///< True will check for poly runs on the template at the 3' tail location of the primer
 	int set_homopolymeric_run_length_limit(int limit) 
 	{
 		homopolymeric_run_length_limit = limit; ///< Default is 5
@@ -307,6 +312,7 @@ public:
 	 */
 	
 // Sequence analysis
+	int analyse_all_candidates(void); // hairpin, self dimer and Tm
 	double hairpin(int candidate_number);
 	double hairpin(int candidate_number, ofstream &fout);
 	int tail_check(int candidate_number, const char* b_sequence, ofstream &fout);
@@ -351,8 +357,8 @@ private:
 	//char complement[22];
 	
 	int test_candidate(const char* sequence, int location_3_prime_end, const char* template_sequence);
-	int sort_yeast_matches(int data_size);
-	int sort_plasmid_matches(int data_size);
+	int sort_binding_A(int data_size);
+	int sort_binding_B(int data_size);
 	int sort_self_dimer(int data_size);
 	int sort_hairpin(int data_size);
 	int sort_f_dimer(int data_size);

@@ -57,7 +57,7 @@ int sequence_utils::nucleotide_complement(int nucleotide)
 	return(*(complement - 65 + nucleotide));
 }
 
-char* sequence_utils::reverse_complement(const char* sequence)
+/*char* sequence_utils::reverse_complement(const char* sequence)
 {
 	int i;
 	int sequence_length = strlen(sequence);
@@ -69,20 +69,20 @@ char* sequence_utils::reverse_complement(const char* sequence)
 	rc_sequence[i] = 0;
 	
 	return(rc_sequence);	
-}
+}*/
 
-int sequence_utils::reverse_complement(const char* a_string, char* b_string)
+int sequence_utils::reverse_complement(const char* orig_string, char* out_string)
 {
 	int i;
-	int a_string_length = strlen(a_string);
+	int orig_string_length = strlen(orig_string);
 	
-	for(i = 0; i < a_string_length; i++)
+	for(i = 0; i < orig_string_length; i++)
 	{	
-		b_string[i] = nucleotide_complement(a_string[a_string_length - i - 1]);
+		out_string[i] = nucleotide_complement(orig_string[orig_string_length - i - 1]);
 	}	
-	b_string[i] = 0;
+	out_string[i] = 0;
 	
-	//cout << b_string << endl;
+	//cout << out_string << endl;
 	return(1);
 }
 

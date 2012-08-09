@@ -236,6 +236,25 @@ int primer_pair::sort_Tm_difference(int data_size)
 	return(1);
 }
 
+int primer_pair::sort_products(int data_size)
+{
+	bool swapped = TRUE;
+	
+	while(swapped)
+	{
+		swapped = FALSE;
+		
+		for(int i = 0; i < data_size - 1; i++)
+		{
+			if(pair_candidate[i].number_of_pcr_products > pair_candidate[i + 1].number_of_pcr_products)
+			{
+				swap(pair_candidate[i], pair_candidate[i + 1]);
+				swapped = TRUE;
+			}
+		}
+	}		
+	return(1);
+}
 int primer_pair::sort_f_pair_dimer(int data_size)
 {
 	bool swapped = TRUE;
@@ -448,7 +467,9 @@ int primer_pair::sort_pair_candidates(const char* priority_list)
 		}
 		else if(!strcmp(token, "PRODUCTS"))
 		{
-			//priority[priority_index] = PRODUCTS;
+			sort_products(data_size);
+			for(i = 0; i < data_size; i++)
+				if(pair_candidate[i].number_of_pcr_products > 1)data_size = i;
 		}
 		else if(!strcmp(token, "MOO_SORT"))
 		{

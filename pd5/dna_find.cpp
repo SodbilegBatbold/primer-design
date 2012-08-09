@@ -61,7 +61,6 @@ int DNAfind::find_sequence(const char* sequence,
 	long location[1001];
 	int count = 1000;
 	bool found = FALSE;
-	char *rc_sequence;	
 	long seq_len = strlen(sequence);
 	long dna_len = strlen(dna_template);
 	
@@ -149,8 +148,8 @@ int DNAfind::find_sequence(const char* sequence,
 	/***************************************************/
 	// Repetition here!
 	
-	rc_sequence = new char[seq_len + 1];	
-	strcpy(rc_sequence, sequence_utils::reverse_complement(sequence));
+	char rc_sequence[seq_len + 1];	
+	sequence_utils::reverse_complement(sequence, rc_sequence);
 	
 	//find a G or C
 	First_GC = 0; // Use 0 default if no Gs or Cs found in sequence
@@ -191,8 +190,6 @@ int DNAfind::find_sequence(const char* sequence,
 			}
 		}
 	}
-	
-	delete[] rc_sequence;
 	
 	matches += index;
 	
@@ -498,13 +495,12 @@ int DNAfind::find_sequence(const char* sequence,
 						   const char* dna_template, 
 						   location_data sequence_match[])
 {
-	char* rc_sequence;
 	int seq_len = strlen(sequence);
 	int w_hits, all_hits;
 	
 /** Reverse complement sequence to search antisense strand */
-	rc_sequence = new char[seq_len + 1];	
-	strcpy(rc_sequence, sequence_utils::reverse_complement(sequence));
+	char rc_sequence[seq_len + 1];	
+	sequence_utils::reverse_complement(sequence, rc_sequence);
 	
 	/** Search strands W and then C */
 	if(!GC_array_optimisation)
@@ -544,8 +540,7 @@ int DNAfind::find_sequence_III(const char* sequence,
 	int index, errors, j;
 	int First_GC, count = 1000;
 	bool found = FALSE; // Matching/close matching sequence found
-	bool high_BAV = FALSE; // Binding Affinity Value (BAV) exceeds threshold if TRUE
-	char *rc_sequence;	
+	bool high_BAV = FALSE; // Binding Affinity Value (BAV) exceeds threshold if TRUE	
 	long seq_len = strlen(sequence);
 	long dna_len = strlen(dna_template);
 	
@@ -602,8 +597,8 @@ int DNAfind::find_sequence_III(const char* sequence,
 		}
 	}
 	
-	rc_sequence = new char[seq_len + 1];	
-	strcpy(rc_sequence, sequence_utils::reverse_complement(sequence));
+	char rc_sequence[seq_len + 1];	
+	sequence_utils::reverse_complement(sequence, rc_sequence);
 	
 	/** Optimise search for genomes with low GC content */
 	//find a G or C
@@ -645,8 +640,6 @@ int DNAfind::find_sequence_III(const char* sequence,
 			}
 		}
 	}
-	
-	delete[] rc_sequence;
 	
 	//matches += index;
 	
@@ -872,7 +865,9 @@ int DNAfind::process_chromosome(const char *chromosome,
 		}		
 	}	
 	delete[] sense_loci;
-	delete[] antisense_loci;	
+	delete[] antisense_loci;
+	delete[] sense_primer;
+	delete[] antisense_primer;
 	return(products);
 }
 
@@ -1041,6 +1036,7 @@ int DNAfind::search_for_pcr_products(const char *forward_primer,
 				else number_of_products_found += process_chromosome(str_chromosome, forward_sequence_tail, reverse_sequence_tail);
 				
 				chromosome.clear();
+				delete[] str_chromosome;
 				chr_for_processing = FALSE;
 			}
 			
@@ -1071,6 +1067,7 @@ int DNAfind::search_for_pcr_products(const char *forward_primer,
 		else number_of_products_found += process_chromosome(str_chromosome, forward_sequence_tail, reverse_sequence_tail);
 		
 		chromosome.clear();
+		delete[] str_chromosome;
 		chr_for_processing = FALSE;
 	}
 	
