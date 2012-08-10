@@ -1,21 +1,14 @@
 
 /*************************************************\
  
- precise_auto.cpp (Ver 1.00 - 10/2/11)
+ precise_deletion.cpp (Ver 2.00 - 1/7/12)
  
  Updated from:
+	precise_auto.cpp (Ver 1.00 - 10/2/11)
 	s_primerII.cpp (Ver. 1.00 - 5/7/10) 
 	sprimer.cpp (Ver. 1.00 - 7/6/10) to run on Beowulf
  
 \*************************************************/
-
-
-/*
- A = 0x41 = 65
- T = 0x54 = 84
- G = 0x47 = 71
- C = 0x43 = 67
- */
 
 #include <fstream>
 #include <iostream>
@@ -26,7 +19,6 @@
 
 using namespace std;
 
-//#include "primrose_utils.h"
 #include "../pd5/primer_pair.h"
 #include "../pd5/dna_find.h"
 #include "../pd5/annealing_temperature.h"
@@ -79,6 +71,14 @@ using namespace std;
 //#define PRIMER_E "ACACTCCTCAGAAGCTC" // (C) @ 1443 Good for YGL202W (17/08/10)
 
 #endif
+
+// Cassette confirmation primers
+/*
+Lactis		Hpin	Sdim	BindA	BindB	Loc		Length	Tm		Sequence
+FinCass		5.0		6.0		0		1		3107	29		54.6	TTCATCCTAAACCAAAAGTAAACAGTGTC
+RinCass		7.0		9.0		0		1		3026	26		54.9	AAGGTACGCTTGTAGAATCCTTCTTC
+ 
+ */
 
 char m_complement[22] =  {"T G   C      N     A"};
 int base_complement(int nucleotide)
@@ -1729,8 +1729,6 @@ int check_sequence_contents(const char* sequence)
  Primer C located upstream of primer D within the ORF to give a product of 300 - 1000 bases
  Primer D located 200 - 400 bases downstream of target ORF
  
- Although it is not actually stated, their products for A & B are usual about half the length of the products of C & D.
- 
 */
 
 int lactis_confirmation_primers(const char* orf_sequence,
@@ -1747,12 +1745,12 @@ int lactis_confirmation_primers(const char* orf_sequence,
 	if(!genome_template.set_tail_length(12)) 
 		cout << "Could not set tail length\n";
 	
-	primer_pair confirmation;
+	primer_pair confirmation; // This is for A and D, B and C are FinCass and RinCass
 	
 	confirmation.set_target_location(800, orf_length - 800);
 	confirmation.set_flank_lengths(200, 200);
 	confirmation.set_primer_length_range(17, 28);
-	confirmation.set_Tm_range(60, 65, 70);
+	confirmation.set_Tm_range(50, 55, 60);
 	
 	confirmation.candidate_analysis();
 	confirmation.sort_individual_candidates("HAIRPIN, SELF_DIMER, TEMPERATURE");	
@@ -1784,7 +1782,6 @@ int lactis_confirmation_primers(const char* orf_sequence,
 	return(TRUE);	
 }
 
-// POMBE VER
 #define BEST 0
 
 int precise_process(const char* gene, 

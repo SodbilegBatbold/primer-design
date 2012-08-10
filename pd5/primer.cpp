@@ -53,6 +53,7 @@
 #define FALSE 0
 
 #define LOCATION_ERROR 0
+#define SET_LOCATION_ERROR 0
 
 //#define TESTING
 
@@ -115,6 +116,8 @@ primer::primer()
 
 int primer::set_primer_location_range(int begin, int end)
 {
+	if(begin < 1 || end < 1)return(SET_LOCATION_ERROR);
+
 	if(reverse_primer) // begin > end
 	{
 		if(end < begin)
@@ -172,6 +175,10 @@ int primer::generate_candidate_primers(const char* template_sequence)
 	// Check for invalid primer location region
 	if((unsigned int)start_location_range_begin > strlen(template_sequence))return(LOCATION_ERROR);
 	if((unsigned int)(start_location_range_end + length_range_longest) > strlen(template_sequence))return(LOCATION_ERROR);
+	
+	// Start locations are physical locations starting at 1, not 0, so adjust for array indexing
+	start_location_range_begin--;
+	start_location_range_end--;
 	   
 	// Find possible primers and test
 	if(downstream_search) // default search is in the upstream direction
@@ -194,7 +201,7 @@ int primer::generate_candidate_primers(const char* template_sequence)
 					// CANDIDATE TESTING
 					if(test_candidate(possible_candidate, i + strlen(possible_candidate), template_sequence))
 					{
-						candidate[n].location_5_prime_end = i + 1; // +1 for physical location
+						candidate[n].location_5_prime_end = i + 1; // + 1 for physical location  
 						candidate[n].primer_length = strlen(possible_candidate);
 						strcpy(candidate[n++].sequence, possible_candidate);
 					}
@@ -215,14 +222,14 @@ int primer::generate_candidate_primers(const char* template_sequence)
 				for(j = length_range_shortest; j <= length_range_longest; j++)
 				{
 					for(k = 0; k < j; k++)
-						possible_candidate[k] = template_sequence[i + k];
+						possible_candidate[k] = template_sequence[i + k]; 
 					
 					possible_candidate[k] = 0;  // end the string
 					
 					// CANDIDATE TESTING
 					if(test_candidate(possible_candidate, i + strlen(possible_candidate), template_sequence))
 					{
-						candidate[n].location_5_prime_end = i + 1; // +1 for physical location
+						candidate[n].location_5_prime_end = i + 1; // + 1 for physical location  
 						candidate[n].primer_length = strlen(possible_candidate);
 						strcpy(candidate[n++].sequence, possible_candidate);
 					}
@@ -255,7 +262,7 @@ int primer::generate_candidate_primers(const char* template_sequence)
 					// CANDIDATE TESTING
 					if(test_candidate(possible_candidate, i + strlen(possible_candidate), template_sequence))
 					{
-						candidate[n].location_5_prime_end = i + 1; // +1 for physical location
+						candidate[n].location_5_prime_end = i + 1; // + 1 for physical location 
 						candidate[n].primer_length = strlen(possible_candidate);
 						strcpy(candidate[n++].sequence, possible_candidate);
 					}
@@ -283,7 +290,7 @@ int primer::generate_candidate_primers(const char* template_sequence)
 					// CANDIDATE TESTING
 					if(test_candidate(possible_candidate, i + strlen(possible_candidate), template_sequence))
 					{
-						candidate[n].location_5_prime_end = i + 1; // +1 for physical location
+						candidate[n].location_5_prime_end = i + 1; // + 1 for physical location
 						candidate[n].primer_length = strlen(possible_candidate);
 						strcpy(candidate[n++].sequence, possible_candidate);
 					}
@@ -624,7 +631,8 @@ int primer::set_priorities(const char* priority_list)
 		 else if(!strcmp(token, "BINDING_B"))
 		 {
 			 priority[priority_index] = BINDING_B;
-		 }else 
+		 }
+		 else 
 		 {
 			 cout << "Priority list error\n";
 		 }
