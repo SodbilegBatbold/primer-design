@@ -55,7 +55,7 @@
 #define LOCATION_ERROR 0
 #define SET_LOCATION_ERROR 0
 
-//#define TESTING
+//#define DEBUG
 
 primer::primer()
 {
@@ -110,12 +110,15 @@ primer::primer()
 	annealing_temperature_weighting = 1.0;
 	primer_length_weighting = 2.0;
 	
+	good_candidates = 0;
+	
 }
 
-/** INITIALISATION */
 
 int primer::set_primer_location_range(int begin, int end)
 {
+	if(begin == 0) begin = 1;  // Assume user enters 0 means the beginning of the sequence
+	
 	if(begin < 1 || end < 1)return(SET_LOCATION_ERROR);
 
 	if(reverse_primer) // begin > end
@@ -185,7 +188,7 @@ int primer::generate_candidate_primers(const char* template_sequence)
 	{
 		if(reverse_primer)
 		{
-	#ifdef TESTING
+	#ifdef DEBUG
 			std::cout << "Reverse downstream\n";
 	#endif
 			
@@ -213,7 +216,7 @@ int primer::generate_candidate_primers(const char* template_sequence)
 		}
 		else
 		{
-	#ifdef TESTING
+	#ifdef DEBUG
 			std::cout << " Forward downstream\n";
 	#endif
 			
@@ -224,7 +227,10 @@ int primer::generate_candidate_primers(const char* template_sequence)
 					for(k = 0; k < j; k++)
 						possible_candidate[k] = template_sequence[i + k]; 
 					
-					possible_candidate[k] = 0;  // end the string
+					possible_candidate[k] = 0;  // end the string					
+#ifdef DEBUG
+					std::cout << possible_candidate << endl;
+#endif
 					
 					// CANDIDATE TESTING
 					if(test_candidate(possible_candidate, i + strlen(possible_candidate), template_sequence))
@@ -243,8 +249,8 @@ int primer::generate_candidate_primers(const char* template_sequence)
 	{
 		if(reverse_primer)
 		{
-#ifdef TESTING
-			std::cout << "Reverse upstream\n";
+#ifdef DEBUG
+			std::cout << "Reverse upstream\n" << start_location_range_end << " and " << start_location_range_begin << endl;
 #endif
 			
 			for(i = start_location_range_end; i <= start_location_range_begin; i++)
@@ -255,7 +261,7 @@ int primer::generate_candidate_primers(const char* template_sequence)
 						possible_candidate[k] = sequence_utils::nucleotide_complement(template_sequence[i - k]);
 					
 					possible_candidate[k] = 0;  // end the string
-#ifdef TESTING
+#ifdef DEBUG
 					std::cout << possible_candidate << endl;
 #endif
 					
@@ -274,7 +280,7 @@ int primer::generate_candidate_primers(const char* template_sequence)
 		}
 		else
 		{
-#ifdef TESTING
+#ifdef DEBUG
 			std::cout << " Forward upstream\n";
 #endif
 			
@@ -286,6 +292,9 @@ int primer::generate_candidate_primers(const char* template_sequence)
 						possible_candidate[k] = template_sequence[i + k];
 					
 					possible_candidate[k] = 0;  // end the string
+#ifdef DEBUG
+					std::cout << possible_candidate << endl;
+#endif
 					
 					// CANDIDATE TESTING
 					if(test_candidate(possible_candidate, i + strlen(possible_candidate), template_sequence))
@@ -554,7 +563,7 @@ int primer::auto_selection(void)
 		   (candidate[i].reverse_dimer    < 11) &&
 		   (candidate[i].binding_A <= yeast_nsb_limit))
 		{
-#ifdef TESTING
+#ifdef DEBUG
 			std::cout << i << ": " << candidate[i].sequence << ", ";
 			//std::cout << candidate[i].sticky_tail << ", ";
 			//std::cout << candidate[i].tail_check << ", ";
@@ -971,12 +980,18 @@ int primer::sort_candidates(void)
 					sort_self_dimer(data_size);
 					for(i = 0; i < data_size; i++)
 						if(candidate[i].self_dimer >= 12)data_size = i;
+#ifdef DEBUG
+					cout << "Good candidates after Self dimer = " << data_size << endl;
+#endif
 					break;
 					
 				case HAIRPIN:	
 					sort_hairpin(data_size);
 					for(i = 0; i < data_size; i++)
 						if(candidate[i].hairpin >= 12)data_size = i;
+#ifdef DEBUG
+					cout << "Good candidates after Hairpin = " << data_size << endl;
+#endif
 					break;
 					
 				case LENGTH:	// Primer length	
@@ -991,6 +1006,9 @@ int primer::sort_candidates(void)
 					for(i = 0; i < data_size; i++)
 						if(candidate[i].annealing_temperature <= min_Tm)data_size = i;
 					sort_Tm_optimum(data_size);
+#ifdef DEBUG
+					cout << "Good candidates after Temperature = " << data_size << endl;
+#endif
 					break;
 					
 				case F_DIMER:	

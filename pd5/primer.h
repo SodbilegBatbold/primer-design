@@ -126,7 +126,7 @@ public:
 		annealing_temperature = 0;
 	}
 
-	char sequence[128];       ///< Primer sequence. Limited to 128 chars. We do not want primers over 100 nt in length anyway 
+	char sequence[1280];       ///< Primer sequence. Limited to 128 chars. We do not want primers over 100 nt in length anyway 
 	int location_5_prime_end; ///< Location of the 5' end. Locations begin at 0, not 1. 
 	double hairpin;           ///< The score for hairpin potential. 
 	double self_dimer;        ///< The score for self-dimer potential.  

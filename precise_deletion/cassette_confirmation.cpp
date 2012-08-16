@@ -113,14 +113,16 @@ int main(int argc, char** argv)
 	// Set parameters
 	// pFS118 cassette 4932-6211, so conf primer region 5332, 5432
 	// pCS1966 cassette 2623-4709, so conf primer region 3023, 3123
-	forward_cassette_primer.set_primer_location_range(5400, 5450);
+	
+	forward_cassette_primer.set_primer_location_range(3023, 3123);
 	forward_cassette_primer.set_primer_length_range(20, 30);
 	forward_cassette_primer.homopolymeric_run_check = TRUE;
+	//forward_cassette_primer.downstream_search = TRUE;
 	forward_cassette_primer.min_Tm = 50.0;
 	forward_cassette_primer.optimum_Tm = 55.0;
 	forward_cassette_primer.max_Tm = 60.0;
 	
-	reverse_cassette_primer.set_primer_location_range(5400, 5450);
+	reverse_cassette_primer.set_primer_location_range(3023, 3123);
 	reverse_cassette_primer.set_primer_length_range(20, 30);
 	reverse_cassette_primer.homopolymeric_run_check = TRUE;
 	reverse_cassette_primer.min_Tm = 50.0;
