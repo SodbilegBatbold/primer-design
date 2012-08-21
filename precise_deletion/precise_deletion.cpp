@@ -39,6 +39,8 @@ using namespace std;
 
 
 // Error defines
+#define OK 1
+//#define ERROR 0
 #define NO_PRIMER_A -1
 #define NO_PRIMER_B -2
 #define NO_PRIMERS_A_AND_B -9
@@ -340,6 +342,9 @@ int precise_confirmation_primers(const char* orf_sequence,
 		rev_candidates = 6;
 	else
 		rev_candidates = confirmation.reverse_primer.good_candidates;
+	
+	if(fwd_candidates < 1 || rev_candidates < 1)
+		return(FALSE);
 	
 	cout << "Actual cands " << fwd_candidates << ", " << rev_candidates << endl;
 	
@@ -936,6 +941,9 @@ int precise_process(const char* organism_name,
 #define PCR1_BEST 0
 #define PCR2_BEST 0
 	
+	char output_file_name[32];
+	sprintf(output_file_name, "%s.xml", gene);
+	fout.open(output_file_name);
 
 		
 		//#ifndef BEOWULF		
@@ -1012,7 +1020,7 @@ int precise_process(const char* organism_name,
 		fout << "\t\t\t<primerDimerReverse>" << pcr2.pair_candidate[PCR2_BEST].reverse_pair_dimer_score << "</primerDimerReverse>\n";
 		
 		fout << "\t\t\t<numberOfProducts>" << pcr2.pair_candidate[PCR2_BEST].number_of_pcr_products << "</numberOfProducts>\n";
-		fout << "\t\t\t<primer_B*>" << pcr1_homology << "</primer_B*>\n";
+		fout << "\t\t\t<primer_B>" << pcr1_homology << "</primer_B>\n";
 		fout << "\t\t\t<primer_R>" << sequence_R  << "</primer_R>\n";
 		fout << "\t\t\t<primer_E>" << primer_E << "</primer_E>\n";
 		fout << "\t\t\t<primer_C>" << sequence_C  << "</primer_C>\n";
@@ -1034,9 +1042,9 @@ int precise_process(const char* organism_name,
 		fout << "</organism>\n";
 		//#endif
 
+	fout.close();
 	
-	
-	return(1);
+	return(TRUE);
 }
 
 int main(int argc, char** argv)
@@ -1050,8 +1058,6 @@ int main(int argc, char** argv)
 	bool found = FALSE;
 	int error = 1;
 	char *token;
-	char output_file_name[32];
-	
 	
 #ifdef POMBE
 	// Pombe parameters
@@ -1082,8 +1088,6 @@ int main(int argc, char** argv)
 	char Fwd_Cassette_confirmation_primer[40] = "TTCATCCTAAACCAAAAGTAAACAGTGT";
 	char Rev_Cassette_confirmation_primer[40] = "AAGGTACGCTTGTAGAATCCTTCTTC";
 #endif
-	
-	int count0s = 0;
 
    	cout << "Precise_Deletion: Primer design\n";
 	cout << "Version 1.3, 1st August 2012\n";
@@ -1181,13 +1185,8 @@ int main(int argc, char** argv)
 				{
 					//cout << "Found " << header_id << endl;
 					
-					sprintf(output_file_name, "%s.xml", header_id);
-					fout.open(output_file_name);
-					
 					//error = auto_process(header_id, orf_sequence, genome_file_name, fout);
 					error = precise_process(organism_name, header_id, orf_sequence, plasmid_sequence, genome_file_name, plasmid_file_name, Fwd_Cassette_confirmation_primer, Rev_Cassette_confirmation_primer, fout);
-					
-					if(!error)count0s++;
 					
 					switch(error)
 					{
@@ -1201,7 +1200,7 @@ int main(int argc, char** argv)
 						case CONF_PRIMER_ERROR : ferr << header_id << ": Confirmation primers error\n"; break;
 					}
 					
-					fout.close();
+					
 				}
 			}
 		} // end if(token)
@@ -1209,8 +1208,6 @@ int main(int argc, char** argv)
 	
 	fin.close();
 	ferr.close();
-	
-	cout << "Zero reverse primers = " << count0s << endl;
 	
     return(1);
 }

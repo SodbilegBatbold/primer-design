@@ -64,6 +64,7 @@
 #include "annealing_temperature.h"
 #include "dimerisation.h"
 #include "constraints.h"
+#include "primer_data.h"
 
 #define TRUE 1
 #define FALSE 0
@@ -93,81 +94,6 @@ enum Priority { SORT_END,
 #define URACIL 85
 #define ANYNUCLEOTIDE 78
 
-using namespace std;
-
-//! Individual primer data class
-/**
- * Class holding the data for a single primer. 
- */
-
-class primer_data
-{
-public:
-	primer_data()
-	{
-	// initialise vars
-		sequence[0] = 0;
-		location_5_prime_end = 0;
-		primer_length = 0;
-		sticky_tail = FALSE;
-		tail_check = 0;
-		hairpin = 0;
-		self_dimer = 0;
-		primer_dimer = 0;
-		forward_dimer = 0;
-		reverse_dimer = 0;
-		//yeast_matches = 0;
-		//plasmid_matches = 0;
-		binding_A = 0;
-		binding_B = 0;
-		seqsim_matches = 0;
-		moo = 0.0;
-		products = 0;
-		annealing_temperature = 0;
-	}
-
-	char sequence[1280];       ///< Primer sequence. Limited to 128 chars. We do not want primers over 100 nt in length anyway 
-	int location_5_prime_end; ///< Location of the 5' end. Locations begin at 0, not 1. 
-	double hairpin;           ///< The score for hairpin potential. 
-	double self_dimer;        ///< The score for self-dimer potential.  
-	//int yeast_matches;        ///< The number of hits to the yeast genome 
-	//int plasmid_matches;      ///< The number of hits to the plasmid 
-	int binding_A;	///< The number of binding hits to the A genome (1 > indicates secondary binding)
-	int binding_B;	///< The number of binding hits to the B genome (1 > indicates secondary binding)
-	int seqsim_matches;       ///< The number of sequence similarity hits 
-	double moo;				///< multi objective optimisation score
-	double annealing_temperature; ///< The calculated annealing temperature 
-	int primer_length;		///< Sequence length of primer
-	
-	// Pair specific attributes (Maintained here for backward compatibility, but now located in primer_pair_data)
-	double primer_dimer;      ///< Highest binding score obtained by primer pair convolution (Most common method).
-	double forward_dimer;     ///< The highest score for forward primer tail binding to the reverse primer. 
-	double reverse_dimer;     ///< The highest score for reverse primer tail binding to the forward primer.  
-	int products;             ///< Number of potential products made by the primers. If > 1, then we have secondary products. 
-	
-	// Deprecated
-	bool sticky_tail;         ///< Whether we allow sticky tails or not. 
-	int tail_check;           ///< ?? 
-
-	
-	// Methods
-	int self_dimerisation(void);
-	int get_GC_content(void)
-	{
-		int GC_number = 0;
-		int length = strlen(sequence);
-		
-		if(sequence[0] == 0) 
-			return(ERROR);
-		else
-		{	
-			for(int i = 0; i < length; i++) 
-				if(sequence[i] == CYTOSINE || sequence[i] == GUANINE) GC_number++;
-			
-			return(GC_number);
-		}
-	}
-};
 
 //! Individual primer design class
 /**

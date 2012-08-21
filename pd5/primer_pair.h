@@ -76,39 +76,11 @@
 #define PRIMER_PAIR_H
 
 #include "primer.h"
+#include "primer_pair_data.h"
 #include "dna_find.h"
 
 #define NO_TEMPLATE_ERROR -32
 
-//! Primer pair data class
-/**
- The main class containing primer pair data
- */
-class primer_pair_data
-{
-public:
-	char forward_sequence[128];
-	char reverse_sequence[128]; 
-	int forward_index;
-	int reverse_index;
-	int location_forward_5_prime_end;
-	int location_reverse_5_prime_end;
-	double forward_hairpin_score;
-	double reverse_hairpin_score;
-	double forward_self_dimer_score;
-	double reverse_self_dimer_score;
-	double forward_annealing_temperature;
-	double reverse_annealing_temperature;
-	double forward_pair_dimer_score; ///< forward 3' tail on reverse primer
-	double reverse_pair_dimer_score; ///< reverse 3' tail on forward primer
-	int number_of_pcr_products;
-	double annealing_temperature_difference;
-	double moo_score;
-	
-	// Methods
-	int pair_dimerisation(void);
-	int pcr_products(DNAfind &mynsb);
-};
 
 //! Primer pair design class
 /**

@@ -1272,15 +1272,6 @@ int primer::self_dimer(int candidate_number, ofstream &fout)
 	return(TRUE);	
 }
 
-int primer_data::self_dimerisation(void)
-{
-	dimerisation dimer;
-	
-	dimer.self_dimer(sequence);
-	self_dimer = dimer.self_dimer_score;
-	
-	return(TRUE);	
-}
 
 
 int primer::primer_dimer(int candidate_number_a, const char* b_sequence, ofstream &fout)

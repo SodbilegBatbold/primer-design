@@ -174,7 +174,7 @@ int primer_pair::candidate_analysis(void)
 		}
 	}
 	else {
-		// No forward candidates error
+		return(FALSE);
 	}
 	
 	if(reverse_primer.candidates_found)
@@ -187,7 +187,7 @@ int primer_pair::candidate_analysis(void)
 		}
 	}
 	else {
-		// No reverse candidates error
+		return(FALSE);
 	}
 
 	
@@ -541,40 +541,9 @@ int primer_pair::show_best_pair_candidates(int var)
 	return(TRUE);
 }
 
-
-int primer_pair_data::pair_dimerisation(void)
-{
-	dimerisation pair_dimer;
-	
-	if(forward_sequence && reverse_sequence)
-	{
-		pair_dimer.pair_dimer(forward_sequence, reverse_sequence);
-		forward_pair_dimer_score = pair_dimer.forward_dimer_score;
-		reverse_pair_dimer_score = pair_dimer.reverse_dimer_score;
-	}
-	else
-	{
-		return(FALSE);
-	}	
-	
-	return(TRUE);
-}
-
-int primer_pair_data::pcr_products(DNAfind &mynsb)
-{
-	if(forward_sequence && reverse_sequence)
-	{
-		//mynsb.search_nsb_product(forward_sequence, reverse_sequence);
-		number_of_pcr_products = mynsb.search_for_pcr_products(forward_sequence, reverse_sequence);
-	}
-	else
-	{
-		return(FALSE);
-	}	
-	
-	return(TRUE);
-
-}
+/**
+ Sets the required minimum, optimum and maximum annealing temperatures for both forward and reverse primers.
+ */
 
 int primer_pair::set_Tm_range(double minimum, double optimum, double maximum)
 {
