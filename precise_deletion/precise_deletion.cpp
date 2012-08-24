@@ -27,6 +27,8 @@ using namespace std;
 // ORGANISM (POMBE, S_CERE, LACTIS)
 #define LACTIS
 
+#define DB_OUT
+
 // OUTPUT FORMAT
 #define XML 1
 
@@ -50,6 +52,9 @@ using namespace std;
 #define NO_PCR2_REVERSE -6
 #define NO_URA3 -7
 #define CONF_PRIMER_ERROR -8
+#define NO_PCR1_PRIMERS -10
+#define NO_PLASMID_PRIMERS -11
+#define NO_PCR2_PRIMERS -12
 
 // TESTING
 #define TESTING
@@ -297,7 +302,8 @@ int precise_confirmation_primers(const char* orf_sequence,
 								 const char* Primer_R,
 								 const char* Fwd_Cassette,
 								 const char* Rev_Cassette,
-								 char* cnf_results)
+								 char* cnf_results,
+								 char* csv_results)
 {
 	int i = 0;
 	char tempstr[15000]; // for message output cnf_results
@@ -377,6 +383,9 @@ int precise_confirmation_primers(const char* orf_sequence,
 	strcat(cnf_results, "\t\t\t<confirmationPrimerReverse>");
 	strcat(cnf_results, CPS_D);
 	strcat(cnf_results, "</confirmationPrimerReverse>\n");
+	
+	sprintf(tempstr, "%d, %d, ", (int)strlen(CPS_A), (int)strlen(CPS_D));
+	strcpy(csv_results, tempstr);
 	
 	cout << "Length of ORF: " << strlen(orf_sequence) << endl;
 
@@ -558,9 +567,8 @@ int precise_process(const char* organism_name,
 {
 
 	int i = 0;
-	int j = 0;
-	
-
+	int j = 0;	
+	int examples_to_show;
 		
 	DNAfind genome_template(genome_file_name);
 	
@@ -594,7 +602,11 @@ int precise_process(const char* organism_name,
 	
 // Start by finding the best reverse primer
 	pcr1.reverse_primer.set_primer_location_range(start - 1, start - 1); // Primer B starts immediately before start codon
-	//pcr1.reverse_primer.homopolymeric_run_check = FALSE;
+	
+#ifndef LACTIS  //default homopolymeric run check FALSE
+	//pcr1.reverse_primer.homopolymeric_run_check = TRUE;
+#endif
+
 	pcr1.reverse_primer.set_primer_length_range(30, 60);
 	pcr1.reverse_primer.optimum_primer_length = 40;
 	
@@ -609,9 +621,9 @@ int precise_process(const char* organism_name,
 
 // Now set params for forward primer using reverse primer data	
 	pcr1.forward_primer.set_primer_location_range(1, 500);
-	//pcr1.forward_primer.downstream_search = TRUE;	
+	pcr1.forward_primer.downstream_search = TRUE;	
 	pcr1.forward_primer.set_primer_length_range(35, 45);
-	//pcr1.forward_primer.homopolymeric_run_check = TRUE; // We can afford to be choosy with the forward primer and reduce potential secondary products	
+	pcr1.forward_primer.homopolymeric_run_check = TRUE; // We can afford to be choosy with the forward primer and reduce potential secondary products	
 	
 // To get a close Tm we constrain GC content in fwd primer to be close to the best rev primer
 	//pcr1.forward_primer.required_GC_content = sequence_utils::GC_content(pcr1.reverse_primer.candidate[0].sequence);
@@ -679,9 +691,17 @@ int precise_process(const char* organism_name,
 	
 	pcr1.sort_pair_candidates("TM_DIFF, F_DIMER, R_DIMER, PRODUCTS, MOO_SORT");
 	
-	// Display best N candidate pairs
-	//int N = 6;
-	//pcr1.show_best_pair_candidates(6);
+	if(pcr1.good_pair_candidates < 1)
+	{
+		return(NO_PCR1_PRIMERS);
+	}
+	
+	if(pcr1.good_pair_candidates > 5)
+		examples_to_show = 6;
+	else 
+		examples_to_show = pcr1.good_pair_candidates;
+	
+	pcr1.show_best_pair_candidates(examples_to_show);
 	
 	//Make PCR1 product
 	char pcr1_product[1001];
@@ -751,8 +771,18 @@ int precise_process(const char* organism_name,
 	
 	plasmid.sort_pair_candidates("TM_DIFF, F_DIMER, R_DIMER, PRODUCTS, MOO_SORT");
 	
-	// Display best 6 candidate pairs
-	//plasmid.show_best_pair_candidates(6);
+	if(plasmid.good_pair_candidates < 1)
+	{
+		return(NO_PLASMID_PRIMERS);
+	}
+	
+	// Display best candidate pairs
+	if(plasmid.good_pair_candidates > 5)
+		examples_to_show = 6;
+	else 
+		examples_to_show = plasmid.good_pair_candidates;
+	
+	plasmid.show_best_pair_candidates(examples_to_show);
 
 //	Make C and R sequences
 	
@@ -866,8 +896,17 @@ int precise_process(const char* organism_name,
 	
 	pcr2.sort_pair_candidates("TM_DIFF, F_DIMER, R_DIMER, PRODUCTS, MOO_SORT");
 	
-	// Display best 6 candidate pairs
-	//pcr2.show_best_pair_candidates(6);
+	if(pcr2.good_pair_candidates < 1)
+	{
+		return(NO_PCR2_PRIMERS);
+	}
+	
+	if(pcr2.good_pair_candidates > 5)
+		examples_to_show = 6;
+	else 
+		examples_to_show = pcr2.good_pair_candidates;
+	
+	pcr2.show_best_pair_candidates(examples_to_show);
 	
 	// Make cassette sequence
 	// When we know which pcr2 candidates are to be used, only then can we determine the cassette
@@ -914,6 +953,7 @@ int precise_process(const char* organism_name,
 	// Confirmation primers
 	
 	char cnf_results[20000] = "None";
+	char csv_results[2000] = "None";
 	
 	/*if(XML)
 	{
@@ -926,7 +966,7 @@ int precise_process(const char* organism_name,
 			return(CONF_PRIMER_ERROR);
 	}*/
 	
-	if(!precise_confirmation_primers(orf_sequence, genome_file_name, plasmid_sequence, primer_D, primer_E, rc_sequence_C, sequence_R, Fwd_Cassette, Rev_Cassette, cnf_results))
+	if(!precise_confirmation_primers(orf_sequence, genome_file_name, plasmid_sequence, primer_D, primer_E, rc_sequence_C, sequence_R, Fwd_Cassette, Rev_Cassette, cnf_results, csv_results))
 		return(CONF_PRIMER_ERROR);
 	
 	// RESULTS
@@ -1044,8 +1084,50 @@ int precise_process(const char* organism_name,
 
 	fout.close();
 	
+	/*
+	 To collate all .csv results use cat *.csv > all.csv
+	 */
+
+#ifdef DB_OUT
+	char csv_file_name[32];
+	sprintf(csv_file_name, "%s.csv", gene);	
+	ofstream fcsv(csv_file_name);
+	fcsv << gene << ", ";
+	fcsv << pcr1.pair_candidate[PCR1_BEST].forward_hairpin_score << ", ";
+	fcsv << pcr1.pair_candidate[PCR1_BEST].forward_self_dimer_score << ", ";
+	fcsv << pcr1.pair_candidate[PCR1_BEST].reverse_hairpin_score << ", ";
+	fcsv << pcr1.pair_candidate[PCR1_BEST].reverse_self_dimer_score << ", ";
+	fcsv << pcr1.pair_candidate[PCR1_BEST].forward_pair_dimer_score << ", ";
+	fcsv << pcr1.pair_candidate[PCR1_BEST].reverse_pair_dimer_score << ", ";
+	fcsv << pcr1.pair_candidate[PCR1_BEST].number_of_pcr_products << ", ";
+	fcsv << " - , ";
+	fcsv << pcr2.pair_candidate[PCR2_BEST].forward_hairpin_score << ", ";
+	fcsv << pcr2.pair_candidate[PCR2_BEST].forward_self_dimer_score << ", ";
+	fcsv << pcr2.pair_candidate[PCR2_BEST].reverse_hairpin_score << ", ";
+	fcsv << pcr2.pair_candidate[PCR2_BEST].reverse_self_dimer_score << ", ";
+	fcsv << pcr2.pair_candidate[PCR2_BEST].forward_pair_dimer_score << ", ";
+	fcsv << pcr2.pair_candidate[PCR2_BEST].reverse_pair_dimer_score << ", ";	
+	fcsv << pcr2.pair_candidate[PCR2_BEST].number_of_pcr_products << ", ";
+	fcsv << " - , ";
+	fcsv << strlen(pcr1_homology) << ", ";
+	fcsv << strlen(sequence_R) << ", ";	
+	fcsv << strlen(sequence_C) << ", ";
+	fcsv << strlen(primer_E) << ", ";
+	fcsv << strlen(primer_D) << ", ";
+	fcsv << " - , ";
+	fcsv << csv_results;
+	fcsv << endl;
+	
+	fcsv.close();
+#endif	
+	
 	return(TRUE);
 }
+
+/**
+ Note that the Fwd_Cassette_confirmation_primer and Rev_Cassette_confirmation_primer are obtained by building 
+ (use ./build_cassette_confirmation) and running cassette_confirmation.cpp
+ */
 
 int main(int argc, char** argv)
 {
@@ -1192,10 +1274,13 @@ int main(int argc, char** argv)
 					{
 						case NO_PRIMER_B: ferr << header_id << ": No primer B\n"; break;
 						case NO_PRIMER_A: ferr << header_id << ": No primer A\n"; break;
+						case NO_PCR1_PRIMERS: ferr << header_id << "; No PCR1 primer pairs after sorting\n"; break;
 						case NO_PCR2_FORWARD: ferr << header_id << ": No PCR2 forward primers \n"; break;
 						case NO_PCR2_REVERSE: ferr << header_id << ": No PCR2 reverse primers \n"; break;
+						case NO_PCR2_PRIMERS: ferr << header_id << ": No PCR2 primer pair after sorting\n"; break;
 						case NO_PRIMER_D: ferr << header_id << ": No plasmid primer D \n"; break;
 						case NO_PRIMER_E: ferr << header_id << ": No plasmid primer E \n"; break;
+						case NO_PLASMID_PRIMERS: ferr << header_id << ": No plasmid primer pairs after sorting\n"; break;
 						case NO_URA3: ferr << header_id << ": Unable to open ura3_rc.fa \n"; break;
 						case CONF_PRIMER_ERROR : ferr << header_id << ": Confirmation primers error\n"; break;
 					}

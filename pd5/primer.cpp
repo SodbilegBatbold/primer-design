@@ -1054,8 +1054,8 @@ int primer::sort_candidates(void)
 	
 	good_candidates = data_size;
 	
-	if(data_size < 1) return(0);
-	else return(1);
+	if(data_size < 1) return(FAIL);
+	else return(PASS);
 }
 
 

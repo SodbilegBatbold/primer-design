@@ -483,7 +483,10 @@ int primer_pair::sort_pair_candidates(const char* priority_list)
 		token = strtok(NULL, ", \t\n\r");
 		
 	}
-	return(TRUE);
+	good_pair_candidates = data_size;
+	
+	if(data_size < 1) return(FAIL);
+	else return(PASS);
 }
 
 int primer_pair::show_individual_candidates(void)

@@ -78,9 +78,7 @@
 #include "primer.h"
 #include "primer_pair_data.h"
 #include "dna_find.h"
-
-#define NO_TEMPLATE_ERROR -32
-
+#include "global_defs.h"
 
 //! Primer pair design class
 /**
@@ -130,6 +128,7 @@ public:
 	
 	int make_pair_candidates(int number_of_forward_candidates, int number_of_reverse_candidates);
 	int number_of_pair_candidates;
+	int good_pair_candidates;
 	
 	int sort_pair_candidates(const char* priority_list);
 	int show_individual_candidates(void);

@@ -65,11 +65,8 @@
 #include "dimerisation.h"
 #include "constraints.h"
 #include "primer_data.h"
+#include "global_defs.h"
 
-#define TRUE 1
-#define FALSE 0
-
-#define ERROR -1
 /**
  * Priorities to be used when sorting candidate primers.
  */
