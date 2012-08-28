@@ -63,7 +63,6 @@
 
 #include "annealing_temperature.h"
 #include "dimerisation.h"
-#include "constraints.h"
 #include "primer_data.h"
 #include "global_defs.h"
 
@@ -97,7 +96,7 @@ enum Priority { SORT_END,
  The main class for individual primer design
  */
 
-class primer: public annealing_temperature, constraints
+class primer: public annealing_temperature
 {
 public:
 	

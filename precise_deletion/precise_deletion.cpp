@@ -25,9 +25,10 @@ using namespace std;
 #include "../pd5/sequence_utils.h"
 
 // ORGANISM (POMBE, S_CERE, LACTIS)
-#define LACTIS
+#define POMBE
 
 #define DB_OUT
+#define DISPLAY_RESULTS
 
 // OUTPUT FORMAT
 #define XML 1
@@ -567,9 +568,12 @@ int precise_process(const char* organism_name,
 {
 
 	int i = 0;
-	int j = 0;	
+	int j = 0;
+	
+#ifdef DISPLAY_RESULTS
 	int examples_to_show;
-		
+#endif
+	
 	DNAfind genome_template(genome_file_name);
 	
 	if(!genome_template.set_max_mismatches(0)) 
@@ -696,12 +700,16 @@ int precise_process(const char* organism_name,
 		return(NO_PCR1_PRIMERS);
 	}
 	
+#ifdef DISPLAY_RESULTS
+	 // Display best candidates
+	 
 	if(pcr1.good_pair_candidates > 5)
 		examples_to_show = 6;
 	else 
 		examples_to_show = pcr1.good_pair_candidates;
 	
 	pcr1.show_best_pair_candidates(examples_to_show);
+#endif
 	
 	//Make PCR1 product
 	char pcr1_product[1001];
@@ -721,14 +729,18 @@ int precise_process(const char* organism_name,
 //  Make plasmid primers
 		
 	primer_pair plasmid;
-	
+
+#ifdef LACTIS
 // For Lactis: pCS1966 0-4740, ermAM 2623-3360 & oroP 3786-4709
 	plasmid.forward_primer.set_primer_location_range(2573, 2623);
 	plasmid.reverse_primer.set_primer_location_range(4709, 4740);
+#endif
 	
+#ifdef POMBE
 // For Pombe: pFS118 sequence is 7282 bases long, promoter 4932-4981 URA4 4982-5776, terminator 5797-6211
-	//plasmid.forward_primer.set_primer_location_range(4832, 4932);
-	//plasmid.reverse_primer.set_primer_location_range(6211, 6311);
+	plasmid.forward_primer.set_primer_location_range(4832, 4932);
+	plasmid.reverse_primer.set_primer_location_range(6211, 6311);
+#endif
 	
 	plasmid.set_primer_length_range(18, 20);
 	
@@ -776,6 +788,7 @@ int precise_process(const char* organism_name,
 		return(NO_PLASMID_PRIMERS);
 	}
 	
+#ifdef DISPLAY_RESULTS
 	// Display best candidate pairs
 	if(plasmid.good_pair_candidates > 5)
 		examples_to_show = 6;
@@ -783,7 +796,8 @@ int precise_process(const char* organism_name,
 		examples_to_show = plasmid.good_pair_candidates;
 	
 	plasmid.show_best_pair_candidates(examples_to_show);
-
+#endif
+	
 //	Make C and R sequences
 	
 // 	C = 45 nt upstream of the stop codon and include stop
@@ -901,12 +915,16 @@ int precise_process(const char* organism_name,
 		return(NO_PCR2_PRIMERS);
 	}
 	
+#ifdef DISPLAY_RESULTS
+	 // Display best candidate pairs
+	 
 	if(pcr2.good_pair_candidates > 5)
 		examples_to_show = 6;
 	else 
 		examples_to_show = pcr2.good_pair_candidates;
 	
 	pcr2.show_best_pair_candidates(examples_to_show);
+#endif
 	
 	// Make cassette sequence
 	// When we know which pcr2 candidates are to be used, only then can we determine the cassette
@@ -948,11 +966,11 @@ int precise_process(const char* organism_name,
 	for(i = fwd_loc; i <= rev_loc; i++) cassette_sequence[j++] = plasmid_sequence[i];
 	cassette_sequence[j] = 0;
 	
-	//cout << cassette_sequence << endl;
+	cout << cassette_sequence << endl;
 	
 	// Confirmation primers
 	
-	char cnf_results[20000] = "None";
+	char cnf_results[30000] = "None";
 	char csv_results[2000] = "None";
 	
 	/*if(XML)
