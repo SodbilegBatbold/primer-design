@@ -1,8 +1,8 @@
 
 
-#COMMONOBJS = annealing_temperature.o DNAfind.o primer.o dimerisation.o primer_pair.o oligotm.o sequence_utils.o display_utils.o constraints.o
+#COMMONOBJS = annealing_temperature.o dna_find.o primer.o dimerisation.o primer_pair.o oligotm.o sequence_utils.o display_utils.o constraints.o
 
-LCOMMONOBJS = pd5/annealing_temperature.lo pd5/DNAfind.lo pd5/primer_data.lo pd5/primer.lo pd5/dimerisation.lo pd5/primer_pair_data.lo pd5/primer_pair.lo pd5/oligotm.lo pd5/sequence_utils.lo pd5/display_utils.lo 
+LCOMMONOBJS = pd5/annealing_temperature.lo pd5/dna_find.lo pd5/primer_data.lo pd5/primer.lo pd5/dimerisation.lo pd5/primer_pair_data.lo pd5/primer_pair.lo pd5/oligotm.lo pd5/sequence_utils.lo pd5/display_utils.lo 
 
 
 OBJ_CLI = pd5_cli/pd5_cli.o
