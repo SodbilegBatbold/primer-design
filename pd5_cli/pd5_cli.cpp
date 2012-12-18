@@ -67,12 +67,22 @@ void usage() {
   std::cout << "      Fasta file containing template sequence in which to find primers" << std::endl;
   std::cout << "-n, --nsbfile filename" << std::endl;
   std::cout << "      Name of fasta file against which to search for non-specific binding." << std::endl;
-  std::cout << "-o, --output t|h|c" << std::endl;
+  std::cout << "-o, --output filename" << std::endl;
+  std::cout << "      Name of output file. If this option is not used, output will go to stdout." << std::endl;
+  std::cout << "-O, --output-type t|h|c" << std::endl;
   std::cout << "      Output type: text, HTML or CSV" << std::endl;
+  std::cout << "-V, --version" << std::endl;
+  std::cout << "      Display version information" << std::endl;
   exit(0);
 }
 
-
+/** 
+ * Describes the version information
+ */
+void version() {
+  std::cout << "pd5_cli: Version 1.0.0" << std::endl;
+  exit(0);
+}
 
 /**
  * Tokenises a string such as "1,20,30,60", splitting on commas, and
@@ -159,7 +169,8 @@ int new_process(char* template_sequence,
 		char *revargs_s,
 		char *tm_args_s,		
 		OutputType output_type, 
-		char* nsbfile)
+		char* nsbFile,
+		char* outFile)
 {
 
   char *seqName = NULL;
@@ -170,25 +181,25 @@ int new_process(char* template_sequence,
   // Check that we have a genome file and, if so, set up DNAfind
   // and parameters for secondary binding detection
 
-  if(nsbfile != NULL) 
+  if(nsbFile != NULL) 
   {
-    nsbP = new DNAfind(nsbfile);
+    nsbP = new DNAfind(nsbFile);
     //nsbP = &nsb;
     if(!nsbP->set_max_mismatches(0)) 
     {
-      cout << "Could not set max_mismatches" << std::endl;
+      cerr << "Could not set max_mismatches" << std::endl;
       return FALSE;
     }
 
     if(!nsbP->set_tail_length(12)) 
     {
-      cout << "Could not set tail length" << std::endl;
+      cerr << "Could not set tail length" << std::endl;
       return FALSE;
     }
 
     if(!nsbP->set_max_viable_product_length(5000)) 
     {
-      cout << "Could not set max amplicon length" << std::endl;
+      cerr << "Could not set max amplicon length" << std::endl;
       return FALSE;
     }
   }
@@ -260,7 +271,7 @@ int new_process(char* template_sequence,
     //cout << "Sort individual candidates and display\n";
     pcr1.sort_individual_candidates("HAIRPIN, SELF_DIMER, TEMPERATURE");
 	
-// Testing:
+    // Testing:
     //pcr1.show_individual_candidates();
 
     //cout << "Select and sort primer pairs\n";
@@ -269,7 +280,7 @@ int new_process(char* template_sequence,
     // For testing only: Display best 6 candidate pairs
     //pcr1.show_best_pair_candidates(6);
 
-	int best = 0; // 0 is the index for the best candidate primer pair
+    int best = 0; // 0 is the index for the best candidate primer pair
 
     display_utils display;
     char * product = NULL;
@@ -277,118 +288,128 @@ int new_process(char* template_sequence,
 
     extract_product(template_sequence, &pcr1.pair_candidate[best], product);
 
-	
+    std::streambuf * buf;
+    std::ofstream of;
+
+    if(outFile != NULL) {
+      of.open(outFile);
+      buf = of.rdbuf();
+    } else {
+      buf = std::cout.rdbuf();
+    }
+
+    std::ostream out(buf);
+
     switch (output_type) 
     {
 
     case TXT: {
       // Forward
       if(seqName) {
-	      cout << "Name: " << seqName << endl;
+	out << "Name: " << seqName << endl;
       }
-      cout << "Forward primer" << endl;
-      cout << "Sequence: " << pcr1.pair_candidate[best].forward_sequence << endl;
-      cout << "Size: " << strlen(pcr1.pair_candidate[best].forward_sequence) << endl;
-      cout << "Location 5',3': " << pcr1.pair_candidate[best].location_forward_5_prime_end + 1 << ","
+      out << "Forward primer" << endl;
+      out << "Sequence: " << pcr1.pair_candidate[best].forward_sequence << endl;
+      out << "Size: " << strlen(pcr1.pair_candidate[best].forward_sequence) << endl;
+      out << "Location 5',3': " << pcr1.pair_candidate[best].location_forward_5_prime_end + 1 << ","
            << pcr1.pair_candidate[best].location_forward_5_prime_end + strlen(pcr1.pair_candidate[best].forward_sequence) << endl;
-      cout << "Hairpin score: " << pcr1.pair_candidate[best].forward_hairpin_score << endl;
-      cout << "Self dimer score: " << pcr1.pair_candidate[best].forward_self_dimer_score << endl;
-      cout << "Temperature: " << pcr1.pair_candidate[best].forward_annealing_temperature << endl;
+      out << "Hairpin score: " << pcr1.pair_candidate[best].forward_hairpin_score << endl;
+      out << "Self dimer score: " << pcr1.pair_candidate[best].forward_self_dimer_score << endl;
+      out << "Temperature: " << pcr1.pair_candidate[best].forward_annealing_temperature << endl;
       // Reverse
-      cout << "Reverse primer" << endl;
-      cout << "Sequence: " << pcr1.pair_candidate[best].reverse_sequence  << endl;
-      cout << "Size: " << strlen(pcr1.pair_candidate[best].reverse_sequence)  << endl;
-      cout << "Location 5',3': " << pcr1.pair_candidate[best].location_reverse_5_prime_end + 1 << ","
+      out << "Reverse primer" << endl;
+      out << "Sequence: " << pcr1.pair_candidate[best].reverse_sequence  << endl;
+      out << "Size: " << strlen(pcr1.pair_candidate[best].reverse_sequence)  << endl;
+      out << "Location 5',3': " << pcr1.pair_candidate[best].location_reverse_5_prime_end + 1 << ","
            << pcr1.pair_candidate[best].location_reverse_5_prime_end + 1 - strlen(pcr1.pair_candidate[best].reverse_sequence) << endl;
-      cout << "Hairpin score: " << pcr1.pair_candidate[best].reverse_hairpin_score  << endl;
-      cout << "Self dimer score: " << pcr1.pair_candidate[best].reverse_self_dimer_score << endl;
-      cout << "Temperature: " << pcr1.pair_candidate[best].reverse_annealing_temperature << endl;
+      out << "Hairpin score: " << pcr1.pair_candidate[best].reverse_hairpin_score  << endl;
+      out << "Self dimer score: " << pcr1.pair_candidate[best].reverse_self_dimer_score << endl;
+      out << "Temperature: " << pcr1.pair_candidate[best].reverse_annealing_temperature << endl;
 
       // Primer dimer
-      cout << "Pair details" << endl;
-      cout << "Primer dimer score (fwd): " << pcr1.pair_candidate[best].forward_pair_dimer_score  << endl;
-      cout << "Primer dimer score (rev): " << pcr1.pair_candidate[best].reverse_pair_dimer_score << endl;
-      cout << "NSB score: " << pcr1.pair_candidate[best].number_of_pcr_products << endl;
+      out << "Pair details" << endl;
+      out << "Primer dimer score (fwd): " << pcr1.pair_candidate[best].forward_pair_dimer_score  << endl;
+      out << "Primer dimer score (rev): " << pcr1.pair_candidate[best].reverse_pair_dimer_score << endl;
+      out << "NSB score: " << pcr1.pair_candidate[best].number_of_pcr_products << endl;
 
       // Product
-      cout << "Product length: " << strlen(product) << endl;
-      cout << "Product: " << product << endl;
+      out << "Product length: " << strlen(product) << endl;
+      out << "Product: " << product << endl;
       break;
     }
     case HTML: {
       if(seqName) {
-	std::cout << "<h3>Name</h3><p>" << seqName << "</p>" << std::endl;
+	out << "<h3>Name</h3><p>" << seqName << "</p>" << std::endl;
       }
       // Forward
-      std::cout << "<h3>Forward primer</h3>" << std::endl;
-      std::cout << "<p>Sequence: " << pcr1.pair_candidate[best].forward_sequence << "<br />" << std::endl;
-      std::cout << "Size: " << strlen(pcr1.pair_candidate[best].forward_sequence) << "<br />" << std::endl;
-      std::cout << "Location 5': " << pcr1.pair_candidate[best].location_forward_5_prime_end + 1 << "<br />" << std::endl;
-      std::cout << "Hairpin score: " << pcr1.pair_candidate[best].forward_hairpin_score << "<br />" << std::endl;
-      std::cout << "Self dimer score: " << pcr1.pair_candidate[best].forward_self_dimer_score << "<br />" << std::endl;
-      std::cout << "Temperature: " << pcr1.pair_candidate[best].forward_annealing_temperature << "</p>" << std::endl;
+      out << "<h3>Forward primer</h3>" << std::endl;
+      out << "<p>Sequence: " << pcr1.pair_candidate[best].forward_sequence << "<br />" << std::endl;
+      out << "Size: " << strlen(pcr1.pair_candidate[best].forward_sequence) << "<br />" << std::endl;
+      out << "Location 5': " << pcr1.pair_candidate[best].location_forward_5_prime_end + 1 << "<br />" << std::endl;
+      out << "Hairpin score: " << pcr1.pair_candidate[best].forward_hairpin_score << "<br />" << std::endl;
+      out << "Self dimer score: " << pcr1.pair_candidate[best].forward_self_dimer_score << "<br />" << std::endl;
+      out << "Temperature: " << pcr1.pair_candidate[best].forward_annealing_temperature << "</p>" << std::endl;
 
       // Reverse
-      std::cout << "<h3>Reverse primer</h3>" << std::endl;
-      std::cout << "<p>Sequence: " << pcr1.pair_candidate[best].reverse_sequence << "<br />" << std::endl;
-      std::cout << "Size: " << strlen(pcr1.pair_candidate[best].reverse_sequence) << "<br />" << std::endl;
-      std::cout << "Location 5': " << pcr1.pair_candidate[best].location_reverse_5_prime_end + 1 << "<br />" << std::endl;
-      std::cout << "Hairpin score: " << pcr1.pair_candidate[best].reverse_hairpin_score << "<br />" << std::endl;
-      std::cout << "Self dimer score: " << pcr1.pair_candidate[best].reverse_self_dimer_score << "<br />" << std::endl;
-      std::cout << "Temperature: " << pcr1.pair_candidate[best].reverse_annealing_temperature << "</p>" << std::endl;
+      out << "<h3>Reverse primer</h3>" << std::endl;
+      out << "<p>Sequence: " << pcr1.pair_candidate[best].reverse_sequence << "<br />" << std::endl;
+      out << "Size: " << strlen(pcr1.pair_candidate[best].reverse_sequence) << "<br />" << std::endl;
+      out << "Location 5': " << pcr1.pair_candidate[best].location_reverse_5_prime_end + 1 << "<br />" << std::endl;
+      out << "Hairpin score: " << pcr1.pair_candidate[best].reverse_hairpin_score << "<br />" << std::endl;
+      out << "Self dimer score: " << pcr1.pair_candidate[best].reverse_self_dimer_score << "<br />" << std::endl;
+      out << "Temperature: " << pcr1.pair_candidate[best].reverse_annealing_temperature << "</p>" << std::endl;
 
       // Primer dimer
-      std::cout << "<h3>Pair details</h3>" << std::endl;
-      std::cout << "<p>Primer dimer score (fwd): " << pcr1.pair_candidate[best].forward_pair_dimer_score  << "<br />" << std::endl;
-      std::cout << "Primer dimer score (rev): " << pcr1.pair_candidate[best].reverse_pair_dimer_score << "<br />" << std::endl;
-      //std::cout << "NSB score: " << pcr1.pair_candidate[best].number_of_pcr_products << "</p>" << std::endl;
+      out << "<h3>Pair details</h3>" << std::endl;
+      out << "<p>Primer dimer score (fwd): " << pcr1.pair_candidate[best].forward_pair_dimer_score  << "<br />" << std::endl;
+      out << "Primer dimer score (rev): " << pcr1.pair_candidate[best].reverse_pair_dimer_score << "<br />" << std::endl;
+      //out << "NSB score: " << pcr1.pair_candidate[best].number_of_pcr_products << "</p>" << std::endl;
 
       // Product
-      std::cout << "<p>Product length: " << strlen(product) << "<br />" << std::endl;
-      std::cout << "Product: " << product << "</p>" << std::endl;
+      out << "<p>Product length: " << strlen(product) << "<br />" << std::endl;
+      out << "Product: " << product << "</p>" << std::endl;
 
       // Location
       char * fancy_template = NULL;
       display.html_colour_sequence(template_sequence, &pcr1.pair_candidate[best], fancy_template);
-      std::cout << "<p>Template: " << template_sequence << "</p>" << std::endl;
-      std::cout << "<p>Locations of primers within template: " << fancy_template << "</p>" << std::endl;
+      out << "<p>Template: " << template_sequence << "</p>" << std::endl;
+      out << "<p>Locations of primers within template: " << fancy_template << "</p>" << std::endl;
       free(fancy_template);
       break;
     }
-		case CSV: 
-		{
-			std::cout << "Fwd sequence, Fwd size, Fwd loc 5', Fwd loc 3', Fwd hairpin, Fwd self dimer, Fwd temp, Rev sequence, Rev size, Rev loc 5', Rev loc 3', Rev hairpin, Rev self dimer, Rev temp, Pair dimer (fwd), Pair dimer (rev), Pair NSB, Product len, Product" << endl;
+    case CSV: {
+      out << "Fwd sequence, Fwd size, Fwd loc 5', Fwd loc 3', Fwd hairpin, Fwd self dimer, Fwd temp, Rev sequence, Rev size, Rev loc 5', Rev loc 3', Rev hairpin, Rev self dimer, Rev temp, Pair dimer (fwd), Pair dimer (rev), Pair NSB, Product len, Product" << endl;
 			
-			if(seqName) std::cout << seqName << ",";
+      if(seqName) out << seqName << ",";
       
-			// Forward
-			std::cout << pcr1.pair_candidate[best].forward_sequence << ",";
-			std::cout << strlen(pcr1.pair_candidate[best].forward_sequence) << ",";
-			std::cout << pcr1.pair_candidate[best].location_forward_5_prime_end + 1 << "," 
-				<< pcr1.pair_candidate[best].location_forward_5_prime_end + strlen(pcr1.pair_candidate[best].forward_sequence) << ",";
-			std::cout << pcr1.pair_candidate[best].forward_hairpin_score << ",";
-			std::cout << pcr1.pair_candidate[best].forward_self_dimer_score << ",";
-			std::cout << pcr1.pair_candidate[best].forward_annealing_temperature << ",";
-			// Reverse
-			std::cout << pcr1.pair_candidate[best].reverse_sequence  << ",";
-			std::cout << strlen(pcr1.pair_candidate[best].reverse_sequence)  << ",";
-			std::cout << pcr1.pair_candidate[best].location_reverse_5_prime_end + 1 << "," 
-				<< pcr1.pair_candidate[best].location_reverse_5_prime_end + 1 - strlen(pcr1.pair_candidate[best].reverse_sequence)<< ",";
-			std::cout << pcr1.pair_candidate[best].reverse_hairpin_score  << ",";
-			std::cout << pcr1.pair_candidate[best].reverse_self_dimer_score << ",";
-			std::cout << pcr1.pair_candidate[best].reverse_annealing_temperature << ",";
+      // Forward
+      out << pcr1.pair_candidate[best].forward_sequence << ",";
+      out << strlen(pcr1.pair_candidate[best].forward_sequence) << ",";
+      out << pcr1.pair_candidate[best].location_forward_5_prime_end + 1 << "," 
+		<< pcr1.pair_candidate[best].location_forward_5_prime_end + strlen(pcr1.pair_candidate[best].forward_sequence) << ",";
+      out << pcr1.pair_candidate[best].forward_hairpin_score << ",";
+      out << pcr1.pair_candidate[best].forward_self_dimer_score << ",";
+      out << pcr1.pair_candidate[best].forward_annealing_temperature << ",";
+      // Reverse
+      out << pcr1.pair_candidate[best].reverse_sequence  << ",";
+      out << strlen(pcr1.pair_candidate[best].reverse_sequence)  << ",";
+      out << pcr1.pair_candidate[best].location_reverse_5_prime_end + 1 << "," 
+		<< pcr1.pair_candidate[best].location_reverse_5_prime_end + 1 - strlen(pcr1.pair_candidate[best].reverse_sequence)<< ",";
+      out << pcr1.pair_candidate[best].reverse_hairpin_score  << ",";
+      out << pcr1.pair_candidate[best].reverse_self_dimer_score << ",";
+      out << pcr1.pair_candidate[best].reverse_annealing_temperature << ",";
+      
+      // Primer dimer
+      out << pcr1.pair_candidate[best].forward_pair_dimer_score  << ",";
+      out << pcr1.pair_candidate[best].reverse_pair_dimer_score << ",";
+      out << pcr1.pair_candidate[best].number_of_pcr_products << ",";
+      
+      // Product
+      out << strlen(product) << ",";
+      out << product << std::endl;
 
-			// Primer dimer
-			std::cout << pcr1.pair_candidate[best].forward_pair_dimer_score  << ",";
-			std::cout << pcr1.pair_candidate[best].reverse_pair_dimer_score << ",";
-			std::cout << pcr1.pair_candidate[best].number_of_pcr_products << ",";
-
-			// Product
-			std::cout << strlen(product) << ",";
-			std::cout << product << std::endl;
-
-			break;
-		}
+      break;
+     }
     }
 	
     free(product);
@@ -415,7 +436,8 @@ int main(int argc, char** argv)
   char *fwdargs            = NULL;
   char *tm_args            = NULL;
   char *output_type_string = NULL;
-  char *nsbfile            = NULL;
+  char *nsbFile            = NULL;
+  char *outFile            = NULL;
   OutputType output_type   = TXT; 
 
   //cout << "Args: " << argc << endl;
@@ -426,19 +448,21 @@ int main(int argc, char** argv)
       static struct option long_options[] =
 	{
 	  {"help",     no_argument,   0, 'h'},
-	  {"output",   no_argument,   0, 'o'},
+	  {"output",   required_argument, 0, 'o'},
+	  {"output-type", required_argument, 0, 'O'},
 	  {"fwd",  required_argument, 0, 'f'},
 	  {"rev",  required_argument, 0, 'r'},
 	  {"tm",  required_argument, 0, 't'},
 	  {"seq",  required_argument, 0, 's'},
 	  {"Seqfile",  required_argument, 0, 'S'},
 	  {"nsbfile",  required_argument, 0, 'n'},
+	  {"version",  no_argument, 0, 'V'},
 	  {0, 0, 0, 0}
 	};
       /* getopt_long stores the option index here. */
       int option_index = 0;
       
-      c = getopt_long (argc, argv, "ho:f:r:t:s:S:n:",
+      c = getopt_long (argc, argv, "ho:O:f:r:t:s:S:n:V",
 		       long_options, &option_index);
      
       /* Detect the end of the options. */
@@ -468,9 +492,9 @@ int main(int argc, char** argv)
 	revargs = optarg;
 	break;
 	
-		case 't':
-			tm_args = optarg;
-			break;
+      case 't':
+	tm_args = optarg;
+	break;
 	
       case 's':
 	seq = optarg;
@@ -483,18 +507,32 @@ int main(int argc, char** argv)
 	break;
 
       case 'n':
-	nsbfile = optarg;
+	nsbFile = optarg;
 	break;
 
       case 'o':
+	outFile = optarg;
+	break;
+
+      case 'O':
 	output_type_string = optarg;
 	if( output_type_string[0] == 'h') {
 	  output_type = HTML;
 	} else if (output_type_string[0] == 'c') {
 	  output_type = CSV;
+	} else if (output_type_string[0] == 't') {
+	  output_type = TXT;
+	} else {
+	  cerr << "Error: Invalid output type (should be c, t or h), but was " << output_type_string << endl;
+	  exit(1);
 	}
+
 	break;
 	
+      case 'V':
+	version();
+	break;
+
       case '?':
 	/* getopt_long already printed an error message. */
 	break;
@@ -504,9 +542,13 @@ int main(int argc, char** argv)
       }
     }
 	
-	new_process(seq, seqFile, fwdargs, revargs, tm_args, output_type, nsbfile);
+  int ok = new_process(seq, seqFile, fwdargs, revargs, tm_args, output_type, nsbFile, outFile);
 
-  exit(1);
+  if (!ok) {
+    exit(1);
+  } else {
+    exit(0);
+  }
 }
 
 
