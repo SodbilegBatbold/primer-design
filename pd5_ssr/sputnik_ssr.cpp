@@ -1,8 +1,8 @@
 #include <cmath>
-#include "../PD5/display_utils.h"
+#include "../pd5/display_utils.h"
 #include "sputnik_ssr.h"
-#include "../PD5/sequence_utils.h"
-#include "../PD5/annealing_temperature.h"
+#include "../pd5/sequence_utils.h"
+#include "../pd5/annealing_temperature.h"
 #include "sputnik.h"
 
 /**

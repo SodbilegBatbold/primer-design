@@ -1,7 +1,7 @@
 #include <cstring>
 #include <cstdio>
 #include <cstdlib>
-#include "../PD5/primer.h"
+#include "../pd5/primer.h"
 
 #ifndef SPUTNIK_SSR_H
 #define SPUTNIK_SSR_H
