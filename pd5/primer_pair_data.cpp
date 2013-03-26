@@ -40,6 +40,12 @@
  
  *******************************************************************/
 
+/** \file primer_pair_data.cpp
+ \brief Data pertaining to a pair of primers
+
+ */
+
+
 #include "primer_pair_data.h"
 
 int primer_pair_data::pair_dimerisation(void)

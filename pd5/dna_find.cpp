@@ -38,7 +38,7 @@
  
  *******************************************************************/
 
-/** \file DNAfind.cpp
+/** \file dna_find.cpp
  \brief Secondary binding analysis methods
  
  

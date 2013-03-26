@@ -36,7 +36,7 @@
  
  *******************************************************************/
 
-/** \file DNAfind.h
+/** \file dna_find.h
  \brief Secondary binding analysis methods
  
  

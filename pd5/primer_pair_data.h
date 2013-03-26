@@ -40,6 +40,11 @@
  
  *******************************************************************/
 
+/** \file primer_pair_data.h
+ \brief Data pertaining to a pair of primers
+
+ */
+
 #ifndef PRIMER_PAIR_DATA_H
 #define PRIMER_PAIR_DATA_H
 

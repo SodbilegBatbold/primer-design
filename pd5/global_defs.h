@@ -40,10 +40,10 @@
  
  *******************************************************************/
 
-/** \file primer.cpp
- \brief Individual primer design
+/** \file global_defs.h
+ \brief Global definitions
  
- This file contains the methods and attributes required for individual primer design
+ This file contains global definitions.
  */
 
 #ifndef GLOBAL_REFS_H
