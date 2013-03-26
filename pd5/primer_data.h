@@ -40,6 +40,14 @@
  
  *******************************************************************/
 
+/** \file primer_data.h
+ \brief Class holding the data for a single primer
+
+
+ */
+
+
+
 #ifndef PRIMER_DATA_H
 #define PRIMER_DATA_H
 

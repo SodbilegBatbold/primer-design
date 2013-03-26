@@ -3,7 +3,7 @@
  
  PD5: a general purpose library for primer design app development.
  
- primer__data.cpp
+ primer_data.cpp
  
  Created by:	Michael C. Riley
 				Amanda Clare
@@ -39,6 +39,12 @@
  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  
  *******************************************************************/
+
+/** \file primer_data.cpp
+ \brief Data pertaining to a single primer
+
+
+ */
 
 #include "primer_data.h"
 
