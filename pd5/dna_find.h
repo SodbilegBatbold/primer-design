@@ -42,16 +42,14 @@
  
  */
 
-#ifndef BAP_H
-#define BAP_H
+#ifndef DNAFIND_H
+#define DNAFIND_H
  
 #include <fstream>
 #include <iostream> 
 #include <cstring>
 #include <cstdio>
 #include <cstdlib>
-//#include <vector>
-
 #include "sequence_utils.h"
 
 #define TRUE 1
@@ -130,7 +128,6 @@ public:
 	/** Finds all potential products. Returns number of products found. 
 	 \sa set_max_mismatches(), set_tail_length(), set_max_viable_amplicon_length(); */
 	int search_for_pcr_products(const char *forward_sequence, const char *reverse_sequence);
-	int search_for_pcr_products_II(const char *forward_sequence, const char *reverse_sequence);
 	
 	//char* reverse_complement(const char* sequence);
 	
@@ -175,27 +172,14 @@ private:
 					  const char* dna_template, 
 					  location_data sequence_match[]);
 	
-	int find_sequence_II(string sequence, 
-						 string dna_template,
-						 location_data sequence_match[]);
-	
-	int find_sequence_III(const char* sequence, 
-						  const char* dna_template, 
-						  location_data sequence_match[]);
-	
-	//int base_complement(int nucleotide);
-	
 	int process_chromosome(const char *chromosome, 
 						   const char *forward_sequence, 
 						   const char *reverse_sequence);
-	
-	
+		
 	int matches;
 	int max_mismatches;
 	int max_viable_product_length;
 	int tail_length;
-	//char *rc_sequence;
-
 };
 
 #endif
