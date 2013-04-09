@@ -974,12 +974,8 @@ int DNAfind::search_for_pcr_products(const char *forward_primer,
 	string chromosome;
 	string temp;
 	
-	
-	/**
-	  Make Tails
-	 1) Make sure that the sequence is not shorter than DNAfind::tail_length 
-	 otherwise make the tails the same as primer length.
-	 */
+	// Make Tails: Make sure that the sequence is not shorter than DNAfind::tail_length 
+	// otherwise make the tails the same as primer length.
 	
 	int fwd_seq_len = strlen(forward_primer);
 	int rev_seq_len = strlen(reverse_primer);
@@ -999,7 +995,7 @@ int DNAfind::search_for_pcr_products(const char *forward_primer,
 	char forward_sequence_tail[21]; // tails no longer than 20 bp
 	char reverse_sequence_tail[21];
 	
-	/** Make 3' tail sequences */
+	// Make 3' tail sequences
 	for(i = 0; i < fwd_tail_length; i++)
 		forward_sequence_tail[i] = forward_primer[fwd_seq_len - fwd_tail_length + i];
 	forward_sequence_tail[fwd_tail_length] = 0;
@@ -1008,8 +1004,8 @@ int DNAfind::search_for_pcr_products(const char *forward_primer,
 		reverse_sequence_tail[i] = reverse_primer[rev_seq_len - rev_tail_length + i];
 	reverse_sequence_tail[rev_tail_length] = 0;
 	
-	/** Read genome.fa and process each chromosome
-	 */
+	// Read genome.fa and process each chromosome
+	 
 	fin.clear();
 	fin.seekg(ios::beg);
 	

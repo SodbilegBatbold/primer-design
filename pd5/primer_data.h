@@ -100,7 +100,7 @@ public:
 	int binding_A;	///< The number of binding hits to the A genome (1 > indicates secondary binding)
 	int binding_B;	///< The number of binding hits to the B genome (1 > indicates secondary binding)
 	int seqsim_matches;       ///< The number of sequence similarity hits 
-	double moo;				///< multi objective optimisation score
+	double moo;		       ///< Multi objective optimisation score
 	double annealing_temperature; ///< The calculated annealing temperature 
 	int primer_length;		///< Sequence length of primer
 	
@@ -111,12 +111,14 @@ public:
 	int products;             ///< Number of potential products made by the primers. If > 1, then we have secondary products. 
 	
 	// Deprecated
-	bool sticky_tail;         ///< Whether we allow sticky tails or not. 
-	int tail_check;           ///< ?? 
+	bool sticky_tail;         ///< Deprecated. Whether we allow sticky tails or not. 
+	int tail_check;           ///< Deprecated. 
 	
 	
 	// Methods
+	/** Calls dimerisation::self_dimer and sets self_dimer. Returns TRUE */
 	int self_dimerisation(void);
+	/** Counts the number of Gs and Cs. Returns the GC count, or FALSE */
 	int get_GC_content(void);
 };
 

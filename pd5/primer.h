@@ -106,7 +106,7 @@ public:
 				
 	}
 
-// Candidate generation
+
 
 	/**
 	 * generate_candidates: Use this function for most purposes.
@@ -117,26 +117,26 @@ public:
 	{
 		return(generate_candidate_primers(template_seq));
 	}
-					
+			
+	/** Do not use this function, use primer::generate_candidates */
 	int generate_candidate_primers(const char* template_sequence);
 	
-	int homopolymeric_run_detection(const char* sequence);
 
-	/**
-	 *\defgroup CandidateDisplay Candidate display
-	 * @{
+	/** @name CandidateDisplay 
+	 * Primer candidate display: Various methods for displaying the primers
 	 */
+	///@{
 	int show_candidate(int candidate_index);
 	int show_candidate(int candidate_index, ofstream &fout);
 	int show_all_candidates();
 	int show_all_candidates(ofstream &fout);
 	int show_all_single_candidates();
-	/** @} */
+	///@}
 
-	/**
-	 *\defgroup CandidateSelection Candidate selection
-	 * @{
+	/** @name CandidateSelection 
+	 * Methods for candidate selection
 	 */
+	///@{
 
 	/** 
 	 * Returns the index of the first candidate primer which is
@@ -149,24 +149,120 @@ public:
 	 * some successful candidates, 0 if no successful candidates. 
 	 * \sa auto_selection */
 	int sort_candidates(void);
+
+	/** AFC: This should return something consistent with the auto_selection? auto_selection returns 0 if first candidate is good enough. rank_selection returns 0 if no candidates */
 	int rank_selection(void)
 	{
-		return(sort_candidates());
+	  return(sort_candidates());
+	  // AFC I propose instead the following, and to update the calls in sputnik_ssr.cpp accordingly:
+	  //if (!sort_candidates()) {return -1;} 
+	  //else { return 0; } 
 	}
 	
-	
+       
+	///@}
 
-	// int manual_selection(int candidate_number);
-	/** @} */
-
+	/** Set the range of locations for the primer's 5' end */
 	int set_primer_location_range(int begin, int end);
+	/** Set the range of lengths for the primer */
 	int set_primer_length_range(int begin, int end);
 
-	/**
-	 *\defgroup PrimerParams User defined primer parameters
-	 * @{
+	/** Defines a sequence that must not be present in the primer */
+	int set_sequence_to_avoid(const char* subsequence)
+	{
+		strcpy(seq_to_avoid, subsequence);
+		avoid_subsequence_check = TRUE;
+		return(TRUE);
+	}
+
+	/** Default limit is 5 */
+	int set_homopolymeric_run_length_limit(int limit) 
+	{
+		homopolymeric_run_length_limit = limit; 
+		return(TRUE);
+	}
+
+	/** Sets the primer::priority */
+	int set_priorities(const char* priority_list); 
+
+
+
+	/** @name SequenceAnalysis 
+	 * Sequence Analysis
 	 */
+	///@{
+
+	/** Calculates hairpin, self dimer and Tm for each candidate */
+	int analyse_all_candidates(void); 
+
+	/** Calculates hairpin score */
+	double hairpin(int candidate_number);
+	// double hairpin(int candidate_number, ofstream &fout);
+
+	/** Calls sequence_utils::tail_check */
+	int tail_check(int candidate_number, const char* b_sequence, ofstream &fout);
+	/** Calls sequence_utils::sticky_tail_check */
+	int sticky_tail_check(int candidate_number);
+
+	/** As for primer::tail_complementarity but outputs detail to stdout */
+	int tail_complementarity_report(const char* sequence);
+	/** Checks if the tail of the sequence will bind to its complement, returns TRUE or FALSE */
+	int tail_complementarity(const char* sequence);
+
+	/** Calculates self_dimer score and returns TRUE */
+	int self_dimer(int candidate_number);
+	/** Calculates self_dimer score, outputs to fout and returns TRUE */
+	int self_dimer(int candidate_number, ofstream &fout);
+
+	/** Deprecated. Do not use (only works for short primers) */
+	int primer_dimer(int candidate_number_a, const char* b_sequence, ofstream &fout);
+	/** Calculates and saves primer dimer forward and reverse scores. Returns 0 */
+	int primer_dimer_2(int candidate_number, const char* b_sequence);
+	/** Calculates and saves primer dimer forward and reverse scores, and outputs to fout. Returns 0 */
+	int primer_dimer_2(int candidate_number, const char* b_sequence, ofstream &fout);
+
+	/** \Deprecated */
+	int blast_yeast(int candidate_number, const char* name);
+	/** \Deprecated */
+	int blast_plasmid(int candidate_number, const char* name);
+	/** \Deprecated */
+	int blast_yeast(int candidate_number, const char* name, ofstream &fout);
+	/** \Deprecated */
+	int blast_plasmid(int candidate_number, const char* name, ofstream &fout);
+
+	/** Use BLAST to find the number of hits of the candidate against the given sequence, with e-value at primer::expectation or better. Calls sequence_utils::blast_seq */
+	int blast_seq(int candidate_number, const char* sequence);
+	/** Use BLAST to find the number of hits of the candidate against the given database, with e-value at primer::expectation or better. Calls sequence_utils::blast_db */
+	int blast_db(int candidate_number, const char* db_name);
 	
+// FASTA implementation 17/2/11 & 24/2/11
+	/** See sequence_utils::Smith_Waterman */
+	int Smith_Waterman(int candidate_number, const char* library);
+	/** See  sequence_utils::fasta3 */
+	int fasta3(int candidate_number, const char* library);
+
+	double expectation;     ///< E-value for use in BLAST searches.
+
+	/** Uses annealing_temperature::primer3_Tm to calculate and save the temperature. */
+	int calculate_temperature(int candidate_number);
+
+	/** Checks for homopolymeric run in sequence. Returns TRUE if found one that is longer 
+	    than allowed length, FALSE otherwise. */
+	int homopolymeric_run_detection(const char* sequence);
+
+
+	///@} 
+
+	/**
+	 * The array of candidate primers. Maximum 102 candidates allowed.
+	 */
+	primer_data candidate[102];
+
+	/** @name PrimerParams 
+	 * User defined primer parameters
+	 */
+	///@{
+
 	bool verbose;
 	
 	int start_location_range_begin; ///< Beginning of range for 5' end 
@@ -185,85 +281,32 @@ public:
 	int candidates_found;           ///< Number of candidates meeting basic criteria. 
 	int good_candidates;            ///< Number of candidates left after scoring and eliminating 
 	
-	bool reverse_primer;            ///< Whether this is  the reverse primer */
+	bool reverse_primer;            ///< Whether this is  the reverse primer 
 	bool downstream_search;			///< Set TRUE to search downstream towards target
-	bool GC_clamping;               ///< ?? Default TRUE
-	bool no_sticky_tails;           ///< ?? Default FALSE
+	bool GC_clamping;               ///< Whether to require primer to end in G or C (but not allow more than 2 GC in final 4 bases. Default TRUE
+	bool no_sticky_tails;           ///< Default FALSE. AFC: NOT USED/CHECKED, DOES NOT CHANGE ANYTHING.
 	bool no_G_primer;				///< Candidate primers should contain no Gs
 	bool no_C_primer;				///< Candidate primers should contain no Cs 
 	bool tail_complementarity_check; ///< Used in the test_candidates method to opt for a tail complentarity check
     
-	int set_sequence_to_avoid(const char* subsequence)
-	{
-		strcpy(seq_to_avoid, subsequence);
-		avoid_subsequence_check = TRUE;
-		return(TRUE);
-	}
-	
 	bool homopolymeric_run_check; ///< Set to true to find homopolymeric runs >= homopolymeric_run_length_limit
 	bool homopolymeric_run_nr_tail_check; ///< True will check for poly runs on the template at the 3' tail location of the primer
-	int set_homopolymeric_run_length_limit(int limit) 
-	{
-		homopolymeric_run_length_limit = limit; ///< Default is 5
-		return(TRUE);
-	}
-	
-	// Auto selection parameters
-	int yeast_nsb_limit;
-	/**
-	 * Default sorting priorities (can have up to 32 including SORT_END). Fill this
-	 * with Priority elements in the order required. Finish with
-	 * SORT_END ??.
-	 */
-#define PRIORITY_LIST_LENGTH_MAX 32
-	
-	Priority priority[PRIORITY_LIST_LENGTH_MAX];
-	int set_priorities(const char* priority_list);
+
+	int yeast_nsb_limit; ///< AFC is this used? Can we generalise it from yeast? 
 	int max_number_candidates;
 
-	/** @} */
+#define PRIORITY_LIST_LENGTH_MAX 32
+	Priority priority[PRIORITY_LIST_LENGTH_MAX]; ///< Default sorting priorities (can have up to 32 including SORT_END). Fill this with Priority elements in the order required. Finish with SORT_END.
 
-	/**
-	 * The array of candidate primers. Maximum 102 candidates allowed.
+
+	///@}
+
+	/** @name MOOWeightings 
+	 * Multi Objective Optimisation weightings 
 	 */
-	primer_data candidate[102];
 
-	/**
-	 *\defgroup SequenceAnalysis Sequence Analysis
-	 * @{
-	 */
-	
-// Sequence analysis
-	int analyse_all_candidates(void); // hairpin, self dimer and Tm
-	double hairpin(int candidate_number);
-	double hairpin(int candidate_number, ofstream &fout);
-	int tail_check(int candidate_number, const char* b_sequence, ofstream &fout);
-	int sticky_tail_check(int candidate_number);
-	
-	int tail_complementarity_report(const char* sequence);
-	int tail_complementarity(const char* sequence);
-	int self_dimer(int candidate_number);
-	int self_dimer(int candidate_number, ofstream &fout);
-	/** Deprecated. Do not use (only works for short primers) */
-	int primer_dimer(int candidate_number_a, const char* b_sequence, ofstream &fout);
-	int primer_dimer_2(int candidate_number, const char* b_sequence);
-	int primer_dimer_2(int candidate_number, const char* b_sequence, ofstream &fout);
-	int blast_yeast(int candidate_number, const char* name);
-	int blast_plasmid(int candidate_number, const char* name);
-	int blast_yeast(int candidate_number, const char* name, ofstream &fout);
-	int blast_plasmid(int candidate_number, const char* name, ofstream &fout);
-	int blast_seq(int candidate_number, const char* sequence);
-	int blast_db(int candidate_number, const char* db_name);
+	///@{
 
-	int calculate_temperature(int candidate_number);
-
-	double expectation;
-	
-// FASTA implementation 17/2/11 & 24/2/11
-	int Smith_Waterman(int candidate_number, const char* library);
-	int fasta3(int candidate_number, const char* library);
-	
-// Multi Objective Optimisation weightings
 	double hairpin_weighting;
 	double self_dimer_weighting;
 	double forward_pair_dimer_weighting;
@@ -271,8 +314,13 @@ public:
 	double annealing_temperature_weighting;
 	double primer_length_weighting;
 
+	///@}
 
-	/** @} */
+
+
+
+
+
 
 private:
 // Candidate generation
@@ -296,7 +344,7 @@ private:
 	bool avoid_subsequence_check;		///< Set to TRUE to avoid including seq_to_avoid in primer sequence
 	char* seq_to_avoid;             ///< A sequence that must not be present in the primer 
 
-	int homopolymeric_run_length_limit; //< Default = 5
+	int homopolymeric_run_length_limit; ///< Default = 5
 	
 
 };

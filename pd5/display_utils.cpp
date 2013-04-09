@@ -58,14 +58,14 @@ int display_utils::extract_product(const char* template_seq, primer_data *fwd, p
   int len   = 1 + end - begin;
 
   if (template_seq == 0 || strlen(template_seq) == 0 || (int)strlen(template_seq) < begin || (int)strlen(template_seq) < (begin+len-1)) {
-    return 0; 
+    return FALSE; 
   } else {
     product = (char *)(malloc (len + 1));
     for (int i = 0; i < len; i++){ 
       product[i] = template_seq[begin+i];
     }
     product[len] = '\0';
-    return 1;
+    return TRUE;
   }
 }
 

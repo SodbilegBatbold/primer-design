@@ -48,29 +48,17 @@
  design applications. It was developed in response to a growing need for increasingly complex primer
  design applications.
  
- The main class for designing primer pairs is primer_pair. The primer class can be used
- where an individual primer needs to be assessed or designed. However, the analysis classes (dimerisation, 
+ The main class for designing primer pairs is primer_pair. The \ref primer class can be used
+ where an individual primer needs to be assessed or designed. However, the analysis classes (\ref dimerisation, 
  annealing_temperature, DNAfind) are designed so that they can be used in isolation
  
  */
 
-
 /** \file primer_pair.h
- \brief Main classes primer pair design
- Primer pair
- 
- Having selected the location of the target and/or regions in which the primers maybe located:-
- 
- Three steps:-
- Generating a number of candidates subject to hard constraints.
- Analyse and score candidate primers
- Sort according to score for most optimum pairs
- 
- Hard constraints
- primer location
- length
- 
+ \brief The main class for designing pairs of primers
+
  */
+
 
 #ifndef PRIMER_PAIR_H
 #define PRIMER_PAIR_H
@@ -80,9 +68,21 @@
 #include "dna_find.h"
 #include "global_defs.h"
 
+
+
+
 //! Primer pair design class
 /**
  The main class for designing pairs of primers
+
+ Having selected the location of the target and/or regions in which the primers may be located, 
+ there are three steps :- 
+ (1) Generate a number of candidates subject to hard constraints.
+ (2) Analyse and score candidate primers
+ (3) Sort according to score for most optimum pairs. 
+ 
+ Hard constraints: primer location, primer length
+
  */
 
 class primer_pair
@@ -91,21 +91,28 @@ public:
 	primer_pair();
 	~primer_pair(){};
 	
-	// Make two instances of the primer class
+	// Two instances of the primer class
 	primer forward_primer;
 	primer reverse_primer;
 	
 	// Array of optimum pair results
 	primer_pair_data pair_candidate[38];
 	
-	int get_primers(const char* dna_template);
+	
+	// int get_primers(const char* dna_template);
+
+	/** AFC: to check */
 	int pair_dimerisation(void);
+
+	/** Sets the begin and end locations of the region for amplification */
 	int set_target_location(int begin, int end);
+	/** Sets the allowed size of flanking regions that can be amplified either side of the target region */
 	int set_flank_lengths(int upstream_flank_length, int downstream_flank_length);
+	/** Sets the allowed length of the primers themselves */
 	int set_primer_length_range(int shortest_length, int longest_length);
 	
-	/** Sets the maximum, minimum and optimum annealing temperatures for primers
-		Default 50, 55, 60
+	/** Sets the maximum, minimum and optimum annealing temperatures for primers.
+		Default 50, 55, 60.
 	 */
 	int set_Tm_range(double minimum, double optimum, double maximum);
 	
@@ -119,19 +126,40 @@ public:
 	 */
 	int candidate_analysis(void);
 	
+	/** Sort the pair candidates by increasing Tm difference */
 	int sort_Tm_difference(int data_size);
+	/** Sort the pair candidates by increasing number of PCR products */
 	int sort_products(int data_size);
+	/** Sort the pair candidates by increasing pair dimer score of the forward primer */
 	int sort_f_pair_dimer(int data_size);
+	/** Sort the pair candidates by increasing pair dimer score of the reverse primer */
 	int sort_r_pair_dimer(int data_size);
 	
+	/** Sort the individual candidates by increasing pair dimer score of the reverse primer 
+	    (that is, sort the forward primer candidates, then sort the reverse primer candidates) 
+	*/
 	int sort_individual_candidates(const char* priority_list);
-	
-	int make_pair_candidates(int number_of_forward_candidates, int number_of_reverse_candidates);
-	int number_of_pair_candidates;
-	int good_pair_candidates;
-	
-	int sort_pair_candidates(const char* priority_list);
+	/** Show all the forward primer candidates, then show all the reverse primer candidates */
 	int show_individual_candidates(void);
+	
+	/** Fill a pair_candidates array with the pairs made by the cross product of the forward 
+	    candidates and the reverse candidates. That is, each forward candidate is paired with 
+	    every reverse candidate 
+	*/
+	int make_pair_candidates(int number_of_forward_candidates, int number_of_reverse_candidates);
+	/** The total number of pairs of candidates that were generated (including ones that are not good) */
+	int number_of_pair_candidates;
+	/** The number of pairs of candidates being considered that are still "good" (that meet the 
+	    criteria given) 
+	*/
+	int good_pair_candidates;
+	/** Sort the primer pair candidates by the chosen priorities. If the pair 
+	    candidates array was not already populated with pairs, get the best 6 
+	    (or less if 6 not available) of each forward and reverse primers to 
+	    make 36 primer pairs before sorting.
+	*/
+	int sort_pair_candidates(const char* priority_list);
+	/** Write the details of the var best candidates to stdout */
 	int show_best_pair_candidates(int var);
 	
 	//Make parameters public for now 6/4/11
@@ -150,8 +178,10 @@ public:
 	int reverse_required_GC_content;
 	int reverse_GC_tolerance;
 	
-	/** \defgroup moopair Primer pair multi objective optimisation 
-	 @{ */
+	/** @name moopair 
+	 * Primer pair multi objective optimisation 
+	 */
+	///@{
 	/** Uses multi objective optimisation to sort for optimum primer pairs */
 	int sort_moo(int data_size);
 	
@@ -164,8 +194,8 @@ public:
 	//! Multi Objective Optimisation weighting
 	double Tm_diff_weighting;
 	 
-	 /** @} */
-// Accessor methods
+	///@}
+
 	
 private:
 	int upstream_flank_length;
