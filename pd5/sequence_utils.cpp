@@ -114,10 +114,8 @@ int sequence_utils::nucleotide_content(int nucleotide, const char* sequence)
 
 int sequence_utils::compare_sequences(const char* a_seq, const char* b_seq, double complementarity, ofstream &fout)
 {
-        unsigned int sequence_length = strlen(a_seq), i; //, j;
-	//double Tm;
+        unsigned int sequence_length = strlen(a_seq), i;
 	char match[sequence_length];
-	//char seq_data[1000];
 	bool HIT = FALSE;
 	
 	if(sequence_length != strlen(b_seq))
@@ -142,7 +140,7 @@ int sequence_utils::compare_sequences(const char* a_seq, const char* b_seq, doub
 	
 	match[i] = 0;
 	
-	if(number_of_matches > sequence_length * complementarity) // >80% MATCH	
+	if(number_of_matches > sequence_length * complementarity) 
 	{		
 		fout << a_seq << endl;
 		fout << match << endl;

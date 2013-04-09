@@ -134,7 +134,7 @@ int primer_pair::pair_dimerisation(void)
 {
 	dimerisation pair_dimer;
 	
-	// Uses primer_data
+	// Uses primer_data - DOES IT? AFC: LOOKS LIKE IT SETS PARAMS IN THE LOCAL pair_dimer
 	pair_dimer.pair_dimer(forward_primer.candidate[0].sequence, reverse_primer.candidate[0].sequence);
 	
 	// Uses primer_pair_data
@@ -544,9 +544,9 @@ int primer_pair::show_best_pair_candidates(int var)
 	return(TRUE);
 }
 
-/**
- Sets the required minimum, optimum and maximum annealing temperatures for both forward and reverse primers.
- */
+
+
+// Sets the required minimum, optimum and maximum annealing temperatures for both forward and reverse primers.
 
 int primer_pair::set_Tm_range(double minimum, double optimum, double maximum)
 {

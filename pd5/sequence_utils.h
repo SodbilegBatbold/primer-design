@@ -73,6 +73,7 @@
 #define URACIL 85
 #define ANYNUCLEOTIDE 78
 
+
 using namespace std;
 
 //! Methods for sequence analysis and manipulation
@@ -89,21 +90,40 @@ class sequence_utils
 	};
 	
 	~sequence_utils(){};
-  //int hairpin(const char* sequence, primer_data_structure &score);
-  //	int hairpin(const char* sequence, primer_data_structure &score, ofstream &fout);
+	// int hairpin(const char* sequence, primer_data_structure &score);
+	// int hairpin(const char* sequence, primer_data_structure &score, ofstream &fout);
+	/** Compares last 15 bases of each sequence for tail complementarity. Returns number of hits */ 
 	static int tail_check(const char* a_sequence, const char* b_sequence, ofstream &fout);
+	/** Returns TRUE if sequence ends in GC or CG, else FALSE */
 	static int sticky_tail_check(const char* query_sequence);
+	
 	//int self_dimer(const char* a_sequence, primer_data_structure &score);
 	//int self_dimer(const char* a_sequence, primer_data_structure &score, ofstream &fout);
 	/** Deprecated. Do not use (only works for short primers) */
 	static int primer_dimer(const char* a_sequence, const char* b_sequence, ofstream &fout);
+	/** See dimerisation::primer_dimer_V2. Always returns 0 */
 	static int primer_dimer_2(const char* a_sequence, const char* b_sequence);
+	/** See dimerisation::primer_dimer_V2. Always returns 0. Outputs to fout */
 	static int primer_dimer_2(const char* a_sequence, const char* b_sequence, ofstream &fout);
+
+	/// deprecated
 	static int blast_yeast(const char* sequence, const char* name, double expectation);
+	/// deprecated
 	static int blast_plasmid(const char* sequence, const char* name, double expectation);
+	/// deprecated
 	static int blast_yeast(const char* sequence, const char* name, double expectation, ofstream &fout);
+	/// deprecated
 	static int blast_plasmid(const char* sequence, const char* name, double expectation, ofstream &fout);
+
+	/** Use blastn to find the number of hits of the candidate against the given 
+	    sequence, with e-value at primer::expectation or better. blastn must be 
+	    installed and in your PATH. Returns the number of hits. */
 	static int blast_seq(const char* query, const char* sequence, double expectation);
+
+	/** Use blastn to find the number of hits of the candidate against the given 
+	    database, with e-value at primer::expectation or better. blastn must be 
+	    installed and in your PATH. The database must exist and be pre-formatted. 
+	    Returns the number of hits. */
 	static int blast_db(const char* query, const char* db_name, double expectation);
 
 
@@ -111,16 +131,23 @@ class sequence_utils
 
 	
 // FASTA implementation 17/2/11 & 24/2/11
+	/** Uses ssearch35 to search for hits of query against library. Returns the number of hits. */
 	static int Smith_Waterman(const char* query, const char* library, double expectation);
+	/** Uses fasta35 to search for hits of query against library. Returns the number of hits. */
 	static int fasta3(const char* query, const char* library, double expectation);
+
+	/** Returns the number of hits parsed from the file-based output of fasta. */ 
 	static int fasta_results_parser(const char* fasta_output_filename);
 
-	
+	/** Returns the number of Gs and Cs in a sequence */
 	static int GC_content(const char* sequence);
+	/** Returns the count of a particular nucleotide in the sequence. Use #def'd constants, 
+	    ADENINE etc for the nucleotide */
 	static int nucleotide_content(int nucleotide, const char* sequence);
-
+	/** Returns the complement of a particular nucleotide. Use #def'd constants, 
+	    ADENINE etc for the nucleotide */
 	static int nucleotide_complement(int nucleotide);
-	//char* reverse_complement(const char* sequence);
+	/** Calculate the reverse complement */ 
 	static int reverse_complement(const char* orig_string, char* out_string);
 	
 private:

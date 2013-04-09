@@ -4,7 +4,7 @@
  
  display_utils.h
  
- Created by Amanda Clare on 01/06/2011 - afc"at"aber.ac.uk
+ Created by Michael Riley and Amanda Clare on 01/06/2011 
  
  Copyright (c) 2010, 2011 Aberystwyth University. 
  All rights reserved.
@@ -71,9 +71,24 @@ class display_utils
   display_utils();
   ~display_utils() {};
   
+  /**
+     \brief Populates \a product with the product that would be created from \a template_seq using the \a fwd and \a rev primers. 
+
+     Returns TRUE if successful and FALSE otherwise.  
+   */
   int extract_product(const char* template_seq, primer_data *fwd, primer_data *rev, char * &product);
   
+  /**
+     \brief Populates \a output with the \a template_seq where the \a primers are highlighted in red. 
+
+     Returns the length of the output.
+   */
   int html_colour_sequence(const char* template_seq, primer_pair_data *primers, char * &output);
+  /**
+     \brief Populates \a output with the \a template_seq where the \a fwd and \a rev primers are highlighted in red. 
+
+     Returns the length of the output.
+   */
   int html_colour_sequence(const char* template_seq, primer_data *fwd, primer_data *rev, char * &output);
 
 };

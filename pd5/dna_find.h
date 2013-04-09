@@ -77,17 +77,18 @@ public:
 
 //! Secondary binding class
 /**
- Methods for detecting potential secondary primer binding on the template and potential secondary products
+ Methods for detecting potential secondary primer binding on the template and potential secondary products.
+ 
  Example use for genome of S. cerevisiae:
  
- \\\DNAfind my_dnafind("s_cere_genome.fa");
- \\\my_dnafind.set_max_mismatches(5);\\
- \\\my_dnafind.set_tail_length(20);\\
- \\\my_dnafind.set_max_viable_product_length(3500);\\
+     DNAfind my_dnafind("s_cere_genome.fa");
+     my_dnafind.set_max_mismatches(5);
+     my_dnafind.set_tail_length(20);
+     my_dnafind.set_max_viable_product_length(3500);
   
- \\\int products = my_dnafind.search_for_pcr_products(primer_A, primer_B); 
+     int products = my_dnafind.search_for_pcr_products(primer_A, primer_B); 
  
- \\\cout << "Number of products = " << products << endl;
+     cout << "Number of products = " << products << endl;
  */
 
 class DNAfind: public sequence_utils
@@ -116,12 +117,13 @@ public:
 		fin.close();
 	};
 	
-	location_data forward_primer_match_locations[1000];
-	location_data reverse_primer_match_locations[1000];
+	location_data forward_primer_match_locations[1000]; ///< Calculated results stored here
+	location_data reverse_primer_match_locations[1000]; ///< Calculated results stored here
 	
 	/** \brief Secondary binding site prediction */
 	/** Finds all potential binding site locations. Returns number of binding sites found, locations 
-	 of all sites found are in location_data \sa set_max_mismatches(), set_tail_length() */
+	 of all sites found are in forward_primer_match_locations and reverse_primer_match_locations
+	 \sa set_max_mismatches(), set_tail_length() */
 	int search_for_binding_sites(const char* sequence);
 	
 	/** \brief Secondary product prediction */
@@ -148,8 +150,8 @@ public:
 	int set_max_viable_product_length(int var);
 	
 	//int set_optimisation(int var);
-	bool GC_array_optimisation;
-	bool report_details;
+	bool GC_array_optimisation; ///< Optimisation parameter
+	bool report_details;   ///< Outputs to stdout
 	
 private:
 	ifstream fin;

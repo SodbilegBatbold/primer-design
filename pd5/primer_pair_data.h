@@ -65,26 +65,31 @@ public:
 	//primer_pair_data();
 	//~primer_pair_data(){};
 	
-	char forward_sequence[128];
-	char reverse_sequence[128]; 
-	int forward_index;
-	int reverse_index;
-	int location_forward_5_prime_end;
-	int location_reverse_5_prime_end;
-	double forward_hairpin_score;
-	double reverse_hairpin_score;
-	double forward_self_dimer_score;
-	double reverse_self_dimer_score;
-	double forward_annealing_temperature;
-	double reverse_annealing_temperature;
-	double forward_pair_dimer_score; ///< forward 3' tail on reverse primer
-	double reverse_pair_dimer_score; ///< reverse 3' tail on forward primer
-	int number_of_pcr_products;
-	double annealing_temperature_difference;
-	double moo_score;
+	char forward_sequence[128]; ///< Forward primer sequence. Limited to 128 chars. We do not want primers over 100 nt in length anyway 
+	char reverse_sequence[128]; ///< Reverse primer sequence. Limited to 128 chars. We do not want primers over 100 nt in length anyway 
+	int forward_index;   ///< Which forward primer this was, out of the array of candidates
+	int reverse_index;   ///< Which reverse primer this was, out of the array of candidates
+	int location_forward_5_prime_end;  ///< Location of the 5' end. Locations begin at 0, not 1.
+	int location_reverse_5_prime_end;  ///< Location of the 5' end. Locations begin at 0, not 1.
+	double forward_hairpin_score;  ///< The score for hairpin potential.
+	double reverse_hairpin_score;  ///< The score for hairpin potential.
+	double forward_self_dimer_score;  ///< The score for self-dimer potential.  
+	double reverse_self_dimer_score;  ///< The score for self-dimer potential.  
+	double forward_annealing_temperature; ///< The calculated annealing temperature 
+	double reverse_annealing_temperature;  ///< The calculated annealing temperature 
+	double forward_pair_dimer_score; ///< Dimer score of forward 3' tail on reverse primer
+	double reverse_pair_dimer_score; ///< Dimer score of reverse 3' tail on forward primer
+	int number_of_pcr_products;  ///< The number of potential products that this pair could make
+	double annealing_temperature_difference; ///< The calculated difference between annealing temperatures 
+	double moo_score;   ///< Multi objective optimisation score
 	
 	// Methods
+	/** Calls pair_dimer on forward_sequence and reverse_sequence and sets the 
+	    forward_pair_dimer_score and reverse_pair_dimer_score. Returns TRUE on success 
+	    and FALSE on failure. */
 	int pair_dimerisation(void);
+	/** Sets number_of_pcr_products by calling DNAfind::search_for_pcr_products. Returns 
+	    TRUE on success and FALSE on failure. */
 	int pcr_products(DNAfind &mynsb);
 };
 

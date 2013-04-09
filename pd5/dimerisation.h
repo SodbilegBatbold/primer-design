@@ -57,9 +57,11 @@
 
 #include "sequence_utils.h"
 
+#define ERROR -1
+/*
 #define TRUE 1
 #define FALSE 0
-#define ERROR -1
+
 
 #define ADENINE 65
 #define THYMINE 84
@@ -67,6 +69,7 @@
 #define CYTOSINE 67
 #define URACIL 85
 #define ANYNUCLEOTIDE 78
+*/
 
 using namespace std;
 
@@ -81,32 +84,46 @@ public:
 	dimerisation();
 	~dimerisation(){};
 	
-	/** \brief hairpin */
-	/** This is the current recommended method for hairpin prediction. It uses 3' tail binding affinity	 
+	/** \brief This is the current recommended method for hairpin prediction. It uses 3' tail 
+	    binding affinity
 	 */
 	int hairpin(const char* sequence);
 	
 	/**
-	 \brief self_dimer
-	 
-	 This is the current recommended method for self dimerisation prediction. It uses 3' tail binding affinity	 
+	 \brief This is the current recommended method for self dimerisation prediction. It uses 3' 
+	 tail binding affinity
+
+	 Sets self_dimer_score and self_dimer_location. Returns TRUE
 	 */
 	int self_dimer(const char* a_sequence);
+	/**
+	 \brief As for dimerisation::self_dimer(const char* a_sequence) but also outputs to fout.
+
+	 Sets self_dimer_score and self_dimer_location. Returns TRUE
+	 */
 	int self_dimer(const char* a_sequence, ofstream &fout);
 	
 	/**
-	 \brief pair_dimer
-	 
-	 This is the current recommended method for pair dimerisation prediction. It uses 3' tail binding affinity	 
+	 \brief This is the current recommended method for pair dimerisation prediction. 
+	 It uses 3' tail binding affinity
+
+	 Sets forward_dimer_score, reverse_dimer_score, forward_dimer_location and 
+	 reverse_dimer_location. Returns TRUE
 	 */
 	int pair_dimer(const char* a_sequence, const char* b_sequence);
 	
 	/**
-	 \brief primer_dimer_V2
+	 \brief Deprecated
 	 
 	 Deprecated method for determining potential dimerisation. 
 	 */	
 	int primer_dimer_V2(const char* a_sequence, const char* b_sequence);
+
+	/**
+	 \brief Deprecated
+	 
+	 Deprecated method for determining potential dimerisation. 
+	 */	
 	int primer_dimer_V2(const char* a_sequence, const char* b_sequence, ofstream &fout);
 	
 	/**
@@ -115,9 +132,13 @@ public:
 	 Old method for determining potential dimerisation. Displays in file all complementary matches over
 	 a predefined percentage (default 80%).
 	 
-	 See also: set_percentage_complementarity(int var);
+	 \sa pair_dimer, set_percentage_complementarity
 	 */
 	int percentage_complementarity(const char* a_sequence, const char* b_sequence, ofstream &fout);
+
+	/**
+	 \brief Percentage complementarity accessor. var must be between 0 and 100.
+	*/
 	int set_percentage_complementarity(int var);
 	
 	/** 
@@ -129,7 +150,7 @@ public:
 	 */
 	int thermodynamic_dimerisation(const char* a_sequence, const char* b_sequence);
 	
-	char* match;
+	//char* match;
 	
 	int dimer_tail_length;
 	int high_scoring_limit;
@@ -141,9 +162,9 @@ public:
 	int hairpin_location;
 	double self_dimer_score;
 	int self_dimer_location;
-	double forward_dimer_score; // Score for the A sequence (forward primer) tail matched to the entire B sequence
+	double forward_dimer_score; ///< Score for the A sequence (forward primer) tail matched to the entire B sequence
 	int forward_dimer_location;
-	double reverse_dimer_score; // Score for the B sequence (reverse primer) tail matched to the entire A sequence
+	double reverse_dimer_score; ///< Score for the B sequence (reverse primer) tail matched to the entire A sequence
 	int reverse_dimer_location;
 	
 private:

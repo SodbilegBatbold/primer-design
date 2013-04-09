@@ -67,16 +67,16 @@ public:
 	~annealing_temperature(){};
 		
 	/** A very basic method suitable for short sequences no more than 13 bp. Not recommended,
-	 but included for research/historical purposes. */
+	 but included for research/historical purposes. Returns the temperature. */
 	double Marmur_method(const char* sequence);
 	
 	/** Non linear equation method based on sequence length and GC content. Does not compensate
-	 for GC clustering. \sa Wallace_method */
+	 for GC clustering. Returns the temperature. \sa Wallace_method. */
 	double Freier_method(const char* sequence);
 			
 	/** Non linear equation method based on sequence length and GC content. Does not compensate
 	 for GC clustering. Maps primer3's Santa Lucia algorithm well for non clustered sequences 
-	 and handles sequences > 32 bp. \sa Freier_method */
+	 and handles sequences > 32 bp. Returns the temperature. \sa Freier_method.  */
 	double Wallace_method(const char* sequence);
 	
 	/** Container for future development of a thermodynamic annealing temperature calculation.
@@ -85,7 +85,7 @@ public:
 	double Santa_Lucia_method(const char* primer_sequence, const char* template_sequence);
 	
 	/**
-	\defgroup Primer3 Primer3's annealing temperature method
+	\defgroup Primer3 Primer3's annealing temperature methods
 	@{
 	*/
 	

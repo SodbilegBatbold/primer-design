@@ -61,8 +61,6 @@ primer::primer()
 {
 	reverse_primer = FALSE;
 	verbose = FALSE;
-	// Initialise this look-up string for use by base_complement
-	//strcpy(complement, "T G   C      N     A");
 		
 	expectation = 0.5;
 	
@@ -80,7 +78,7 @@ primer::primer()
 	length_range_shortest = 18;      
 	length_range_longest = 25; 
 	
-	yeast_nsb_limit = 1; //
+	yeast_nsb_limit = 1; 
 	
 	optimum_primer_length = 21;
 	optimum_Tm = 55.0;
@@ -167,7 +165,6 @@ int primer::set_primer_length_range(int begin, int end)
 }
 
 
-/** CANDIDATE GENERATION */
 
 int primer::generate_candidate_primers(const char* template_sequence)
 {
