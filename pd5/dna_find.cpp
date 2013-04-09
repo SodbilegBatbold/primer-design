@@ -76,9 +76,7 @@ int DNAfind::find_sequence(const char* sequence,
 			break;
 		}
 	}
-	
-
-	
+		
 	for(i = 0; i < (dna_len - seq_len); i++)
 	{
 		if(sequence[First_GC] == dna_template[i + First_GC])
@@ -113,40 +111,6 @@ int DNAfind::find_sequence(const char* sequence,
 			}
 		}
 	}
-	
-	// OR
-	/*
-	int x = 0;
-	int opt_array_limit = 5;
-	int offset[opt_array_limit];
-	
-	for(i = 0; i < seq_len; i++)
-	{	
-		if(sequence[i] == GUANINE || sequence[i] == CYTOSINE)
-		{ 
-			offset[x] = i;
-			if(++x > opt_array_limit)break;
-		}
-	}
-	
-	int offset_array_size = x;
-	
-	for(i = 0; i < (dna_len - seq_len); i++)
-	{
-		found = TRUE;
-		for(x = 0; x < offset_array_size; i++)
-		{
-			if(sequence[offset[x]] != dna_template[i + offset[x]])
-			{	
-				found = FALSE;
-				break;
-			}
-		}
-		if(found) cout << "Possible match found\n"; // match and evaluate BAV
-	}
-	*/
-	/***************************************************/
-	// Repetition here!
 	
 	char rc_sequence[seq_len + 1];	
 	sequence_utils::reverse_complement(sequence, rc_sequence);
@@ -304,25 +268,6 @@ long find_subset(string sequence, string dna_template)
 	return(location);
 }
 
-
-
-int DNAfind::find_sequence_II(string sequence, 
-							  string dna_template,
-							  location_data sequence_match[])
-{
-	int number_of_matches = 0;
-	string rc_sequence;	
-
-	find_subset(sequence, dna_template);
-	 	
-	rc_sequence = reverse_complement(sequence);
-	
-	cout << rc_sequence << endl;
-	//find_subset(rc_sequence, dna_template);
-	
-	return(number_of_matches);
-		
-}
 
 /** Speed options:
  first_GC_opt() looks for the first S (S = G or C) starting from the 5' end of the sequence
@@ -531,122 +476,6 @@ int DNAfind::find_sequence(const char* sequence,
 }
 
 
-
-int DNAfind::find_sequence_III(const char* sequence, 
-							   const char* dna_template, 
-							   location_data sequence_match[])
-{
-	long i;
-	int index, errors, j;
-	int First_GC, count = 1000;
-	bool found = FALSE; // Matching/close matching sequence found
-	bool high_BAV = FALSE; // Binding Affinity Value (BAV) exceeds threshold if TRUE	
-	long seq_len = strlen(sequence);
-	long dna_len = strlen(dna_template);
-	
-	index = 0;
-	
-	/** Optimise search for genomes with low GC content */
-	//find a G or C
-	First_GC = 0; // Use 0 default if no Gs or Cs found in sequence
-	
-	for(i = 0; i < seq_len; i++)if(sequence[i] == GUANINE || sequence[i] == CYTOSINE){First_GC = i; break;}
-	
-	/** Search the DNA template (most likely a chromosome) for a match/close match
-	 to the sequence
-	 */
-	for(i = 0; i < (dna_len - seq_len); i++)
-	{
-		if(sequence[First_GC] == dna_template[i + First_GC])
-		{
-			found = TRUE;
-			errors = 0;
-			for(j = 0; j < seq_len; j++)
-			{
-				if(sequence[j] != dna_template[i + j])
-				{
-					if(errors++ >= max_mismatches){found = FALSE; break;}
-				}
-			}
-			
-			/** If a match is found, evaluate the binding affinity and if the BA value exceeds
-			 the threshold, set high_BA to TRUE
-			 */
-			high_BAV = TRUE;
-			// evaluate_BAV_P3();
-			// evaluate_BAV_Hgen();
-			// evaluate_BAV_Wallace();
-			
-			if(found && high_BAV)
-			{
-				sequence_match[index].location = i;
-				sequence_match[index].sense_strand = TRUE;
-				//cout << "Found " << sequence << " at w " << location[count] << endl;
-				index++;
-				if(index > count)
-				{
-#ifdef DNAFIND_DEBUG					
-					cout << "Error: more than " << count << " matches\n";
-#endif
-					return(index);
-				}
-				
-				found = FALSE;
-				//if(count >= 30)break;
-			}
-		}
-	}
-	
-	char rc_sequence[seq_len + 1];	
-	sequence_utils::reverse_complement(sequence, rc_sequence);
-	
-	/** Optimise search for genomes with low GC content */
-	//find a G or C
-	First_GC = 0; // Use 0 default if no Gs or Cs found in sequence
-
-	for(i = 0; i < seq_len; i++)
-		if(rc_sequence[i] == GUANINE || rc_sequence[i] == CYTOSINE){First_GC = i; break;}
-	
-	for(i = 0; i < (dna_len - seq_len); i++)
-	{
-		if(rc_sequence[First_GC] == dna_template[i + First_GC])
-		{
-			found = TRUE;
-			errors = 0;
-			for(j = 0; j < seq_len; j++)
-			{
-				if(rc_sequence[j] != dna_template[i + j])
-				{
-					if(errors++ >= max_mismatches){found = FALSE; break;};
-				}
-			}
-			
-			if(found)
-			{
-				sequence_match[index].location = i + seq_len;
-				sequence_match[index].sense_strand = FALSE;
-				//cout << "Found " << rc_sequence << " at c " << location[count] << endl;
-				index++;
-				if(index > count)
-				{
-#ifdef DNAFIND_DEBUG					
-					cout << "Error: more than " << count << " matches\n";
-#endif
-					return(index);
-				}
-				
-				found = FALSE;
-				//if(count >= 30)break;
-			}
-		}
-	}
-	
-	//matches += index;
-	
-	return(index);
-	
-}
-
 int DNAfind::search_for_binding_sites(const char *sequence)
 {	
 	//fasta reader
@@ -654,21 +483,19 @@ int DNAfind::search_for_binding_sites(const char *sequence)
 	char *s_buffer, *buffer, *token;
 	int i = 0;
 	long location;
-	bool chr_for_processing = FALSE;
-	
+	bool chromosome_for_processing = FALSE;	
 	
 	char tail_sequence[20];
 	
-	/* For normal sequence
+	// For normal sequence
 	int sequence_length = strlen(sequence);
 	for(i = 0; i < tail_length; i++)
 		tail_sequence[i] = sequence[i + sequence_length - tail_length];
-	*/
 	
-	// For reverse complement sequence
+	/* For reverse complement sequence
 	for(i = 0; i < tail_length; i++)
 		tail_sequence[i] = sequence[i];
-
+     */
 	// Terminate sequence string
 	tail_sequence[tail_length] = 0;
 
@@ -693,7 +520,7 @@ int DNAfind::search_for_binding_sites(const char *sequence)
 		
 		if(buffer[0] == 0x3E)  // fasta header
 		{
-			if(chr_for_processing) // We have a chromosome - do stuff to it
+			if(chromosome_for_processing)
 			{
 #ifdef DNAFIND_DEBUG				
 				cout << "chromo for processing\n";
@@ -708,10 +535,10 @@ int DNAfind::search_for_binding_sites(const char *sequence)
 				
 				//cout << "Found " << location << endl;
 				chromosome.clear();
-				chr_for_processing = FALSE;
+				chromosome_for_processing = FALSE;
 			}
 			strcpy(header_id, strtok(buffer, " >\n\t\r"));
-			chr_for_processing = TRUE;
+			chromosome_for_processing = TRUE;
 			//cout << header_id << endl;
 		}
 		else 
@@ -723,7 +550,7 @@ int DNAfind::search_for_binding_sites(const char *sequence)
 		//if(i++ > 2) break;
 	} 
 	
-	if(chr_for_processing) // We have a chromosome - do stuff to it
+	if(chromosome_for_processing)
 	{
 #ifdef DNAFIND_DEBUG		
 		cout << "Last one\n";
@@ -738,7 +565,7 @@ int DNAfind::search_for_binding_sites(const char *sequence)
 		
 		//cout << "Found " << location << endl;
 		chromosome.clear();
-		chr_for_processing = FALSE;
+		chromosome_for_processing = FALSE;
 	}
 	
 	// matches is a member var updated by find_sequence()
@@ -871,92 +698,10 @@ int DNAfind::process_chromosome(const char *chromosome,
 	return(products);
 }
 
-int DNAfind::search_for_pcr_products_II(const char *forward_sequence, 
-										const char *reverse_sequence)
-{	
-	//fasta reader using char arrays
-	
-	char header_id[32];
-	char buffer[2056];
-	char *token;
-	bool chr_for_processing = FALSE;
-	int number_of_products_found = 0;
-	char *chromosome = NULL;
-	bool FASTA_SEQUENCE = FALSE;
-
-#ifdef DNAFIND_DEBUG
-	cout << "Nsb product search\n";
-#endif
-	
-	fin.clear();
-	fin.seekg(0, ios::beg);
-	
-	/** IMPORTANT:
-	 When searching for binding sites and secondary products we need to find not where the primers
-	 match, but where they bind, which is the reverse complement of the primer.
-	 */
-	
-	while(fin.getline(buffer, 2055))
-	{			
-		if(buffer[0] == 0x3E)  // fasta header
-		{
-			if(chr_for_processing) // We have a chromosome - do stuff with it
-			{
-#ifdef DNAFIND_DEBUG				
-				cout << "Processing chromosome\n";
-#endif				
-				number_of_products_found += process_chromosome(chromosome, forward_sequence, reverse_sequence);
-				free(chromosome);
-				chr_for_processing = FALSE;
-			}
-			token = strtok(buffer, " >\n\t\r");
-			if(token)strcpy(header_id, token);
-			chr_for_processing = TRUE;
-			
-#ifdef DNAFIND_DEBUG			
-			cout << header_id << endl;
-#endif			
-		}
-		else if(FASTA_SEQUENCE)
-		{
-			token = strtok(buffer, " >\n\t\r");
-			if(*token)
-			{
-				chromosome = (char*)realloc(chromosome, strlen(chromosome) + strlen(token) + 1);
-				strcat(chromosome, token);
-			}
-		}
-		else 
-		{
-			token = strtok(buffer, " >\n\t\r");
-			if(*token)
-			{
-				chromosome = (char*) malloc(strlen(token) + 1);
-				strcpy(chromosome, token);
-			
-				FASTA_SEQUENCE = TRUE;
-			}
-		}
-	} 
-	
-	if(chr_for_processing) // We have a chromosome - do stuff with it
-	{
-#ifdef DNAFIND_DEBUG		
-		cout << "Processing last chromosome\n";
-#endif		
-		number_of_products_found += process_chromosome(chromosome, forward_sequence, reverse_sequence);
-		free(chromosome);
-		chr_for_processing = FALSE;
-	}
-	return(number_of_products_found);
-}
 
 /** DNAfind::search_for_pcr_products:
  Takes the forward and reverse primer sequences and searches for primer binding sites that
  would result in a PCR reaction generating a product no larger that max_viable_product_length.
- 
- When searching for binding sites and secondary products we need to find not where the primers
- match, but where they bind, which is the complement of the primer.
  */
 
 int DNAfind::search_for_pcr_products(const char *forward_primer, 
@@ -967,7 +712,7 @@ int DNAfind::search_for_pcr_products(const char *forward_primer,
 	int i;
 	char header_id[32];
 	char *buffer, *token;
-	bool chr_for_processing = FALSE;
+	bool chromosome_for_processing = FALSE;
 	int number_of_products_found = 0;	
 	char *str_chromosome;	
 	string t_buffer;
@@ -1016,7 +761,7 @@ int DNAfind::search_for_pcr_products(const char *forward_primer,
 		
 		if(buffer[0] == 0x3E)  // fasta header
 		{
-			if(chr_for_processing) // We have a chromosome - do stuff with it
+			if(chromosome_for_processing)
 			{				
 				// Convert c_string to char*
 				str_chromosome = new char [chromosome.size() + 1];
@@ -1033,11 +778,11 @@ int DNAfind::search_for_pcr_products(const char *forward_primer,
 				
 				chromosome.clear();
 				delete[] str_chromosome;
-				chr_for_processing = FALSE;
+				chromosome_for_processing = FALSE;
 			}
 			
 			strcpy(header_id, strtok(buffer, " >\n\t\r"));
-			chr_for_processing = TRUE;					
+			chromosome_for_processing = TRUE;					
 		}
 		else 
 		{
@@ -1047,7 +792,7 @@ int DNAfind::search_for_pcr_products(const char *forward_primer,
 		delete[] buffer;
 	} 
 	
-	if(chr_for_processing) // We have a chromosome - do stuff with it
+	if(chromosome_for_processing)
 	{	
 		// Convert c_string to char*
 		str_chromosome = new char [chromosome.size() + 1];
@@ -1064,7 +809,7 @@ int DNAfind::search_for_pcr_products(const char *forward_primer,
 		
 		chromosome.clear();
 		delete[] str_chromosome;
-		chr_for_processing = FALSE;
+		chromosome_for_processing = FALSE;
 	}
 	
 	return(number_of_products_found);
@@ -1105,16 +850,5 @@ int DNAfind::set_max_viable_product_length(int var)
 	}	
 }
 
-/*	
- string forward_sequence_tail;
- string reverse_sequence_tail;
- string chromosome;
- 
- forward_sequence_tail.assign(forward_sequence, tail_length);
- reverse_sequence_tail.assign(reverse_sequence, tail_length);
- chromosome.assign(chromosome_str);
- 
- int f_count = find_sequence_II(forward_sequence_tail, chromosome, forward_primer_match_locations);
- int r_count = find_sequence_II(reverse_sequence_tail, chromosome, reverse_primer_match_locations);
- */
+
 
