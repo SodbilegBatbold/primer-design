@@ -89,7 +89,7 @@ public:
      cout << "Number of products = " << products << endl;
  */
 
-class DNAfind: public sequence_utils
+class DNAfind
 {
 public:
 	//! Constructor

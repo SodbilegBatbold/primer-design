@@ -82,7 +82,7 @@ bool dimerisation::compare_sequences(const char* a_seq, const char* b_seq, doubl
 	int number_of_matches = 0;
 	for(i = 0; i < sequence_length; i++)
 	{ 
-		if(a_seq[i] == nucleotide_complement(b_seq[i]))
+	  if(a_seq[i] == sequence_utils::nucleotide_complement(b_seq[i]))
 		{
 			match[i] = 124; // In DOS | = 179, in File text | = 124
 			number_of_matches++;
@@ -117,7 +117,7 @@ int dimerisation::hairpin(const char* sequence)
 		
 		for(i = 0; i < dimer_tail_length; i++)
 		{
-			if(tail[i] == nucleotide_complement(sequence[j + i]))
+		  if(tail[i] == sequence_utils::nucleotide_complement(sequence[j + i]))
 			{
 				if(tail[i] == CYTOSINE || tail[i] == GUANINE)
 				{
@@ -172,7 +172,7 @@ int dimerisation::self_dimer(const char* a_sequence, ofstream &fout)
 		
 		for(i = 0; i < dimer_tail_length; i++)
 		{
-			if(tail[i] == nucleotide_complement(a_sequence[j + i]))
+		  if(tail[i] == sequence_utils::nucleotide_complement(a_sequence[j + i]))
 			{
 				if(tail[i] == CYTOSINE || tail[i] == GUANINE)
 				{
@@ -226,7 +226,7 @@ int dimerisation::self_dimer(const char* a_sequence)
 		
 		for(i = 0; i < dimer_tail_length; i++)
 		{
-			if(tail[i] == nucleotide_complement(a_sequence[j + i]))
+		  if(tail[i] == sequence_utils::nucleotide_complement(a_sequence[j + i]))
 			{
 				if(tail[i] == CYTOSINE || tail[i] == GUANINE)
 				{
@@ -268,7 +268,7 @@ int dimerisation::self_dimer(const char* a_sequence)
 		
 		for(i = 0; i < dimer_tail_length; i++)
 		{
-			if(tail[i] == nucleotide_complement(a_sequence[j + i]))
+		  if(tail[i] == sequence_utils::nucleotide_complement(a_sequence[j + i]))
 			{
 				if(tail[i] == CYTOSINE || tail[i] == GUANINE)
 				{
@@ -322,7 +322,7 @@ int dimerisation::pair_dimer(const char* a_sequence, const char* b_sequence)
 		
 		for(i = 0; i < dimer_tail_length; i++)
 		{
-			if(tail[i] == nucleotide_complement(b_sequence[j + i]))
+		  if(tail[i] == sequence_utils::nucleotide_complement(b_sequence[j + i]))
 			{
 				if(tail[i] == CYTOSINE || tail[i] == GUANINE)
 				{
@@ -356,7 +356,7 @@ int dimerisation::pair_dimer(const char* a_sequence, const char* b_sequence)
 		
 		for(i = 0; i < dimer_tail_length; i++)
 		{
-			if(tail[i] == nucleotide_complement(a_sequence[j + i]))
+		  if(tail[i] == sequence_utils::nucleotide_complement(a_sequence[j + i]))
 			{
 				if(tail[i] == CYTOSINE || tail[i] == GUANINE)
 				{
@@ -412,7 +412,7 @@ int dimerisation::primer_dimer_V2(const char* a_sequence, const char* b_sequence
 		
 		for(i = 0; i < dimer_tail_length; i++)
 		{
-			if(tail[i] == nucleotide_complement(b_sequence[j + i]))
+		  if(tail[i] == sequence_utils::nucleotide_complement(b_sequence[j + i]))
 			{
 				if(tail[i] == CYTOSINE || tail[i] == GUANINE)
 				{
@@ -446,7 +446,7 @@ int dimerisation::primer_dimer_V2(const char* a_sequence, const char* b_sequence
 		
 		for(i = 0; i < dimer_tail_length; i++)
 		{
-			if(tail[i] == nucleotide_complement(a_sequence[j + i]))
+		  if(tail[i] == sequence_utils::nucleotide_complement(a_sequence[j + i]))
 			{
 				if(tail[i] == CYTOSINE || tail[i] == GUANINE)
 				{
@@ -501,7 +501,7 @@ int dimerisation::primer_dimer_V2(const char* a_sequence, const char* b_sequence
 		
 		for(i = 0; i < dimer_tail_length; i++)
 		{
-			if(tail[i] == nucleotide_complement(b_sequence[j + i]))
+		  if(tail[i] == sequence_utils::nucleotide_complement(b_sequence[j + i]))
 			{
 				if(tail[i] == CYTOSINE || tail[i] == GUANINE)
 				{
@@ -536,7 +536,7 @@ int dimerisation::primer_dimer_V2(const char* a_sequence, const char* b_sequence
 		
 		for(i = 0; i < dimer_tail_length; i++)
 		{
-			if(tail[i] == nucleotide_complement(a_sequence[j + i]))
+		  if(tail[i] == sequence_utils::nucleotide_complement(a_sequence[j + i]))
 			{
 				if(tail[i] == CYTOSINE || tail[i] == GUANINE)
 				{

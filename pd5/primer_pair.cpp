@@ -170,7 +170,8 @@ int primer_pair::candidate_analysis(void)
 		{
 			forward_primer.hairpin(idx);
 			forward_primer.self_dimer(idx);
-			forward_primer.candidate[idx].annealing_temperature = forward_primer.primer3_Tm(forward_primer.candidate[idx].sequence);
+			//forward_primer.candidate[idx].annealing_temperature = forward_primer.primer3_Tm(forward_primer.candidate[idx].sequence);
+			forward_primer.calculate_temperature(idx);
 		}
 	}
 	else {
@@ -183,7 +184,8 @@ int primer_pair::candidate_analysis(void)
 		{
 			reverse_primer.hairpin(idx);
 			reverse_primer.self_dimer(idx);
-			reverse_primer.candidate[idx].annealing_temperature = reverse_primer.primer3_Tm(reverse_primer.candidate[idx].sequence);
+			//reverse_primer.candidate[idx].annealing_temperature = reverse_primer.primer3_Tm(reverse_primer.candidate[idx].sequence);
+			reverse_primer.calculate_temperature(idx);
 		}
 	}
 	else {

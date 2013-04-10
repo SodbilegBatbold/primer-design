@@ -96,7 +96,7 @@ enum Priority { SORT_END,
  The main class for individual primer design
  */
 
-class primer: public annealing_temperature
+class primer
 {
 public:
 	
