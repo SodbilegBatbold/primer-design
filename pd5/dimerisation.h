@@ -78,7 +78,7 @@ using namespace std;
  Class contains various methods for determining potential dimerisation
  */
 
-class dimerisation: public sequence_utils
+class dimerisation
 {
 public:
 	dimerisation();

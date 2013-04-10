@@ -3,7 +3,6 @@ var searchData=
   ['santa_5flucia_5fmethod',['Santa_Lucia_method',['../classannealing__temperature.html#ab8ee36de64b4229416231faa763648ee',1,'annealing_temperature']]],
   ['search_5ffor_5fbinding_5fsites',['search_for_binding_sites',['../class_d_n_afind.html#a9737c595c37ae784e539fd6d4502603c',1,'DNAfind']]],
   ['search_5ffor_5fpcr_5fproducts',['search_for_pcr_products',['../class_d_n_afind.html#a4b73574bbfe01f13d24061358ed40512',1,'DNAfind']]],
-  ['search_5ffor_5fpcr_5fproducts_5fii',['search_for_pcr_products_II',['../class_d_n_afind.html#aa29ee3b192bbfedd9e4ab4e9c2590697',1,'DNAfind']]],
   ['self_5fdimer',['self_dimer',['../classprimer__data.html#af7c536f4cf65608f8dded31749a3ff86',1,'primer_data::self_dimer()'],['../classdimerisation.html#a167a39e66593342ec7b8beb228c16936',1,'dimerisation::self_dimer(const char *a_sequence)'],['../classdimerisation.html#aa3fe6b3a38ff23eff827dccc7e8e8fd3',1,'dimerisation::self_dimer(const char *a_sequence, ofstream &amp;fout)'],['../classprimer.html#a482c3734947398fc75b81563b0dd0fbf',1,'primer::self_dimer(int candidate_number)'],['../classprimer.html#a774db1e10bf45cb7ce1c9803debca61d',1,'primer::self_dimer(int candidate_number, ofstream &amp;fout)']]],
   ['self_5fdimerisation',['self_dimerisation',['../classprimer__data.html#aefffdba94fe4ec585b2d5c324e26d402',1,'primer_data']]],
   ['seqsim_5fmatches',['seqsim_matches',['../classprimer__data.html#a3d7ed5907250d06883197d112a5f1732',1,'primer_data']]],
