@@ -57,4 +57,18 @@
 #define ERROR -1
 #define NO_TEMPLATE_ERROR -32
 
+
+#define nucleotide_A 0x41
+#define nucleotide_C 0x43
+#define nucleotide_G 0x47
+#define nucleotide_T 0x54
+#define nucleotide_N 0x4E
+
+#define ADENINE 65
+#define THYMINE 84
+#define GUANINE 71
+#define CYTOSINE 67
+#define URACIL 85
+#define ANYNUCLEOTIDE 78
+
 #endif

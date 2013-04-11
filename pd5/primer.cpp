@@ -49,9 +49,6 @@
 
 #include "primer.h"
 
-#define TRUE 1
-#define FALSE 0
-
 #define LOCATION_ERROR 0
 #define SET_LOCATION_ERROR 0
 
@@ -68,7 +65,7 @@ primer::primer()
 	max_number_candidates = 100;
 	downstream_search = FALSE;
 	GC_clamping = TRUE;
-	no_sticky_tails = FALSE;
+	// no_sticky_tails = FALSE; //This variable no longer used
 	no_G_primer = FALSE;
 	no_C_primer = FALSE;
 	tail_complementarity_check = TRUE;
@@ -583,7 +580,7 @@ int primer::auto_selection(void)
 	if(FOUND)
 		return(selection);
 	else
-		return(-1);
+		return(ERROR);
 	
 }
 
@@ -1051,8 +1048,8 @@ int primer::sort_candidates(void)
 	
 	good_candidates = data_size;
 	
-	if(data_size < 1) return(FAIL);
-	else return(PASS);
+	if(data_size < 1) return(FALSE);
+	else return(TRUE);
 }
 
 
@@ -1253,20 +1250,20 @@ int primer::self_dimer(int candidate_number)
 {
 	dimerisation dimer;
 	
-	dimer.self_dimer(candidate[candidate_number].sequence);
+	int ok = dimer.self_dimer(candidate[candidate_number].sequence);
 	candidate[candidate_number].self_dimer = dimer.self_dimer_score;
 	
-	return(TRUE);	
+	return(ok);	
 }
 
 int primer::self_dimer(int candidate_number, ofstream &fout)
 {
 	dimerisation dimer;
 	
-	dimer.self_dimer(candidate[candidate_number].sequence, fout);
+	int ok = dimer.self_dimer(candidate[candidate_number].sequence, fout);
 	candidate[candidate_number].self_dimer = dimer.self_dimer_score;
 	
-	return(TRUE);	
+	return(ok);	
 }
 
 
@@ -1284,10 +1281,11 @@ int primer::primer_dimer_2(int candidate_number_a, const char* b_sequence)
 	{
 		candidate[candidate_number_a].forward_dimer = dimer.forward_dimer_score;
 		candidate[candidate_number_a].reverse_dimer = dimer.reverse_dimer_score;
-	}
+		return TRUE;
+	} 
 	
-	return(0);
-		
+	return(FALSE);
+	
 }
 
 
@@ -1300,9 +1298,10 @@ int primer::primer_dimer_2(int candidate_number_a, const char* b_sequence, ofstr
 	{
 		candidate[candidate_number_a].forward_dimer = dimer.forward_dimer_score;
 		candidate[candidate_number_a].reverse_dimer = dimer.reverse_dimer_score;
+		return TRUE;
 	}
 	
-	return(0);
+	return(FALSE);
 	
 }
 

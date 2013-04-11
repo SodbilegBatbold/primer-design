@@ -38,6 +38,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="modules.html"><span>Modules</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
@@ -144,6 +145,14 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>show_all_single_candid
 Public Attributes</h2></td></tr>
 <tr class="memitem:a1c4e603cfc39253649f2650ec76f5092"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classprimer__data.html">primer_data</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classprimer.html#a1c4e603cfc39253649f2650ec76f5092">candidate</a> [102]</td></tr>
 <tr class="separator:a1c4e603cfc39253649f2650ec76f5092"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5e3dfff4745e5c8942b5f6ccc7abfe97"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5e3dfff4745e5c8942b5f6ccc7abfe97"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classprimer.html#a5e3dfff4745e5c8942b5f6ccc7abfe97">candidates_found</a></td></tr>
+<tr class="memdesc:a5e3dfff4745e5c8942b5f6ccc7abfe97"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of candidates meeting basic criteria. <br/></td></tr>
+<tr class="separator:a5e3dfff4745e5c8942b5f6ccc7abfe97"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3ee42e9f96800f733d1ec83e5faad707"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3ee42e9f96800f733d1ec83e5faad707"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classprimer.html#a3ee42e9f96800f733d1ec83e5faad707">good_candidates</a></td></tr>
+<tr class="memdesc:a3ee42e9f96800f733d1ec83e5faad707"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of candidates left after scoring and eliminating. <br/></td></tr>
+<tr class="separator:a3ee42e9f96800f733d1ec83e5faad707"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr><td colspan="2"><div class="groupHeader">PrimerParams</div></td></tr>
 <tr><td colspan="2"><div class="groupText"><p>User defined primer parameters </p>
 </div></td></tr>
@@ -190,14 +199,6 @@ double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
 double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classprimer.html#ac861052a4d4ea34c25445d3fd862cabd">min_Tm</a></td></tr>
 <tr class="memdesc:ac861052a4d4ea34c25445d3fd862cabd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Minimum temp for a primer. <br/></td></tr>
 <tr class="separator:ac861052a4d4ea34c25445d3fd862cabd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5e3dfff4745e5c8942b5f6ccc7abfe97"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5e3dfff4745e5c8942b5f6ccc7abfe97"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classprimer.html#a5e3dfff4745e5c8942b5f6ccc7abfe97">candidates_found</a></td></tr>
-<tr class="memdesc:a5e3dfff4745e5c8942b5f6ccc7abfe97"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of candidates meeting basic criteria. <br/></td></tr>
-<tr class="separator:a5e3dfff4745e5c8942b5f6ccc7abfe97"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3ee42e9f96800f733d1ec83e5faad707"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3ee42e9f96800f733d1ec83e5faad707"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classprimer.html#a3ee42e9f96800f733d1ec83e5faad707">good_candidates</a></td></tr>
-<tr class="memdesc:a3ee42e9f96800f733d1ec83e5faad707"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of candidates left after scoring and eliminating. <br/></td></tr>
-<tr class="separator:a3ee42e9f96800f733d1ec83e5faad707"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7c2027f14597f88be714fe4c3a838b7f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7c2027f14597f88be714fe4c3a838b7f"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classprimer.html#a7c2027f14597f88be714fe4c3a838b7f">reverse_primer</a></td></tr>
 <tr class="memdesc:a7c2027f14597f88be714fe4c3a838b7f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether this is the reverse primer. <br/></td></tr>
@@ -210,10 +211,6 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classprimer.html#ab029c6086080bcfa7c32e5cca31e8cc1">GC_clamping</a></td></tr>
 <tr class="memdesc:ab029c6086080bcfa7c32e5cca31e8cc1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether to require primer to end in G or C (but not allow more than 2 GC in final 4 bases. Default TRUE. <br/></td></tr>
 <tr class="separator:ab029c6086080bcfa7c32e5cca31e8cc1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad9ad77ff29c4330ee14b99d3322adf55"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad9ad77ff29c4330ee14b99d3322adf55"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classprimer.html#ad9ad77ff29c4330ee14b99d3322adf55">no_sticky_tails</a></td></tr>
-<tr class="memdesc:ad9ad77ff29c4330ee14b99d3322adf55"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default FALSE. AFC: NOT USED/CHECKED, DOES NOT CHANGE ANYTHING. <br/></td></tr>
-<tr class="separator:ad9ad77ff29c4330ee14b99d3322adf55"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a79efa8cc8698ffc2ead172901d2a349b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a79efa8cc8698ffc2ead172901d2a349b"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classprimer.html#a79efa8cc8698ffc2ead172901d2a349b">no_G_primer</a></td></tr>
 <tr class="memdesc:a79efa8cc8698ffc2ead172901d2a349b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Candidate primers should contain no Gs. <br/></td></tr>
@@ -352,7 +349,7 @@ double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Returns the index of the first candidate primer which is good enough. Returns -1 if no such primer exists. </p>
+<p>Returns the index of the first candidate primer which is good enough. Returns ERROR if no such primer exists. </p>
 <dl class="section see"><dt>See Also</dt><dd><a class="el" href="classprimer.html#abeade336bb2de80a29f1c92cf8b4969f">rank_selection</a> </dd></dl>
 
 </div>
@@ -584,7 +581,13 @@ double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Do not use this function, use <a class="el" href="classprimer.html#a39b2f9e7f627cbf48ef52c28f757c1fa">primer::generate_candidates</a> </p>
+<p>Use this function for most primer generation purposes. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">template_seq</td><td>the template sequence in which you want to seach for primers. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -609,13 +612,7 @@ double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
   </tr>
 </table>
 </div><div class="memdoc">
-<p>generate_candidates: Use this function for most purposes. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">template_seq</td><td>the template sequence in which you want to seach for primers. </td></tr>
-  </table>
-  </dd>
-</dl>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000002">Deprecated:</a></b></dt><dd>Do not use this function, use <a class="el" href="classprimer.html#a095ef835effbbb98bad7fbac2476c79c">primer::generate_candidate_primers</a> </dd></dl>
 
 </div>
 </div>
@@ -682,7 +679,7 @@ double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Deprecated. Do not use (only works for short primers) </p>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000003">Deprecated:</a></b></dt><dd>Do not use (only works for short primers) </dd></dl>
 
 </div>
 </div>
@@ -709,7 +706,7 @@ double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Calculates and saves primer dimer forward and reverse scores. Returns 0 </p>
+<p>Calculates and saves primer dimer forward and reverse scores. Returns TRUE/FALSE </p>
 
 </div>
 </div>
@@ -742,7 +739,7 @@ double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Calculates and saves primer dimer forward and reverse scores, and outputs to fout. Returns 0 </p>
+<p>Calculates and saves primer dimer forward and reverse scores, and outputs to fout. Returns TRUE/FALSE </p>
 
 </div>
 </div>
@@ -767,7 +764,8 @@ double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
   </tr>
 </table>
 </div><div class="memdoc">
-<p>AFC: This should return something consistent with the auto_selection? auto_selection returns 0 if first candidate is good enough. rank_selection returns 0 if no candidates </p>
+<p>Reorders the candidate list into ranked order. Returns the index of the first candidate primer which is good enough (this will always be 0). Number of good candidates is stored in <a class="el" href="classprimer.html#a3ee42e9f96800f733d1ec83e5faad707">good_candidates</a>. Returns ERROR if no such primer exists. </p>
+<dl class="section see"><dt>See Also</dt><dd><a class="el" href="classprimer.html#a3305b785b8780d450761d746e37dc7a2">auto_selection</a>, <a class="el" href="classprimer.html#aac92ad0347f4a30e91a35068a1811e5f">sort_candidates</a> </dd></dl>
 
 </div>
 </div>
@@ -784,7 +782,7 @@ double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Calculates self_dimer score and returns TRUE </p>
+<p>Calculates <a class="el" href="classprimer__data.html#af7c536f4cf65608f8dded31749a3ff86" title="The score for self-dimer potential.">primer_data::self_dimer</a> score and returns TRUE/FALSE </p>
 
 </div>
 </div>
@@ -811,7 +809,7 @@ double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Calculates self_dimer score, outputs to fout and returns TRUE </p>
+<p>Calculates <a class="el" href="classprimer__data.html#af7c536f4cf65608f8dded31749a3ff86" title="The score for self-dimer potential.">primer_data::self_dimer</a> score, outputs to fout and returns TRUE/FALSE </p>
 
 </div>
 </div>
@@ -976,7 +974,7 @@ double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Reorders the candidate list into ranked order. Returns 1 if some successful candidates, 0 if no successful candidates. </p>
+<p>Reorders the candidate list into ranked order. Returns TRUE if some successful candidates, FALSE if no successful candidates. </p>
 <dl class="section see"><dt>See Also</dt><dd><a class="el" href="classprimer.html#a3305b785b8780d450761d746e37dc7a2">auto_selection</a> </dd></dl>
 
 </div>
@@ -1086,7 +1084,7 @@ double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Apr 10 2013 11:41:45 for PD5 by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Apr 11 2013 12:40:10 for PD5 by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3.1
 </small></address>

@@ -53,25 +53,8 @@
 #include <cstring>
 #include <cstdio>
 #include <cstdlib>
+#include "global_defs.h"
 
-
-#define nucleotide_A 0x41
-#define nucleotide_C 0x43
-#define nucleotide_G 0x47
-#define nucleotide_T 0x54
-#define nucleotide_N 0x4E
-
-
-#define TRUE 1
-#define FALSE 0
-
-
-#define ADENINE 65
-#define THYMINE 84
-#define GUANINE 71
-#define CYTOSINE 67
-#define URACIL 85
-#define ANYNUCLEOTIDE 78
 
 
 using namespace std;
@@ -101,9 +84,15 @@ class sequence_utils
 	//int self_dimer(const char* a_sequence, primer_data_structure &score, ofstream &fout);
 	/** Deprecated. Do not use (only works for short primers) */
 	static int primer_dimer(const char* a_sequence, const char* b_sequence, ofstream &fout);
-	/** See dimerisation::primer_dimer_V2. Always returns 0 */
+	/** Returns the maximum dimer score from forward and reverse primers. 
+	    Better to use a dimerisation or primer object instead of this method, 
+	    as those would provide more detail.
+	    \sa dimerisation::primer_dimer_V2, primer::primer_dimer_2.*/
 	static int primer_dimer_2(const char* a_sequence, const char* b_sequence);
-	/** See dimerisation::primer_dimer_V2. Always returns 0. Outputs to fout */
+	/** Returns the maximum dimer score from forward and reverse primers. Outputs to fout.
+	    Better to use a dimerisation or primer object instead of this method, 
+	    as those would provide more detail.
+	    \sa dimerisation::primer_dimer_V2, primer::primer_dimer_2. */
 	static int primer_dimer_2(const char* a_sequence, const char* b_sequence, ofstream &fout);
 
 	/// deprecated

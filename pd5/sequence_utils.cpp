@@ -250,10 +250,16 @@ int sequence_utils::primer_dimer(const char* a_sequence, const char* b_sequence,
 int sequence_utils::primer_dimer_2(const char* a_sequence, const char* b_sequence)
 {
 	dimerisation dimer;
-	
-	dimer.primer_dimer_V2(a_sequence, b_sequence);
-	return(0);
-	
+
+	if(dimer.primer_dimer_V2(a_sequence, b_sequence)) {
+	  int max_score = dimer.forward_dimer_score;
+	  if (dimer.reverse_dimer_score > max_score) {
+	    max_score = dimer.reverse_dimer_score;
+	  }
+	  return(max_score);
+	} else {
+	  return(ERROR); 
+	}
 }
 
 
@@ -261,9 +267,15 @@ int sequence_utils::primer_dimer_2(const char* a_sequence, const char* b_sequenc
 {
 	dimerisation dimer;
 	
-	dimer.primer_dimer_V2(a_sequence, b_sequence, fout);
-	return(0);
-	
+	if(dimer.primer_dimer_V2(a_sequence, b_sequence, fout)) {
+	  int max_score = dimer.forward_dimer_score;
+	  if (dimer.reverse_dimer_score > max_score) {
+	    max_score = dimer.reverse_dimer_score;
+	  }
+	  return(max_score);
+	} else {
+	  return(ERROR); 
+	}
 }
 
 
@@ -650,7 +662,7 @@ int sequence_utils::Smith_Waterman(const char* query, const char* library_filena
 // Set options
 	sprintf(options,"-q -H");
 
-	sprintf(command, "./ssearch35 %s -E %E -O fasta_output.txt fasta_input.fa %s", options, expectation, library_filename);	
+	sprintf(command, "ssearch35 %s -E %E -O fasta_output.txt fasta_input.fa %s", options, expectation, library_filename);	
 	system(command);
 	
 	number_of_hits = fasta_results_parser("fasta_output.txt");
@@ -675,7 +687,7 @@ int sequence_utils::fasta3(const char* query, const char* library_filename, doub
 	// Set options
 	sprintf(options,"-q -H");
 	
-	sprintf(command, "./fasta35 %s -E %E -O fasta_output.txt fasta_input.fa %s", options, expectation, library_filename);	
+	sprintf(command, "fasta35 %s -E %E -O fasta_output.txt fasta_input.fa %s", options, expectation, library_filename);	
 	system(command);
 	
 	number_of_hits = fasta_results_parser("fasta_output.txt");
