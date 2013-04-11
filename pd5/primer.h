@@ -49,12 +49,6 @@
 #ifndef PRIMER_H
 #define PRIMER_H
 
-#define nucleotide_A 0x41
-#define nucleotide_C 0x43
-#define nucleotide_G 0x47
-#define nucleotide_T 0x54
-#define nucleotide_N 0x4E
-
 #include <fstream>
 #include <iostream>
 #include <cstring>
@@ -83,12 +77,6 @@ enum Priority { SORT_END,
 				TEMPERATURE,
 				TM_DIFF};
 
-#define ADENINE 65
-#define THYMINE 84
-#define GUANINE 71
-#define CYTOSINE 67
-#define URACIL 85
-#define ANYNUCLEOTIDE 78
 
 
 //! Individual primer design class
@@ -108,17 +96,18 @@ public:
 
 
 
-	/**
-	 * generate_candidates: Use this function for most purposes.
-	 * @param template_seq the template sequence in which you want
-	 * to seach for primers.
+	/** \deprecated 
+	 * Do not use this function, use primer::generate_candidate_primers 
 	 */
 	int generate_candidates(const char* template_seq)
 	{
 		return(generate_candidate_primers(template_seq));
 	}
 			
-	/** Do not use this function, use primer::generate_candidates */
+	/** Use this function for most primer generation purposes.
+	 * @param template_seq the template sequence in which you want
+	 * to seach for primers. 
+	 */
 	int generate_candidate_primers(const char* template_sequence);
 	
 
@@ -140,23 +129,26 @@ public:
 
 	/** 
 	 * Returns the index of the first candidate primer which is
-	 * good enough. Returns -1 if no such primer exists. 
+	 * good enough. Returns ERROR if no such primer exists. 
 	 * \sa rank_selection */
 	int auto_selection(void);
 
 	/** 
-	 * Reorders the candidate list into ranked order. Returns 1 if 
-	 * some successful candidates, 0 if no successful candidates. 
+	 * Reorders the candidate list into ranked order. Returns TRUE if 
+	 * some successful candidates, FALSE if no successful candidates. 
 	 * \sa auto_selection */
 	int sort_candidates(void);
 
-	/** AFC: This should return something consistent with the auto_selection? auto_selection returns 0 if first candidate is good enough. rank_selection returns 0 if no candidates */
+	/** Reorders the candidate list into ranked order. Returns the index of 
+	 * the first candidate primer which is good enough (this will always be 0).
+	 * Number of good candidates is stored in \ref good_candidates.
+	 * Returns ERROR if no such primer exists. 
+	 * \sa auto_selection, sort_candidates  
+	 */
 	int rank_selection(void)
 	{
-	  return(sort_candidates());
-	  // AFC I propose instead the following, and to update the calls in sputnik_ssr.cpp accordingly:
-	  //if (!sort_candidates()) {return -1;} 
-	  //else { return 0; } 
+	  if (!sort_candidates()) {return ERROR;} 
+	  else { return 0; } // if sort is successful then first good candidate is in index 0; 
 	}
 	
        
@@ -209,16 +201,16 @@ public:
 	/** Checks if the tail of the sequence will bind to its complement, returns TRUE or FALSE */
 	int tail_complementarity(const char* sequence);
 
-	/** Calculates self_dimer score and returns TRUE */
+	/** Calculates primer_data::self_dimer score and returns TRUE/FALSE */
 	int self_dimer(int candidate_number);
-	/** Calculates self_dimer score, outputs to fout and returns TRUE */
+	/** Calculates primer_data::self_dimer score, outputs to fout and returns TRUE/FALSE */
 	int self_dimer(int candidate_number, ofstream &fout);
 
-	/** Deprecated. Do not use (only works for short primers) */
+	/** \deprecated Do not use (only works for short primers) */
 	int primer_dimer(int candidate_number_a, const char* b_sequence, ofstream &fout);
-	/** Calculates and saves primer dimer forward and reverse scores. Returns 0 */
+	/** Calculates and saves primer dimer forward and reverse scores. Returns TRUE/FALSE */
 	int primer_dimer_2(int candidate_number, const char* b_sequence);
-	/** Calculates and saves primer dimer forward and reverse scores, and outputs to fout. Returns 0 */
+	/** Calculates and saves primer dimer forward and reverse scores, and outputs to fout. Returns TRUE/FALSE */
 	int primer_dimer_2(int candidate_number, const char* b_sequence, ofstream &fout);
 
 	/** \Deprecated */
@@ -258,6 +250,10 @@ public:
 	 */
 	primer_data candidate[102];
 
+	int candidates_found;           ///< Number of candidates meeting basic criteria. 
+	int good_candidates;            ///< Number of candidates left after scoring and eliminating 
+
+
 	/** @name PrimerParams 
 	 * User defined primer parameters
 	 */
@@ -278,13 +274,11 @@ public:
 	double max_Tm;					///< Maximum temp for a primer
 	double min_Tm;					///< Minimum temp for a primer
 	
-	int candidates_found;           ///< Number of candidates meeting basic criteria. 
-	int good_candidates;            ///< Number of candidates left after scoring and eliminating 
 	
 	bool reverse_primer;            ///< Whether this is  the reverse primer 
 	bool downstream_search;			///< Set TRUE to search downstream towards target
 	bool GC_clamping;               ///< Whether to require primer to end in G or C (but not allow more than 2 GC in final 4 bases. Default TRUE
-	bool no_sticky_tails;           ///< Default FALSE. AFC: NOT USED/CHECKED, DOES NOT CHANGE ANYTHING.
+	//bool no_sticky_tails;           ///< Default FALSE. AFC: NOT USED/CHECKED, DOES NOT CHANGE ANYTHING.
 	bool no_G_primer;				///< Candidate primers should contain no Gs
 	bool no_C_primer;				///< Candidate primers should contain no Cs 
 	bool tail_complementarity_check; ///< Used in the test_candidates method to opt for a tail complentarity check

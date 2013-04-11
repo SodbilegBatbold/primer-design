@@ -96,7 +96,7 @@ int sputnik_ssr::find_primers(char* seq, int start, int end, int repeat_len) {
   revP->priority[3] = SORT_END;
 
   
-  if(! revP->rank_selection()) {
+  if(revP->rank_selection() == ERROR) {
     return 0;
   }
 
@@ -109,7 +109,7 @@ int sputnik_ssr::find_primers(char* seq, int start, int end, int repeat_len) {
   revP->priority[0] = TEMPERATURE;
   revP->priority[1] = SORT_END;
   
-  if(! revP->rank_selection()) {
+  if(revP->rank_selection() == ERROR) {
     return 0;
   }
   int bestRev = 0;

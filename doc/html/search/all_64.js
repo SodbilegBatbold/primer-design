@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['deprecated_20list',['Deprecated List',['../deprecated.html',1,'']]],
   ['dimerisation',['dimerisation',['../classdimerisation.html',1,'']]],
   ['dimerisation_2ecpp',['dimerisation.cpp',['../dimerisation_8cpp.html',1,'']]],
   ['dimerisation_2eh',['dimerisation.h',['../dimerisation_8h.html',1,'']]],

@@ -54,15 +54,6 @@
 #include <cstring>
 #include "dimerisation.h"
 
-#define TRUE 1
-#define FALSE 0
-
-#define ADENINE 65
-#define THYMINE 84
-#define GUANINE 71
-#define CYTOSINE 67
-#define URACIL 85
-#define ANYNUCLEOTIDE 78
 
 //! Individual primer data class
 /**

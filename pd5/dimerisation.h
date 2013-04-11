@@ -57,19 +57,6 @@
 
 #include "sequence_utils.h"
 
-#define ERROR -1
-/*
-#define TRUE 1
-#define FALSE 0
-
-
-#define ADENINE 65
-#define THYMINE 84
-#define GUANINE 71
-#define CYTOSINE 67
-#define URACIL 85
-#define ANYNUCLEOTIDE 78
-*/
 
 using namespace std;
 
@@ -97,8 +84,9 @@ public:
 	 */
 	int self_dimer(const char* a_sequence);
 	/**
-	 \brief As for dimerisation::self_dimer(const char* a_sequence) but also outputs to fout.
+	 \brief  Deprecated.
 
+	 \deprecated As for dimerisation::self_dimer(const char* a_sequence) but also outputs to fout.
 	 Sets self_dimer_score and self_dimer_location. Returns TRUE
 	 */
 	int self_dimer(const char* a_sequence, ofstream &fout);
