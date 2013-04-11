@@ -159,7 +159,7 @@ int sputnik_ssr::find_primers(char* seq, int start, int end, int repeat_len) {
   fwdP->priority[4] = LENGTH;
   fwdP->priority[5] = SORT_END;
     
-  if(! fwdP->rank_selection()) {
+  if(fwdP->rank_selection() == ERROR) {
     return 0;
   }
 
@@ -170,7 +170,7 @@ int sputnik_ssr::find_primers(char* seq, int start, int end, int repeat_len) {
   fwdP->candidates_found = fwdP->good_candidates;
   fwdP->priority[0] = TEMPERATURE;
   fwdP->priority[1] = SORT_END;  
-  if(! fwdP->rank_selection()) {
+  if(fwdP->rank_selection() == ERROR) {
     return 0;
   }
 
