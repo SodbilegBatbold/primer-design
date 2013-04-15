@@ -101,8 +101,7 @@ public:
 	
 	// int get_primers(const char* dna_template);
 
-	/** AFC: to check */
-	int pair_dimerisation(void);
+	
 
 	/** Sets the begin and end locations of the region for amplification */
 	int set_target_location(int begin, int end);
@@ -195,7 +194,8 @@ public:
 	double Tm_diff_weighting;
 	 
 	///@}
-
+protected:
+    int pair_dimerisation(void);
 	
 private:
 	int upstream_flank_length;
