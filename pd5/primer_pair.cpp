@@ -134,7 +134,7 @@ int primer_pair::pair_dimerisation(void)
 {
 	dimerisation pair_dimer;
 	
-	// Uses primer_data - DOES IT? AFC: LOOKS LIKE IT SETS PARAMS IN THE LOCAL pair_dimer
+	// Uses primer_data 
 	pair_dimer.pair_dimer(forward_primer.candidate[0].sequence, reverse_primer.candidate[0].sequence);
 	
 	// Uses primer_pair_data
