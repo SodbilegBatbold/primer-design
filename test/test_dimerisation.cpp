@@ -30,8 +30,7 @@ char * test_self_dimer() {
 char * test_pair_dimer() {
   dimerisation d;
   d.pair_dimer(test_seq1,test_seq3);
-  cout<< d.forward_dimer_score << endl;
-  mu_assert((char *)"pair_dimer error, forward_dimer_score != 18", d.forward_dimer_score == 12);
+  mu_assert((char *)"pair_dimer error, forward_dimer_score != 12", d.forward_dimer_score == 12);
   return 0;
 }
 
