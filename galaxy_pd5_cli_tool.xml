@@ -1,0 +1,47 @@
+<tool id="pd5_primerdesign_1" name="Primer design using PD5" >
+  <description>for each sequence in a file</description>
+  <version_string>pd5_cli --version</version_string>
+  <command>pd5_cli -f "$fwdParams" -r "$revParams" -t "$temperature" -S $input -o $output -O $outputFormat</command>
+  <inputs>
+    <param format="fasta" name="input" type="data" label="Sequence file" help="Fasta file containing template sequence in which to find primers"/>
+    <param name="fwdParams" type="text" size="30" label="forward primer details" help="A comma-separated list of 5 integers, representing the target region and primer sizes for the forward primer: min_target_start,max_target_stop,min_primer_length,optimum_primer_length,max_primer_length. For example '1,500,20,23,40'" />
+    <param name="revParams" type="text" size="30" label="reverse primer details" help="A comma-separated list of 5 integers, representing the target region and primer sizes for the reverse primer: min_target_start,max_target_stop,min_primer_length,optimum_primer_length,max_primer_length. Remember this is the reverse primer, so the first integer should be larger than the second. For example '1000,900,20,23,40'" />
+    <param name="temperature" type="text" size="30" label="temperature details" help="A comma-separated list of 3 integers, representing the annealing temperature range: min_temperature,optimum_temperature,max_temperature. For example '50,55,60'" />
+    <param name="outputFormat" type="select" label="output format">
+      <option value="c" selected="true">CSV</option>
+      <option value="t">text</option>
+      <option value="h">HTML</option>
+    </param>
+  </inputs>
+  <outputs>
+    <data format="txt" name="output">
+      <change_format>
+	<when input="outputFormat" value="c" format="csv"/>
+	<when input="outputFormat" value="h" format="html"/>
+      </change_format>
+    </data>
+  </outputs>
+
+  <stdio>
+    <exit_code range="1" level="fatal"   description="An error occurred" />
+  </stdio>
+
+  <tests>
+    <test>
+      <param name="input" value="basic_app/at5g53210.fa"/>
+      <param name="fwdParams" value="1,400,20,30,40" />
+      <param name="revParams" value="1000,600,20,30,40" />
+    </test>
+  </tests>
+
+  <help>
+This tool provides primer design using the PD5 library.
+
+.. class:: warningmark
+
+This tool requires an input sequence in *fasta* format.
+
+----
+  </help>
+
+</tool>
