@@ -17,11 +17,10 @@
 #include <cstdlib>
 #include <getopt.h>
 #include <vector>
-//#include "../pd5/primer.h"
+
 #include "../pd5/primer_pair.h"
 #include "../pd5/display_utils.h"
-//#include "../pd5/sequence_utils.h"
-//#include "../pd5/DNAfind.h"
+
 
 using namespace std;
 
@@ -107,7 +106,7 @@ int splitargs(char *str, vector<int> &args) {
  */
 int readTemplate(char* seqFile, char** seqP, char** seqName){ 
   ifstream fin(seqFile);
-  char buffer[256];
+  char buffer[7000];
   *seqP = new char[7000];
   *seqName = new char[100];
   
