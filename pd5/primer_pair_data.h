@@ -51,8 +51,6 @@
 #include "dimerisation.h"
 #include "dna_find.h"
 
-#define TRUE 1
-#define FALSE 0
 
 //! Primer pair data class
 /**
@@ -94,3 +92,4 @@ public:
 };
 
 #endif
+

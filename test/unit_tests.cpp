@@ -39,8 +39,17 @@ static char * all_dimerisation_tests() {
   return 0;
 }
 
+static char * all_tests() {
+  all_temp_tests();
+  all_sequence_utils_tests();
+  all_dna_find_tests();
+  all_dimerisation_tests();
+  return 0;
+}
+
+
 int main(int argc, char **argv) {
-  char *result = all_dimerisation_tests();
+  char *result = all_tests();
   if (result != 0) {
     printf("%s\n", result);
   }
