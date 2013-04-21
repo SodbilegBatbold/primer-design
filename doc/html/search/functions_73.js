@@ -5,6 +5,7 @@ var searchData=
   ['search_5ffor_5fpcr_5fproducts',['search_for_pcr_products',['../class_d_n_afind.html#a4b73574bbfe01f13d24061358ed40512',1,'DNAfind']]],
   ['self_5fdimer',['self_dimer',['../classdimerisation.html#a167a39e66593342ec7b8beb228c16936',1,'dimerisation::self_dimer(const char *a_sequence)'],['../classdimerisation.html#aa3fe6b3a38ff23eff827dccc7e8e8fd3',1,'dimerisation::self_dimer(const char *a_sequence, ofstream &amp;fout)'],['../classprimer.html#a482c3734947398fc75b81563b0dd0fbf',1,'primer::self_dimer(int candidate_number)'],['../classprimer.html#a774db1e10bf45cb7ce1c9803debca61d',1,'primer::self_dimer(int candidate_number, ofstream &amp;fout)']]],
   ['self_5fdimerisation',['self_dimerisation',['../classprimer__data.html#aefffdba94fe4ec585b2d5c324e26d402',1,'primer_data']]],
+  ['set_5fdna_5ffind',['set_dna_find',['../classprimer__pair.html#a1f339ada33fe2e73f500d2c5e3f688e6',1,'primer_pair']]],
   ['set_5fflank_5flengths',['set_flank_lengths',['../classprimer__pair.html#a4018eb6e3f1d55b063a8359044f6169b',1,'primer_pair']]],
   ['set_5fhomopolymeric_5frun_5flength_5flimit',['set_homopolymeric_run_length_limit',['../classprimer.html#a637e54a715addf51577bdaef305f5d1f',1,'primer']]],
   ['set_5fmax_5fmismatches',['set_max_mismatches',['../class_d_n_afind.html#a0467c7ecfb8aa4093b4c966c79889852',1,'DNAfind']]],

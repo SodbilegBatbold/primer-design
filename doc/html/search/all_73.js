@@ -10,6 +10,7 @@ var searchData=
   ['sequence_5futils',['sequence_utils',['../classsequence__utils.html',1,'']]],
   ['sequence_5futils_2ecpp',['sequence_utils.cpp',['../sequence__utils_8cpp.html',1,'']]],
   ['sequence_5futils_2eh',['sequence_utils.h',['../sequence__utils_8h.html',1,'']]],
+  ['set_5fdna_5ffind',['set_dna_find',['../classprimer__pair.html#a1f339ada33fe2e73f500d2c5e3f688e6',1,'primer_pair']]],
   ['set_5fflank_5flengths',['set_flank_lengths',['../classprimer__pair.html#a4018eb6e3f1d55b063a8359044f6169b',1,'primer_pair']]],
   ['set_5fhomopolymeric_5frun_5flength_5flimit',['set_homopolymeric_run_length_limit',['../classprimer.html#a637e54a715addf51577bdaef305f5d1f',1,'primer']]],
   ['set_5fmax_5fmismatches',['set_max_mismatches',['../class_d_n_afind.html#a0467c7ecfb8aa4093b4c966c79889852',1,'DNAfind']]],

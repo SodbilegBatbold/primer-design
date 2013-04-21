@@ -3,6 +3,9 @@
 #include "test_annealing_temperature.h"
 #include "test_DNAfind.h"
 #include "test_dimerisation.h"
+#include "test_primer.h"
+#include "test_primer_pair.h"
+
 
 int tests_run = 0;
 
@@ -39,11 +42,34 @@ static char * all_dimerisation_tests() {
   return 0;
 }
 
+static char * all_primer_tests() {
+  mu_run_test(test_generate_100_candidate_primers);
+  mu_run_test(test_generate_20mer_primers_at_start);
+  return 0;
+}
+
+static char * all_primer_pair_tests() {
+  mu_run_test(test_generate_38_candidate_pairs);
+  mu_run_test(test_generate_sort_candidate_pairs);
+  return 0;
+}
+
+
+
 static char * all_tests() {
-  all_temp_tests();
-  all_sequence_utils_tests();
-  all_dna_find_tests();
-  all_dimerisation_tests();
+  char * msg;
+  msg = all_temp_tests();
+  if(msg != 0) { return msg; }
+  msg = all_sequence_utils_tests();
+  if(msg != 0) { return msg; }
+  msg = all_dna_find_tests();
+  if(msg != 0) { return msg; }
+  msg = all_dimerisation_tests();
+  if(msg != 0) { return msg; }
+  msg = all_primer_tests();
+  if(msg != 0) { return msg; }
+  msg = all_primer_pair_tests();
+  if(msg != 0) { return msg; }
   return 0;
 }
 

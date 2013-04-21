@@ -47,6 +47,7 @@
  The PD5 software library is a versatile collection of software modules suitable for use in primer 
  design applications. It was developed in response to a growing need for increasingly complex primer
  design applications.
+
  
  The main class for designing primer pairs is primer_pair. The \ref primer class can be used
  where an individual primer needs to be assessed or designed. However, the analysis classes (\ref dimerisation, 
@@ -94,14 +95,19 @@ public:
 	// Two instances of the primer class
 	primer forward_primer;
 	primer reverse_primer;
-	
+
+
+	int max_number_pairs;	
 	// Array of optimum pair results
 	primer_pair_data pair_candidate[38];
-	
-	
+
+	DNAfind *nsbP; 	///< Non-specific binding search mechanism
+
+
 	// int get_primers(const char* dna_template);
 
-	
+	/** Sets the non-specific binding mechanism */
+	int set_dna_find(DNAfind *dnafind);
 
 	/** Sets the begin and end locations of the region for amplification */
 	int set_target_location(int begin, int end);
@@ -163,19 +169,19 @@ public:
 	
 	//Make parameters public for now 6/4/11
 	
-	int forward_start_location_range_begin;
-	int forward_start_location_range_end;
-	int forward_length_range_shortest;
-	int forward_length_range_longest;
-	int forward_required_GC_content;
-	int forward_GC_tolerance;
+	//int forward_start_location_range_begin;
+	//int forward_start_location_range_end;
+	//int forward_length_range_shortest;
+	//int forward_length_range_longest;
+	//int forward_required_GC_content;
+	//int forward_GC_tolerance;
 	
-	int reverse_start_location_range_begin;
-	int reverse_start_location_range_end;
-	int reverse_length_range_shortest;
-	int reverse_length_range_longest;
-	int reverse_required_GC_content;
-	int reverse_GC_tolerance;
+	//int reverse_start_location_range_begin;
+	//int reverse_start_location_range_end;
+	//int reverse_length_range_shortest;
+	//int reverse_length_range_longest;
+	//int reverse_required_GC_content;
+	//int reverse_GC_tolerance;
 	
 	/** @name moopair 
 	 * Primer pair multi objective optimisation 
