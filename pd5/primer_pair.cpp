@@ -256,7 +256,6 @@ int primer_pair::sort_products(int data_size)
 		
 		for(int i = 0; i < data_size - 1; i++)
 		{
-		  cout << "num prods " << pair_candidate[i].number_of_pcr_products << " " << pair_candidate[i + 1].number_of_pcr_products << endl;
 			if(pair_candidate[i].number_of_pcr_products > pair_candidate[i + 1].number_of_pcr_products)
 			{
 				swap(pair_candidate[i], pair_candidate[i + 1]);
@@ -457,7 +456,6 @@ int primer_pair::sort_pair_candidates(const char* priority_list)
 	
 	//int priority_index = 0;
 	int data_size = number_of_pair_candidates;
-	cout << "data size " << data_size << endl;
 	char buffer[1024]; 
 	char *token;
 	
