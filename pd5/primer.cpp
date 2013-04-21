@@ -174,9 +174,11 @@ int primer::generate_candidate_primers(const char* template_sequence)
 	if((unsigned int)(start_location_range_end + length_range_longest) > strlen(template_sequence))return(LOCATION_ERROR);
 	
 	// Start locations are physical locations starting at 1, not 0, so adjust for array indexing
-	start_location_range_begin--;
-	start_location_range_end--;
-	   
+	if(start_location_range_begin > 0 && start_location_range_end > 0) {
+	  start_location_range_begin--;
+	  start_location_range_end--;
+	}
+
 	// Find possible primers and test
 	if(downstream_search) // default search is in the upstream direction
 	{

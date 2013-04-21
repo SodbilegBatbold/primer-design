@@ -11,7 +11,7 @@ OBJ_SSR = pd5_ssr/sputnik_ssr.o pd5_ssr/sputnik.o pd5_ssr/pd5_ssr.o
 
 OBJ_BA = basic_app/basic_app.o
 
-OBJ_TEST = test/test_annealing_temperature.o test/test_sequence_utils.o test/test_DNAfind.o test/test_dimerisation.o test/unit_tests.o 
+OBJ_TEST = test/test_annealing_temperature.o test/test_sequence_utils.o test/test_DNAfind.o test/test_dimerisation.o test/test_primer.o test/test_primer_pair.o test/unit_tests.o
 
 
 CC     = g++

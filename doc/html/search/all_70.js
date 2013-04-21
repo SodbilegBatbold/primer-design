@@ -2,7 +2,7 @@ var searchData=
 [
   ['pd5_20software_20library_20for_20primer_20design_20applications',['PD5 software library for primer design applications',['../index.html',1,'']]],
   ['pair_5fdimer',['pair_dimer',['../classdimerisation.html#ab8d14c8c3a9e6c0f2e8ebd538338152a',1,'dimerisation']]],
-  ['pair_5fdimerisation',['pair_dimerisation',['../classprimer__pair.html#a565a4a1dd8d13d06c4528831fe6d0f19',1,'primer_pair::pair_dimerisation()'],['../classprimer__pair__data.html#a9f25ebcc01c107716a0c122dec53a9f9',1,'primer_pair_data::pair_dimerisation()']]],
+  ['pair_5fdimerisation',['pair_dimerisation',['../classprimer__pair__data.html#a9f25ebcc01c107716a0c122dec53a9f9',1,'primer_pair_data']]],
   ['pcr_5fproducts',['pcr_products',['../classprimer__pair__data.html#a689348cb9d7c16a0466259857cb5bcf9',1,'primer_pair_data']]],
   ['percentage_5fcomplementarity',['percentage_complementarity',['../classdimerisation.html#a908be1e3cd0f37899c1a14823632b196',1,'dimerisation']]],
   ['primer',['primer',['../classprimer.html',1,'']]],

@@ -71,6 +71,14 @@ primer_pair::primer_pair(void)
 	Tm_diff_weighting = 1.0;
 	
 	pair_candidates_exist = FALSE;
+	good_pair_candidates = 0;
+	max_number_pairs = 38;
+	nsbP = NULL;
+}
+
+int primer_pair::set_dna_find(DNAfind *dnafind) {
+  nsbP = dnafind;
+  return TRUE;
 }
 
 int primer_pair::set_target_location(int begin, int end)
@@ -248,6 +256,7 @@ int primer_pair::sort_products(int data_size)
 		
 		for(int i = 0; i < data_size - 1; i++)
 		{
+		  cout << "num prods " << pair_candidate[i].number_of_pcr_products << " " << pair_candidate[i + 1].number_of_pcr_products << endl;
 			if(pair_candidate[i].number_of_pcr_products > pair_candidate[i + 1].number_of_pcr_products)
 			{
 				swap(pair_candidate[i], pair_candidate[i + 1]);
@@ -345,13 +354,16 @@ int primer_pair::sort_individual_candidates(const char* priority_list)
 int primer_pair::make_pair_candidates(int number_of_forward_candidates, int number_of_reverse_candidates)
 {
 	number_of_pair_candidates = (number_of_forward_candidates * number_of_reverse_candidates);
-	
+	if (number_of_pair_candidates > max_number_pairs) { number_of_pair_candidates = max_number_pairs; }
+
 	int pair_idx = 0;
 	
 	for(int fwd_index = 0; fwd_index < number_of_forward_candidates; fwd_index++)
 	{
+	  if(pair_idx >= number_of_pair_candidates) break;
 		for(int rev_index = 0; rev_index < number_of_reverse_candidates; rev_index++)
 		{
+		  if(pair_idx >= number_of_pair_candidates) break;
 			strcpy(pair_candidate[pair_idx].forward_sequence, forward_primer.candidate[fwd_index].sequence);
 			strcpy(pair_candidate[pair_idx].reverse_sequence, reverse_primer.candidate[rev_index].sequence);
 			pair_candidate[pair_idx].forward_index = fwd_index;
@@ -368,6 +380,8 @@ int primer_pair::make_pair_candidates(int number_of_forward_candidates, int numb
 			pair_candidate[pair_idx].annealing_temperature_difference = 
 			fabs(forward_primer.candidate[fwd_index].annealing_temperature - reverse_primer.candidate[rev_index].annealing_temperature);
 			
+			pair_candidate[pair_idx].number_of_pcr_products = 0;
+
 			pair_idx++;
 		}
 	}
@@ -418,6 +432,8 @@ int primer_pair::sort_pair_candidates(const char* priority_list)
 				
 				pair_candidate[pair_idx].annealing_temperature_difference = 
 				fabs(forward_primer.candidate[fwd_index].annealing_temperature - reverse_primer.candidate[rev_index].annealing_temperature);
+
+				pair_candidate[pair_idx].number_of_pcr_products = 0;
 				
 				pair_idx++;
 			}
@@ -432,6 +448,7 @@ int primer_pair::sort_pair_candidates(const char* priority_list)
 		
 		// Initialising 
 		//pair_candidate[i].number_of_pcr_products = 0;
+		pair_candidate[i].pcr_products(*nsbP);
 		//pair_candidate[i].number_of_pcr_products = search_for_pcr_products(pcr1.pair_candidate[i].forward_sequence, pcr1.pair_candidate[i].reverse_sequence);
 		
 	}
@@ -440,7 +457,7 @@ int primer_pair::sort_pair_candidates(const char* priority_list)
 	
 	//int priority_index = 0;
 	int data_size = number_of_pair_candidates;
-	
+	cout << "data size " << data_size << endl;
 	char buffer[1024]; 
 	char *token;
 	
