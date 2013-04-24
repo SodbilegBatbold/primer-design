@@ -55,7 +55,6 @@
 #include <cstdio>
 #include <cstdlib>
 
-#include "annealing_temperature.h"
 #include "dimerisation.h"
 #include "primer_data.h"
 #include "global_defs.h"
@@ -235,7 +234,7 @@ public:
 
 	double expectation;     ///< E-value for use in BLAST searches.
 
-	/** Uses annealing_temperature::primer3_Tm to calculate and save the temperature. */
+	/** Uses a subclass of annealing_temperature to calculate and save the temperature. */
 	int calculate_temperature(int candidate_number);
 
 	/** Checks for homopolymeric run in sequence. Returns TRUE if found one that is longer 

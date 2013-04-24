@@ -134,61 +134,28 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="preprocessor">#ifndef ANNEALING_TEMPERATURE_H</span></div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define ANNEALING_TEMPERATURE_H</span></div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="preprocessor">#include &lt;cstring&gt;</span></div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="preprocessor">#include &lt;cstdlib&gt;</span></div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="preprocessor">#include &quot;oligotm.h&quot;</span></div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="sequence__utils_8h.html" title="Utilities for sequence analysis.">sequence_utils.h</a>&quot;</span> </div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;</div>
-<div class="line"><a name="l00062"></a><span class="lineno"><a class="code" href="classannealing__temperature.html">   62</a></span>&#160;<span class="keyword">class </span><a class="code" href="classannealing__temperature.html" title="Primer annealing temperature calculations.">annealing_temperature</a></div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;{</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    </div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <a class="code" href="classannealing__temperature.html" title="Primer annealing temperature calculations.">annealing_temperature</a>();</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    ~<a class="code" href="classannealing__temperature.html" title="Primer annealing temperature calculations.">annealing_temperature</a>(){};</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        </div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    <span class="keywordtype">double</span> <a class="code" href="classannealing__temperature.html#a50c42a208121e0c6f3522e0e99a54f22">Marmur_method</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* sequence);</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    </div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <span class="keywordtype">double</span> <a class="code" href="classannealing__temperature.html#a551bdb672eb7fd868e96036a46e0ac95">Freier_method</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* sequence);</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;            </div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <span class="keywordtype">double</span> <a class="code" href="classannealing__temperature.html#a0f958d972d467c2ba149e6cff707b174">Wallace_method</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* sequence);</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    </div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="keywordtype">double</span> <a class="code" href="classannealing__temperature.html#ab8ee36de64b4229416231faa763648ee">Santa_Lucia_method</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* primer_sequence, <span class="keyword">const</span> <span class="keywordtype">char</span>* template_sequence);</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    </div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    <span class="keywordtype">double</span> <a class="code" href="group___primer3.html#ga115ac7d87e0fb625a99e6619412266b3">primer3_Tm</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* sequence);</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    <span class="keywordtype">double</span> oligo_Tm(<span class="keyword">const</span> <span class="keywordtype">char</span>* sequence);</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    </div>
-<div class="line"><a name="l00098"></a><span class="lineno"><a class="code" href="group___primer3.html#gad7f4ee9a5506dabc941e0b88a0a78baa">   98</a></span>&#160;    <span class="keyword">typedef</span> <span class="keyword">enum</span> <a class="code" href="group___primer3.html#gad7f4ee9a5506dabc941e0b88a0a78baa" title="primer3 parameters">primer3_parameter</a> </div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    {</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;        DNA_CONC        = 0,</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;        SALT_CONC       = 1,</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;        DIVALENT_CONC   = 2,</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;        DNTP_CONC       = 3,</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;        NN_MAX_LEN      = 4,</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;    } <a class="code" href="group___primer3.html#gad7f4ee9a5506dabc941e0b88a0a78baa" title="primer3 parameters">primer3_parameter</a>;</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    </div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="group___primer3.html#ga78d6bce97ca1587d7b6cf50d758b2778">set_primer3_parameter</a>(<a class="code" href="group___primer3.html#gad7f4ee9a5506dabc941e0b88a0a78baa" title="primer3 parameters">primer3_parameter</a> parameter, <span class="keywordtype">double</span> value);</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    </div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="group___primer3.html#ga241a3292d41ee7f2818283591812e112">set_primer3_method</a>(tm_method_type method);</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    </div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="group___primer3.html#gaeaacad8b355b2d23178f3ce65553aea8">set_primer3_salt_correction_method</a>(salt_correction_type method);    </div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    <span class="keywordtype">double</span> dna_conc;</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    <span class="keywordtype">double</span> salt_conc;</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;    <span class="keywordtype">double</span> divalent_conc;</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    <span class="keywordtype">double</span> dntp_conc;</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;    <span class="keywordtype">int</span>    nn_max_len;</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;    tm_method_type tm_method;</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    salt_correction_type salt_corrections;</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;};</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;<span class="preprocessor"></span></div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="preprocessor">#include &lt;iostream&gt;</span></div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;</div>
+<div class="line"><a name="l00056"></a><span class="lineno"><a class="code" href="classannealing__temperature.html">   56</a></span>&#160;<span class="keyword">class </span><a class="code" href="classannealing__temperature.html" title="Abstract class for primer annealing temperature calculations.">annealing_temperature</a></div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;{</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;  <a class="code" href="classannealing__temperature.html" title="Abstract class for primer annealing temperature calculations.">annealing_temperature</a>() { };</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;  <span class="keyword">virtual</span> ~<a class="code" href="classannealing__temperature.html" title="Abstract class for primer annealing temperature calculations.">annealing_temperature</a>() = 0;</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;  </div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">double</span> <a class="code" href="classannealing__temperature.html#a6273513c7e19a5aa9a8d7e8330bb1f70">calculate_temperature</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* sequence) = 0;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    </div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;};</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="preprocessor"></span></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sun Apr 21 2013 09:50:19 for PD5 by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Apr 24 2013 20:32:59 for PD5 by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3.1
 </small></address>

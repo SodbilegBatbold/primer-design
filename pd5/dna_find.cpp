@@ -51,6 +51,24 @@
 
 using namespace std;
 
+DNAfind::DNAfind(const char* filename) 
+try : nsb(filename)
+{
+  //Set defaults		
+  max_mismatches = 0;
+  tail_length = 12; // Max 20
+  max_viable_product_length = 3500;
+  GC_array_optimisation = TRUE;
+  report_details = FALSE;
+  //cout << "tail "<< tail_length << endl;
+  //cout << "mismatches "<< max_mismatches << endl;
+} 
+catch (...) {
+  throw;
+ }
+
+
+
 int DNAfind::find_sequence(const char* sequence, 
 						   const char* dna_template)
 {
@@ -486,18 +504,19 @@ int DNAfind::search_for_binding_sites(const char *sequence)
 	bool chromosome_for_processing = FALSE;	
 	
 	char tail_sequence[20];
-	
+
 	// For normal sequence
 	int sequence_length = strlen(sequence);
-	for(i = 0; i < tail_length; i++)
+	for(i = 0; i < tail_length; i++) 
 		tail_sequence[i] = sequence[i + sequence_length - tail_length];
-	
+
 	/* For reverse complement sequence
 	for(i = 0; i < tail_length; i++)
 		tail_sequence[i] = sequence[i];
      */
 	// Terminate sequence string
 	tail_sequence[tail_length] = 0;
+
 
 #ifdef DNAFIND_DEBUG
 	cout << "Sequence " << sequence << endl;
@@ -512,7 +531,7 @@ int DNAfind::search_for_binding_sites(const char *sequence)
 	
 	fin.clear();
 	fin.seekg(0, ios::beg);
-	
+
 	while(getline(fin, t_buffer))
 	{	
 		buffer = new char [t_buffer.size() + 1];

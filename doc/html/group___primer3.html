@@ -92,6 +92,11 @@ typedef enum <br class="typebreak"/>
 <a class="el" href="group___primer3.html#gad7f4ee9a5506dabc941e0b88a0a78baa">annealing_temperature::primer3_parameter</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___primer3.html#gade306012fe09443a0b1ac6f3c33f74ff">annealing_temperature::primer3_parameter</a></td></tr>
 <tr class="memdesc:gade306012fe09443a0b1ac6f3c33f74ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">primer3 parameters <br/></td></tr>
 <tr class="separator:gade306012fe09443a0b1ac6f3c33f74ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga686d3ea20b3257bd9ae43e36c5203f7f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ga686d3ea20b3257bd9ae43e36c5203f7f"></a>
+typedef enum <br class="typebreak"/>
+<a class="el" href="group___primer3.html#ga6c54187c7dd187d9ef231549c1b4abc5">primer3_Tm_temperature::primer3_parameter</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___primer3.html#ga686d3ea20b3257bd9ae43e36c5203f7f">primer3_Tm_temperature::primer3_parameter</a></td></tr>
+<tr class="memdesc:ga686d3ea20b3257bd9ae43e36c5203f7f"><td class="mdescLeft">&#160;</td><td class="mdescRight">primer3 parameters <br/></td></tr>
+<tr class="separator:ga686d3ea20b3257bd9ae43e36c5203f7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
 Enumerations</h2></td></tr>
@@ -106,6 +111,17 @@ Enumerations</h2></td></tr>
  }</td></tr>
 <tr class="memdesc:gad7f4ee9a5506dabc941e0b88a0a78baa"><td class="mdescLeft">&#160;</td><td class="mdescRight">primer3 parameters <br/></td></tr>
 <tr class="separator:gad7f4ee9a5506dabc941e0b88a0a78baa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga6c54187c7dd187d9ef231549c1b4abc5"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___primer3.html#ga6c54187c7dd187d9ef231549c1b4abc5">primer3_Tm_temperature::primer3_parameter</a> { <br/>
+&#160;&#160;<b>DNA_CONC</b> = 0, 
+<b>SALT_CONC</b> = 1, 
+<b>DIVALENT_CONC</b> = 2, 
+<b>DNTP_CONC</b> = 3, 
+<br/>
+&#160;&#160;<b>NN_MAX_LEN</b> = 4
+<br/>
+ }</td></tr>
+<tr class="memdesc:ga6c54187c7dd187d9ef231549c1b4abc5"><td class="mdescLeft">&#160;</td><td class="mdescRight">primer3 parameters <br/></td></tr>
+<tr class="separator:ga6c54187c7dd187d9ef231549c1b4abc5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
@@ -120,6 +136,15 @@ double&#160;</td><td class="memItemRight" valign="bottom"><b>annealing_temperatu
 <tr class="separator:ga241a3292d41ee7f2818283591812e112"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaeaacad8b355b2d23178f3ce65553aea8"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___primer3.html#gaeaacad8b355b2d23178f3ce65553aea8">annealing_temperature::set_primer3_salt_correction_method</a> (salt_correction_type method)</td></tr>
 <tr class="separator:gaeaacad8b355b2d23178f3ce65553aea8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga7f61fcb86e4792c7c7e8c771889cb8f8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ga7f61fcb86e4792c7c7e8c771889cb8f8"></a>
+double&#160;</td><td class="memItemRight" valign="bottom"><b>primer3_Tm_temperature::oligo_Tm</b> (const char *sequence)</td></tr>
+<tr class="separator:ga7f61fcb86e4792c7c7e8c771889cb8f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac14d20dedbb7c842a63c88832e7b686f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___primer3.html#gac14d20dedbb7c842a63c88832e7b686f">primer3_Tm_temperature::set_primer3_parameter</a> (primer3_parameter parameter, double value)</td></tr>
+<tr class="separator:gac14d20dedbb7c842a63c88832e7b686f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga97c7de537006ec1c6d2a2678bc324039"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___primer3.html#ga97c7de537006ec1c6d2a2678bc324039">primer3_Tm_temperature::set_primer3_method</a> (tm_method_type method)</td></tr>
+<tr class="separator:ga97c7de537006ec1c6d2a2678bc324039"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga8e447c2fe50692395e6fb99a6de5e8fa"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___primer3.html#ga8e447c2fe50692395e6fb99a6de5e8fa">primer3_Tm_temperature::set_primer3_salt_correction_method</a> (salt_correction_type method)</td></tr>
+<tr class="separator:ga8e447c2fe50692395e6fb99a6de5e8fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <h2 class="groupheader">Function Documentation</h2>
@@ -140,6 +165,24 @@ double&#160;</td><td class="memItemRight" valign="bottom"><b>annealing_temperatu
 
 </div>
 </div>
+<a class="anchor" id="ga97c7de537006ec1c6d2a2678bc324039"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int primer3_Tm_temperature::set_primer3_method </td>
+          <td>(</td>
+          <td class="paramtype">tm_method_type&#160;</td>
+          <td class="paramname"><em>method</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>For setting either Santa Lucia or Breslauer method.</p>
+<dl class="section see"><dt>See Also</dt><dd><a class="el" href="oligotm_8h_source.html">oligoTm.h</a> (for typedef) </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="ga241a3292d41ee7f2818283591812e112"></a>
 <div class="memitem">
 <div class="memproto">
@@ -155,6 +198,33 @@ double&#160;</td><td class="memItemRight" valign="bottom"><b>annealing_temperatu
 </div><div class="memdoc">
 <p>For setting either Santa Lucia or Breslauer method.</p>
 <dl class="section see"><dt>See Also</dt><dd><a class="el" href="oligotm_8h_source.html">oligoTm.h</a> (for typedef) </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="gac14d20dedbb7c842a63c88832e7b686f"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int primer3_Tm_temperature::set_primer3_parameter </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group___primer3.html#gad7f4ee9a5506dabc941e0b88a0a78baa">primer3_parameter</a>&#160;</td>
+          <td class="paramname"><em>parameter</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>value</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>For setting any of the 5 numerical values in Primer3's annealing temperature algorithm. Eg. set_primer3_parameter(DNA_CONC, 70); </p>
 
 </div>
 </div>
@@ -185,6 +255,24 @@ double&#160;</td><td class="memItemRight" valign="bottom"><b>annealing_temperatu
 
 </div>
 </div>
+<a class="anchor" id="ga8e447c2fe50692395e6fb99a6de5e8fa"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int primer3_Tm_temperature::set_primer3_salt_correction_method </td>
+          <td>(</td>
+          <td class="paramtype">salt_correction_type&#160;</td>
+          <td class="paramname"><em>method</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>For setting Schildkraut, Santa Lucia or Owczarzy salt correction method.</p>
+<dl class="section see"><dt>See Also</dt><dd><a class="el" href="oligotm_8h_source.html">oligoTm.h</a> (for typedef) </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="gaeaacad8b355b2d23178f3ce65553aea8"></a>
 <div class="memitem">
 <div class="memproto">
@@ -206,7 +294,7 @@ double&#160;</td><td class="memItemRight" valign="bottom"><b>annealing_temperatu
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sun Apr 21 2013 09:50:20 for PD5 by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Apr 24 2013 20:32:59 for PD5 by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3.1
 </small></address>

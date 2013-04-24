@@ -64,6 +64,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="annotated.html"><span>Class&#160;List</span></a></li>
       <li><a href="classes.html"><span>Class&#160;Index</span></a></li>
+      <li><a href="hierarchy.html"><span>Class&#160;Hierarchy</span></a></li>
       <li class="current"><a href="functions.html"><span>Class&#160;Members</span></a></li>
     </ul>
   </div>
@@ -149,7 +150,12 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <h3><a class="anchor" id="index_c"></a>- c -</h3><ul>
 <li>calculate_temperature()
-: <a class="el" href="classprimer.html#ae96b4913a48afabb8da19728210fa27c">primer</a>
+: <a class="el" href="classannealing__temperature.html#a6273513c7e19a5aa9a8d7e8330bb1f70">annealing_temperature</a>
+, <a class="el" href="classfreier__temperature.html#a721afec7b06769c8ddd1932e3a74a523">freier_temperature</a>
+, <a class="el" href="classwallace__temperature.html#ad93cbd89ea100a2b3277bc60b35de8ba">wallace_temperature</a>
+, <a class="el" href="classprimer3___tm__temperature.html#ab29d22a631691342399fcc497ecfe362">primer3_Tm_temperature</a>
+, <a class="el" href="classprimer.html#ae96b4913a48afabb8da19728210fa27c">primer</a>
+, <a class="el" href="classmarmur__temperature.html#a40edb7f4417689914c10dc03f79902b2">marmur_temperature</a>
 </li>
 <li>candidate_analysis()
 : <a class="el" href="classprimer__pair.html#a4bd4ef01260756f2518ccd39764cc7d4">primer_pair</a>
@@ -227,6 +233,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 
 <h3><a class="anchor" id="index_n"></a>- n -</h3><ul>
+<li>nsb()
+: <a class="el" href="classnsb.html#a469602cf10a34858fdf6f15ac78ada8b">nsb</a>
+</li>
 <li>nucleotide_complement()
 : <a class="el" href="classsequence__utils.html#a3c895f7e7bee6176988edec086853fc9">sequence_utils</a>
 </li>
@@ -284,13 +293,15 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </li>
 <li>search_for_binding_sites()
 : <a class="el" href="class_d_n_afind.html#a9737c595c37ae784e539fd6d4502603c">DNAfind</a>
+, <a class="el" href="classnsb.html#a6650c10038f0c97c7a3d7cd5d855311c">nsb</a>
 </li>
 <li>search_for_pcr_products()
 : <a class="el" href="class_d_n_afind.html#a4b73574bbfe01f13d24061358ed40512">DNAfind</a>
+, <a class="el" href="classnsb.html#ada84672322d656c6f5efe314714a2813">nsb</a>
 </li>
 <li>self_dimer()
-: <a class="el" href="classdimerisation.html#a167a39e66593342ec7b8beb228c16936">dimerisation</a>
-, <a class="el" href="classprimer.html#a482c3734947398fc75b81563b0dd0fbf">primer</a>
+: <a class="el" href="classprimer.html#a482c3734947398fc75b81563b0dd0fbf">primer</a>
+, <a class="el" href="classdimerisation.html#a167a39e66593342ec7b8beb228c16936">dimerisation</a>
 </li>
 <li>self_dimerisation()
 : <a class="el" href="classprimer__data.html#aefffdba94fe4ec585b2d5c324e26d402">primer_data</a>
@@ -315,12 +326,15 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </li>
 <li>set_primer3_method()
 : <a class="el" href="group___primer3.html#ga241a3292d41ee7f2818283591812e112">annealing_temperature</a>
+, <a class="el" href="group___primer3.html#ga97c7de537006ec1c6d2a2678bc324039">primer3_Tm_temperature</a>
 </li>
 <li>set_primer3_parameter()
 : <a class="el" href="group___primer3.html#ga78d6bce97ca1587d7b6cf50d758b2778">annealing_temperature</a>
+, <a class="el" href="group___primer3.html#gac14d20dedbb7c842a63c88832e7b686f">primer3_Tm_temperature</a>
 </li>
 <li>set_primer3_salt_correction_method()
 : <a class="el" href="group___primer3.html#gaeaacad8b355b2d23178f3ce65553aea8">annealing_temperature</a>
+, <a class="el" href="group___primer3.html#ga8e447c2fe50692395e6fb99a6de5e8fa">primer3_Tm_temperature</a>
 </li>
 <li>set_primer_length_range()
 : <a class="el" href="classprimer.html#a6fa16b39c86228152957d735d04bb5d3">primer</a>
@@ -351,8 +365,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 : <a class="el" href="classprimer__pair.html#aa5b233c7ffea73b666880880268360f9">primer_pair</a>
 </li>
 <li>Smith_Waterman()
-: <a class="el" href="classsequence__utils.html#a1fe4292e468c2bec251911251200c677">sequence_utils</a>
-, <a class="el" href="classprimer.html#ad59872dab773754c30ad5925b37d0858">primer</a>
+: <a class="el" href="classprimer.html#ad59872dab773754c30ad5925b37d0858">primer</a>
+, <a class="el" href="classsequence__utils.html#a1fe4292e468c2bec251911251200c677">sequence_utils</a>
 </li>
 <li>sort_candidates()
 : <a class="el" href="classprimer.html#aac92ad0347f4a30e91a35068a1811e5f">primer</a>
@@ -413,11 +427,14 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li>~DNAfind()
 : <a class="el" href="class_d_n_afind.html#afbdb2d6ee8ff47a7c722ad558952e6d7">DNAfind</a>
 </li>
+<li>~nsb()
+: <a class="el" href="classnsb.html#ae9bda7a547bb9ca2b44ca022fd8bf19c">nsb</a>
+</li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sun Apr 21 2013 09:50:20 for PD5 by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Apr 24 2013 20:32:59 for PD5 by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.3.1
 </small></address>

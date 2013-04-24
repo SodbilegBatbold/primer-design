@@ -1,8 +1,7 @@
 
 
-COMMONOBJS = pd5/annealing_temperature.o pd5/dna_find.o pd5/primer_data.o pd5/primer.o pd5/dimerisation.o pd5/primer_pair_data.o pd5/primer_pair.o pd5/oligotm.o pd5/sequence_utils.o pd5/display_utils.o 
+COMMONOBJS = pd5/annealing_temperature.o pd5/marmur_temperature.o pd5/freier_temperature.o pd5/wallace_temperature.o pd5/primer3_Tm_temperature.o pd5/dna_find.o pd5/primer_data.o pd5/primer.o pd5/dimerisation.o pd5/primer_pair_data.o pd5/primer_pair.o pd5/oligotm.o pd5/sequence_utils.o pd5/display_utils.o pd5/nsb.o
 
-#LCOMMONOBJS = annealing_temperature.lo dna_find.lo primer.lo dimerisation.lo primer_pair.lo oligotm.lo sequence_utils.lo display_utils.lo 
 
 #OBJ_PA = precise_auto.o
 

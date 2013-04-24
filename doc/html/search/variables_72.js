@@ -10,7 +10,7 @@ var searchData=
   ['reverse_5fpair_5fdimer_5fscore',['reverse_pair_dimer_score',['../classprimer__pair__data.html#aa597f0ecaf1fafed1a3599ebedea893d',1,'primer_pair_data']]],
   ['reverse_5fpair_5fdimer_5fweighting',['reverse_pair_dimer_weighting',['../classprimer__pair.html#a1ba18d712fdf6b5a71d89a860a978659',1,'primer_pair']]],
   ['reverse_5fprimer',['reverse_primer',['../classprimer.html#a7c2027f14597f88be714fe4c3a838b7f',1,'primer']]],
-  ['reverse_5fprimer_5fmatch_5flocations',['reverse_primer_match_locations',['../class_d_n_afind.html#ac43758728bb353fefc73509d11bb9373',1,'DNAfind']]],
+  ['reverse_5fprimer_5fmatch_5flocations',['reverse_primer_match_locations',['../classnsb.html#a8d14473e3035d1c0b0c65b6300418cbc',1,'nsb']]],
   ['reverse_5fself_5fdimer_5fscore',['reverse_self_dimer_score',['../classprimer__pair__data.html#a268e33beff021189f423dd53228cf8a1',1,'primer_pair_data']]],
   ['reverse_5fsequence',['reverse_sequence',['../classprimer__pair__data.html#a2b6213ab2dac7e6298f9627b6034ffe3',1,'primer_pair_data']]]
 ];
