@@ -42,8 +42,8 @@ char * test_generate_38_candidate_pairs() {
   pp.generate_candidates(seqP);
   pp.make_pair_candidates(pp.forward_primer.candidates_found, pp.reverse_primer.candidates_found);
   mu_assert((char *)"generate_100_candidate_pairs error, number_of_candidates != 38", pp.number_of_pair_candidates == 38);
-  free(seqP);
-  free(seqName);
+  delete [] seqP;
+  delete [] seqName;
   return 0;
 }
 
@@ -69,7 +69,7 @@ char * test_generate_sort_candidate_pairs() {
   pp.sort_individual_candidates("HAIRPIN,LENGTH,TEMPERATURE");
   pp.sort_pair_candidates("TM_DIFF,PRODUCTS");
   mu_assert((char *)"generate_sort_candidate_pairs error, good_pair_candidates != 36", pp.good_pair_candidates == 36);
-  free(seqP);
-  free(seqName);
+  delete [] seqP;
+  delete [] seqName;
   return 0;
 }

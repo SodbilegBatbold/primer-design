@@ -102,29 +102,32 @@ int splitargs(char *str, vector<int> &args) {
 
 
 /**
- * Reads template sequence from a fasta-formatted file.
+ * Reads single template sequence of max 7000 bases from a 
+ * fasta-formatted file.
  */
 int readTemplate(char* seqFile, char** seqP, char** seqName){ 
   ifstream fin(seqFile);
   char buffer[7000];
   *seqP = new char[7000];
   *seqName = new char[100];
-  
-  while(fin.getline(buffer, 255)) 
+
+  while(fin.getline(buffer, 6999))
   {
     if(buffer[0] == 0x3E)  // fasta header
     {
-		strcpy(*seqName, strtok(buffer,"> \t\n\r"));
+      strcpy(*seqName, strtok(buffer,"> \t\n\r"));
     }
     else 
-	{
-		strcat(*seqP, strtok(buffer,"> \t\n\r"));
+      {
+	strcat(*seqP, strtok(buffer,"> \t\n\r"));
     }
-	
     fin.clear();
   }
+
   return 1;
 }
+
+
 
 int extract_product(const char* template_seq, primer_pair_data *myprimers, char * &product) 
 {  
