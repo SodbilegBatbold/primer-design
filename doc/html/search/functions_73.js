@@ -1,8 +1,8 @@
 var searchData=
 [
   ['santa_5flucia_5fmethod',['Santa_Lucia_method',['../classannealing__temperature.html#ab8ee36de64b4229416231faa763648ee',1,'annealing_temperature']]],
-  ['search_5ffor_5fbinding_5fsites',['search_for_binding_sites',['../class_d_n_afind.html#a9737c595c37ae784e539fd6d4502603c',1,'DNAfind']]],
-  ['search_5ffor_5fpcr_5fproducts',['search_for_pcr_products',['../class_d_n_afind.html#a4b73574bbfe01f13d24061358ed40512',1,'DNAfind']]],
+  ['search_5ffor_5fbinding_5fsites',['search_for_binding_sites',['../class_d_n_afind.html#a9737c595c37ae784e539fd6d4502603c',1,'DNAfind::search_for_binding_sites()'],['../classnsb.html#a6650c10038f0c97c7a3d7cd5d855311c',1,'nsb::search_for_binding_sites()']]],
+  ['search_5ffor_5fpcr_5fproducts',['search_for_pcr_products',['../class_d_n_afind.html#a4b73574bbfe01f13d24061358ed40512',1,'DNAfind::search_for_pcr_products()'],['../classnsb.html#ada84672322d656c6f5efe314714a2813',1,'nsb::search_for_pcr_products()']]],
   ['self_5fdimer',['self_dimer',['../classdimerisation.html#a167a39e66593342ec7b8beb228c16936',1,'dimerisation::self_dimer(const char *a_sequence)'],['../classdimerisation.html#aa3fe6b3a38ff23eff827dccc7e8e8fd3',1,'dimerisation::self_dimer(const char *a_sequence, ofstream &amp;fout)'],['../classprimer.html#a482c3734947398fc75b81563b0dd0fbf',1,'primer::self_dimer(int candidate_number)'],['../classprimer.html#a774db1e10bf45cb7ce1c9803debca61d',1,'primer::self_dimer(int candidate_number, ofstream &amp;fout)']]],
   ['self_5fdimerisation',['self_dimerisation',['../classprimer__data.html#aefffdba94fe4ec585b2d5c324e26d402',1,'primer_data']]],
   ['set_5fdna_5ffind',['set_dna_find',['../classprimer__pair.html#a1f339ada33fe2e73f500d2c5e3f688e6',1,'primer_pair']]],
@@ -11,9 +11,9 @@ var searchData=
   ['set_5fmax_5fmismatches',['set_max_mismatches',['../class_d_n_afind.html#a0467c7ecfb8aa4093b4c966c79889852',1,'DNAfind']]],
   ['set_5fmax_5fviable_5fproduct_5flength',['set_max_viable_product_length',['../class_d_n_afind.html#a684c56c48de5fd60924218c0e179cfd6',1,'DNAfind']]],
   ['set_5fpercentage_5fcomplementarity',['set_percentage_complementarity',['../classdimerisation.html#a16edb1f8341e80dd957214386fe20d2b',1,'dimerisation']]],
-  ['set_5fprimer3_5fmethod',['set_primer3_method',['../group___primer3.html#ga241a3292d41ee7f2818283591812e112',1,'annealing_temperature']]],
-  ['set_5fprimer3_5fparameter',['set_primer3_parameter',['../group___primer3.html#ga78d6bce97ca1587d7b6cf50d758b2778',1,'annealing_temperature']]],
-  ['set_5fprimer3_5fsalt_5fcorrection_5fmethod',['set_primer3_salt_correction_method',['../group___primer3.html#gaeaacad8b355b2d23178f3ce65553aea8',1,'annealing_temperature']]],
+  ['set_5fprimer3_5fmethod',['set_primer3_method',['../group___primer3.html#ga241a3292d41ee7f2818283591812e112',1,'annealing_temperature::set_primer3_method()'],['../group___primer3.html#ga97c7de537006ec1c6d2a2678bc324039',1,'primer3_Tm_temperature::set_primer3_method()']]],
+  ['set_5fprimer3_5fparameter',['set_primer3_parameter',['../group___primer3.html#ga78d6bce97ca1587d7b6cf50d758b2778',1,'annealing_temperature::set_primer3_parameter()'],['../group___primer3.html#gac14d20dedbb7c842a63c88832e7b686f',1,'primer3_Tm_temperature::set_primer3_parameter()']]],
+  ['set_5fprimer3_5fsalt_5fcorrection_5fmethod',['set_primer3_salt_correction_method',['../group___primer3.html#gaeaacad8b355b2d23178f3ce65553aea8',1,'annealing_temperature::set_primer3_salt_correction_method()'],['../group___primer3.html#ga8e447c2fe50692395e6fb99a6de5e8fa',1,'primer3_Tm_temperature::set_primer3_salt_correction_method()']]],
   ['set_5fprimer_5flength_5frange',['set_primer_length_range',['../classprimer.html#a6fa16b39c86228152957d735d04bb5d3',1,'primer::set_primer_length_range()'],['../classprimer__pair.html#a74005ad7a56a565d88ba91c788ab5e2e',1,'primer_pair::set_primer_length_range()']]],
   ['set_5fprimer_5flocation_5frange',['set_primer_location_range',['../classprimer.html#a6a4e57263f04ce79e73f068ba4f35892',1,'primer']]],
   ['set_5fpriorities',['set_priorities',['../classprimer.html#aefa95b56642512dabea43d2336b1c517',1,'primer']]],

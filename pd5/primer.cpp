@@ -48,6 +48,7 @@
 #include <cmath> // for fabs
 
 #include "primer.h"
+#include "primer3_Tm_temperature.h"
 
 #define LOCATION_ERROR 0
 #define SET_LOCATION_ERROR 0
@@ -1418,7 +1419,7 @@ int primer::fasta3(int candidate_number, const char* library_filename)
 
 int primer::calculate_temperature(int candidate_number)
 {
-  annealing_temperature temp;
-  candidate[candidate_number].annealing_temperature = temp.primer3_Tm(candidate[candidate_number].sequence);
+  primer3_Tm_temperature temp; // primer3
+  candidate[candidate_number].annealing_temperature = temp.calculate_temperature(candidate[candidate_number].sequence);
   return 1;
 }

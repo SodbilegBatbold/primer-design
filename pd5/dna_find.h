@@ -51,9 +51,10 @@
 #include <cstdio>
 #include <cstdlib>
 #include "sequence_utils.h"
+#include "nsb.h"
 
-#define TRUE 1
-#define FALSE 0
+//#define TRUE 1
+//#define FALSE 0
 
 //#define DNAFIND_DEBUG
 
@@ -64,14 +65,6 @@ using namespace std;
  Data on the location and nature of secondary binding occurrences
  */
 
-class location_data
-{
-public:
-	long location;
-	bool sense_strand;
-	char matching_sequence[21]; 
-	// int matching_sequence_score;
-};
 
 //! Secondary binding class
 /**
@@ -89,24 +82,13 @@ public:
      cout << "Number of products = " << products << endl;
  */
 
-class DNAfind
+class DNAfind : public nsb
 {
 public:
 	//! Constructor
 	/** Note that the instantiation of a DNAfind object requires the file name of the genome sequence for the 
 	 organism under investigation. Must be in FASTA format with each chromosome separately delineated by >. */
-	DNAfind(const char* filename)
-	{
-		fin.open(filename);
-		if(!fin.is_open()) cout << "Cannot open file: " << filename << endl;
-		
-		//Set defaults		
-		max_mismatches = 0;
-		tail_length = 12; // Max 20
-		max_viable_product_length = 3500;
-		GC_array_optimisation = TRUE;
-		report_details = FALSE;
-	};
+        DNAfind(const char* filename);
 	
 	//!Destructor
 	~DNAfind()
@@ -115,8 +97,8 @@ public:
 		fin.close();
 	};
 	
-	location_data forward_primer_match_locations[1000]; ///< Calculated results stored here
-	location_data reverse_primer_match_locations[1000]; ///< Calculated results stored here
+	//location_data forward_primer_match_locations[1000]; ///< Calculated results stored here
+	//location_data reverse_primer_match_locations[1000]; ///< Calculated results stored here
 	
 	/** \brief Secondary binding site prediction */
 	/** Finds all potential binding site locations. Returns number of binding sites found, locations 
@@ -151,7 +133,7 @@ public:
 	bool report_details;   ///< Outputs to stdout
 	
 private:
-	ifstream fin;
+	//ifstream fin;
 	
 	string reverse_complement(string sequence);
 	
@@ -180,6 +162,7 @@ private:
 	int max_mismatches;
 	int max_viable_product_length;
 	int tail_length;
+
 };
 
 #endif
