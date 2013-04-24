@@ -40,8 +40,8 @@ char * test_generate_100_candidate_primers() {
   readTemplate(filename,&seqP,&seqName);
   p.generate_candidates(seqP);
   mu_assert((char *)"generate_100_candidate_primers error, candidates_found != 100", p.candidates_found == 100);
-  free(seqP);
-  free(seqName);
+  delete [] seqP;
+  delete [] seqName;
   return 0;
 }
 
@@ -57,8 +57,8 @@ char * test_generate_20mer_primers_at_start() {
   readTemplate(filename,&seqP,&seqName);
   p.generate_candidates(seqP);
   mu_assert((char *)"generate_fewer_candidate_primers error, candidates_found == 5", p.candidates_found == 5);
-  free(seqP);
-  free(seqName);
+  delete [] seqP;
+  delete [] seqName;
   return 0;
 }
 
