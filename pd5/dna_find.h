@@ -60,10 +60,6 @@
 
 using namespace std;
 
-//! Secondary binding data
-/**
- Data on the location and nature of secondary binding occurrences
- */
 
 
 //! Secondary binding class
