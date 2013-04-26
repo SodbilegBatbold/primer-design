@@ -138,7 +138,8 @@ private:
 					 location_data sequence_match[],
 					 int match_count);
 	
-	int GC_array_opt(const char* sequence, 
+	int GC_array_opt(const char* sequence,
+                     bool is_rc_sequence,
 					 const char* dna_template,
 					 location_data sequence_match[],
 					 int match_count);

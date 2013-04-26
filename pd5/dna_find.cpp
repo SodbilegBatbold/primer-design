@@ -313,7 +313,8 @@ long find_subset(string sequence, string dna_template)
  
  */
 
-int DNAfind::GC_array_opt(const char* sequence, 
+int DNAfind::GC_array_opt(const char* sequence,
+                          bool is_rc_sequence,
 						  const char* dna_template,
 						  location_data sequence_match[],
 						  int match_count)
@@ -333,14 +334,28 @@ int DNAfind::GC_array_opt(const char* sequence,
 	int opt_array_limit = 3; ///< Pattern of (opt_array_limit + 1) Ss will be used
 	int subset[opt_array_limit + 1];
 	
-	for(i = seq_len; i >= 0; i--)
-	{	
-		if(sequence[i] == GUANINE || sequence[i] == CYTOSINE)
-		{
-			subset[x] = i;
-			if(x++ > opt_array_limit)break;
-		}
-	}
+	if(is_rc_sequence)
+    {
+        for(i = 0; i < seq_len; i++)
+        {	
+            if(sequence[i] == GUANINE || sequence[i] == CYTOSINE)
+            {
+                subset[x] = i;
+                if(x++ > opt_array_limit)break;
+            }
+        }
+    }
+    else
+    {
+        for(i = seq_len; i >= 0; i--)
+        {
+            if(sequence[i] == GUANINE || sequence[i] == CYTOSINE)
+            {
+                subset[x] = i;
+                if(x++ > opt_array_limit)break;
+            }
+        }
+    }
 	
 	/** Set size of subset */
 	int offset_array_size = x;
@@ -473,8 +488,8 @@ int DNAfind::find_sequence(const char* sequence,
 	}
 	else
 	{
-		w_hits = GC_array_opt(sequence, dna_template, sequence_match, 0);
-		all_hits = GC_array_opt(rc_sequence, dna_template, sequence_match, w_hits);
+		w_hits = GC_array_opt(sequence, FALSE, dna_template, sequence_match, 0);
+		all_hits = GC_array_opt(rc_sequence, TRUE, dna_template, sequence_match, w_hits);
 	}
 	
 /** Adjust location results for antisense strand */
