@@ -50,11 +50,9 @@
 #include <cstring>
 #include <cstdio>
 #include <cstdlib>
-#include "sequence_utils.h"
+#include "global_defs.h"
 #include "nsb.h"
 
-//#define TRUE 1
-//#define FALSE 0
 
 //#define DNAFIND_DEBUG
 
@@ -132,6 +130,7 @@ private:
 	//ifstream fin;
 	
 	string reverse_complement(string sequence);
+    int reverse_complement(const char* orig_string, char* out_string);
 	
 	int first_GC_opt(const char* sequence, 
 					 const char* dna_template,
