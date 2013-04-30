@@ -84,8 +84,8 @@ public:
   virtual ~nsb() = 0;
   
 
-  location_data forward_primer_match_locations[1000]; ///< Calculated results stored here
-  location_data reverse_primer_match_locations[1000]; ///< Calculated results stored here
+  location_data forward_primer_match_locations[1012]; ///< Calculated results stored here
+  location_data reverse_primer_match_locations[1012]; ///< Calculated results stored here
 
   /** \brief Secondary binding site prediction */
   /** Finds all potential binding site locations. Returns number of binding sites found, locations 
