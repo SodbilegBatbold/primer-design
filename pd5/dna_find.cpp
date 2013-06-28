@@ -81,6 +81,7 @@ int DNAfind::find_sequence(const char* sequence,
 	bool found = FALSE;
 	long seq_len = strlen(sequence);
 	long dna_len = strlen(dna_template);
+    long process_length = dna_len - seq_len;
 	
 // Find a location for G or C in the query sequence - we can use this to speed up the search
 	
@@ -95,7 +96,7 @@ int DNAfind::find_sequence(const char* sequence,
 		}
 	}
 		
-	for(i = 0; i < (dna_len - seq_len); i++)
+	for(i = 0; i < (process_length); i++)
 	{
 		if(sequence[First_GC] == dna_template[i + First_GC])
 		{
@@ -131,14 +132,14 @@ int DNAfind::find_sequence(const char* sequence,
 	}
 	
 	char rc_sequence[seq_len + 1];	
-	sequence_utils::reverse_complement(sequence, rc_sequence);
+	reverse_complement(sequence, rc_sequence);
 	
 	//find a G or C
 	First_GC = 0; // Use 0 default if no Gs or Cs found in sequence
 	
 	for(i = 0; i < seq_len; i++)if(rc_sequence[i] == GUANINE || rc_sequence[i] == CYTOSINE){First_GC = i; break;}
 	
-	for(i = 0; i < (dna_len - seq_len); i++)
+	for(i = 0; i < process_length; i++)
 	{
 		if(rc_sequence[First_GC] == dna_template[i + First_GC])
 		{
@@ -196,7 +197,7 @@ int DNAfind::find_sequence(const char* sequence,
 
 char complement[22] = {"T G   C      N     A"};
 
-int nucleotide_complement(int nucleotide)
+inline int nucleotide_complement(int nucleotide)
 {
 	return(*(complement - 65 + nucleotide));
 }
@@ -217,6 +218,21 @@ string DNAfind::reverse_complement(string sequence)
 	cout << rc_sequence << endl;
 	
 	return(rc_sequence);	
+}
+
+inline int DNAfind::reverse_complement(const char* orig_string, char* out_string)
+{
+	int i;
+	int orig_string_length = strlen(orig_string);
+	
+	for(i = 0; i < orig_string_length; i++)
+	{
+		out_string[i] = nucleotide_complement(orig_string[orig_string_length - i - 1]);
+	}
+	out_string[i] = 0;
+	
+	//cout << out_string << endl;
+	return(1);
 }
 
 //***************************************************************
@@ -313,7 +329,8 @@ long find_subset(string sequence, string dna_template)
  
  */
 
-int DNAfind::GC_array_opt(const char* sequence, 
+int DNAfind::GC_array_opt(const char* sequence,
+                          bool is_rc_sequence,
 						  const char* dna_template,
 						  location_data sequence_match[],
 						  int match_count)
@@ -333,14 +350,28 @@ int DNAfind::GC_array_opt(const char* sequence,
 	int opt_array_limit = 3; ///< Pattern of (opt_array_limit + 1) Ss will be used
 	int subset[opt_array_limit + 1];
 	
-	for(i = seq_len; i >= 0; i--)
-	{	
-		if(sequence[i] == GUANINE || sequence[i] == CYTOSINE)
-		{
-			subset[x] = i;
-			if(x++ > opt_array_limit)break;
-		}
-	}
+	if(is_rc_sequence)
+    {
+        for(i = 0; i < seq_len; i++)
+        {	
+            if(sequence[i] == GUANINE || sequence[i] == CYTOSINE)
+            {
+                subset[x] = i;
+                if(x++ > opt_array_limit)break;
+            }
+        }
+    }
+    else
+    {
+        for(i = seq_len; i >= 0; i--)
+        {
+            if(sequence[i] == GUANINE || sequence[i] == CYTOSINE)
+            {
+                subset[x] = i;
+                if(x++ > opt_array_limit)break;
+            }
+        }
+    }
 	
 	/** Set size of subset */
 	int offset_array_size = x;
@@ -463,7 +494,7 @@ int DNAfind::find_sequence(const char* sequence,
 	
 /** Reverse complement sequence to search antisense strand */
 	char rc_sequence[seq_len + 1];	
-	sequence_utils::reverse_complement(sequence, rc_sequence);
+	reverse_complement(sequence, rc_sequence);
 	
 	/** Search strands W and then C */
 	if(!GC_array_optimisation)
@@ -473,8 +504,8 @@ int DNAfind::find_sequence(const char* sequence,
 	}
 	else
 	{
-		w_hits = GC_array_opt(sequence, dna_template, sequence_match, 0);
-		all_hits = GC_array_opt(rc_sequence, dna_template, sequence_match, w_hits);
+		w_hits = GC_array_opt(sequence, FALSE, dna_template, sequence_match, 0);
+		all_hits = GC_array_opt(rc_sequence, TRUE, dna_template, sequence_match, w_hits);
 	}
 	
 /** Adjust location results for antisense strand */
@@ -697,8 +728,8 @@ int DNAfind::process_chromosome(const char *chromosome,
 						cout << chromosome[sense_loci[i] + k];
 					//cout << endl;
 					
-					sequence_utils::reverse_complement(forward_sequence, rc_forward_sequence);
-					sequence_utils::reverse_complement(reverse_sequence, rc_reverse_sequence);
+					reverse_complement(forward_sequence, rc_forward_sequence);
+					reverse_complement(reverse_sequence, rc_reverse_sequence);
 					
 					if(antisense_primer[j]) cout << "           <<<" << rc_forward_sequence;
 					else cout << "           <<<" << rc_reverse_sequence;
