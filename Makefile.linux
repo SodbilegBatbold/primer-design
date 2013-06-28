@@ -1,0 +1,56 @@
+
+
+
+LCOMMONOBJS = pd5/annealing_temperature.lo pd5/marmur_temperature.lo pd5/freier_temperature.lo pd5/wallace_temperature.lo pd5/primer3_Tm_temperature.lo pd5/dna_find.lo pd5/nsb.lo pd5/primer_data.lo pd5/primer.lo pd5/dimerisation.lo pd5/primer_pair_data.lo pd5/primer_pair.lo pd5/oligotm.lo pd5/sequence_utils.lo pd5/display_utils.lo 
+
+OBJ_PD = precise_deletion/precise_deletion.o
+
+OBJ_CLI = pd5_cli/pd5_cli.o
+
+OBJ_SSR = pd5_ssr/sputnik_ssr.o pd5_ssr/sputnik.o pd5_ssr/pd5_ssr.o
+
+OBJ_BA = basic_app/basic_app.o
+
+OBJ_TEST = test/test_annealing_temperature.o test/test_sequence_utils.o test/test_DNAfind.o test/test_dimerisation.o test/test_primer.o test/test_primer_pair.o test/unit_tests.o
+
+
+CC     = g++
+
+CFLAGS = -O2 -g -Wall
+
+
+all : libpd5.a pd5_ssr pd5_cli basic_app unit_tests
+
+%.lo : %.cpp
+	libtool --mode=compile $(CC) $(CFLAGS) -c $< -o $@
+%.lo : %.c
+	libtool --mode=compile $(CC) $(CFLAGS) -c $< -o $@
+
+libpd5.a: $(LCOMMONOBJS)
+	libtool --mode=link $(CC) $(CFLAGS) -o libpd5.a -static $(LCOMMONOBJS)
+
+%.o: %.cpp
+	$(CC) $(CFLAGS) -c -o $@ $< 
+
+
+
+precise_deletion : $(OBJ_PD) libpd5.a
+	$(CC) $(CFLAGS) $(OBJ_PD) -L. -lpd5 -o precise_deletion/precise_deletion
+
+pd5_ssr : $(OBJ_SSR) libpd5.a
+	$(CC) $(CFLAGS) $(OBJ_SSR)  -L. -lpd5 -o pd5_ssr/pd5_ssr
+
+pd5_cli : $(OBJ_CLI) libpd5.a
+	$(CC) $(CFLAGS) $(OBJ_CLI)  -L. -lpd5 -o pd5_cli/pd5_cli
+
+basic_app : $(OBJ_BA) libpd5.a
+	$(CC) $(CFLAGS) $(OBJ_BA)  -L. -lpd5 -o basic_app/basic_app
+
+unit_tests: $(OBJ_TEST) libpd5.a
+	$(CC) $(CFLAGS) $(OBJ_TEST)  -L. -lpd5 -o test/unit_tests
+
+.PHONY: clean
+
+clean:
+	rm -f *.o *.lo a.out libpd5.a pd5/*.o pd5_cli/*.o pd5_ssr/*.o basic_app/*.o precise_deletion/*.o pd5/*.lo pd5_cli/*.lo pd5_ssr/*.lo basic_app/*.lo precise_deletion/*.lo
+
