@@ -3,6 +3,7 @@
 
 LCOMMONOBJS = pd5/annealing_temperature.lo pd5/marmur_temperature.lo pd5/freier_temperature.lo pd5/wallace_temperature.lo pd5/primer3_Tm_temperature.lo pd5/dna_find.lo pd5/nsb.lo pd5/primer_data.lo pd5/primer.lo pd5/dimerisation.lo pd5/primer_pair_data.lo pd5/primer_pair.lo pd5/oligotm.lo pd5/sequence_utils.lo pd5/display_utils.lo 
 
+OBJ_PD = precise_deletion/precise_deletion.o
 
 OBJ_CLI = pd5_cli/pd5_cli.o
 
@@ -33,8 +34,8 @@ libpd5.a: $(LCOMMONOBJS)
 
 
 
-#precise_auto : $(OBJ_PA) libpd5.a
-#	$(CC) $(CFLAGS) $(OBJ_PA) -L. -lpd5 -o precise_auto
+precise_deletion : $(OBJ_PD) libpd5.a
+	$(CC) $(CFLAGS) $(OBJ_PD) -L. -lpd5 -o precise_deletion/precise_deletion
 
 pd5_ssr : $(OBJ_SSR) libpd5.a
 	$(CC) $(CFLAGS) $(OBJ_SSR)  -L. -lpd5 -o pd5_ssr/pd5_ssr
@@ -51,5 +52,5 @@ unit_tests: $(OBJ_TEST) libpd5.a
 .PHONY: clean
 
 clean:
-	rm -f *.o *.lo a.out libpd5.a pd5/*.o pd5_cli/*.o pd5_ssr/*.o basic_app/*.o pd5/*.lo pd5_cli/*.lo pd5_ssr/*.lo basic_app/*.lo
+	rm -f *.o *.lo a.out libpd5.a pd5/*.o pd5_cli/*.o pd5_ssr/*.o basic_app/*.o precise_deletion/*.o pd5/*.lo pd5_cli/*.lo pd5_ssr/*.lo basic_app/*.lo precise_deletion/*.lo
 

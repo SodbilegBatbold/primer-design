@@ -121,7 +121,7 @@ public:
 	 */
 	int set_Tm_range(double minimum, double optimum, double maximum);
 	
-	/** Generates up to 100 candidates passing hard constraints
+	/** Generates up to 100 candidates for each primer, passing hard constraints
 	 */
 	int generate_candidates(const char* template_sequence);
 	
