@@ -60,6 +60,7 @@ try : nsb(filename)
   max_viable_product_length = 3500;
   GC_array_optimisation = TRUE;
   report_details = FALSE;
+	report_matches = FALSE;
   //cout << "tail "<< tail_length << endl;
   //cout << "mismatches "<< max_mismatches << endl;
 } 
@@ -82,7 +83,8 @@ int DNAfind::find_sequence(const char* sequence,
 	long seq_len = strlen(sequence);
 	long dna_len = strlen(dna_template);
     long process_length = dna_len - seq_len;
-	char subject_sequence[32], rc_subject[32];
+	char subject_sequence[32];
+	//char rc_subject[32];
 	
 // Find a location for G or C in the query sequence - we can use this to speed up the search
 	
@@ -114,14 +116,17 @@ int DNAfind::find_sequence(const char* sequence,
 			if(found)
 			{
 				location[index] = i;
-#ifdef DNAFIND_DEBUG
-				for(j = 0; j < seq_len; j++)
-					subject_sequence[j] = dna_template[i + j];
-				subject_sequence[seq_len] = 0;
-				
-				cout << "Query " << sequence << " at w " << location[index] << endl;
-				cout << "Sbjct " << subject_sequence << " at w " << location[index] << endl << endl;
-#endif				
+
+				if(report_matches)
+				{
+					for(j = 0; j < seq_len; j++)
+						subject_sequence[j] = dna_template[i + j];
+					subject_sequence[seq_len] = 0;
+					
+					cout << "Query " << sequence << " at w " << location[index] << endl;
+					cout << "Sbjct " << subject_sequence << " at w " << location[index] << endl << endl;
+				}
+			
 				index++;
 				if(index > count)
 				{
@@ -162,15 +167,17 @@ int DNAfind::find_sequence(const char* sequence,
 			if(found)
 			{
 				location[index] = i + seq_len;
-#ifdef DNAFIND_DEBUG
-				for(j = 0; j < seq_len; j++)
-					subject_sequence[j] = dna_template[i + j];
-				subject_sequence[seq_len] = 0;
-				
-				cout << "Query " << rc_sequence << " at c " << location[index] - seq_len << endl;
-				cout << "Sbjct " << subject_sequence << " at c " << location[index]  - seq_len << endl << endl;
-				
-#endif
+
+				if(report_matches)
+				{
+					for(j = 0; j < seq_len; j++)
+						subject_sequence[j] = dna_template[i + j];
+					subject_sequence[seq_len] = 0;
+					
+					cout << "Query " << rc_sequence << " at c " << location[index] - seq_len << endl;
+					cout << "Sbjct " << subject_sequence << " at c " << location[index]  - seq_len << endl << endl;
+				}
+
 				index++;
 				if(index > count)
 				{
