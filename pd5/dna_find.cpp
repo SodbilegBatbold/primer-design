@@ -82,6 +82,7 @@ int DNAfind::find_sequence(const char* sequence,
 	long seq_len = strlen(sequence);
 	long dna_len = strlen(dna_template);
     long process_length = dna_len - seq_len;
+	char subject_sequence[32], rc_subject[32];
 	
 // Find a location for G or C in the query sequence - we can use this to speed up the search
 	
@@ -113,8 +114,13 @@ int DNAfind::find_sequence(const char* sequence,
 			if(found)
 			{
 				location[index] = i;
-#ifdef DNAFIND_DEBUG				
-				cout << "Found " << sequence << " at w " << location[index] << endl;
+#ifdef DNAFIND_DEBUG
+				for(j = 0; j < seq_len; j++)
+					subject_sequence[j] = dna_template[i + j];
+				subject_sequence[seq_len] = 0;
+				
+				cout << "Query " << sequence << " at w " << location[index] << endl;
+				cout << "Sbjct " << subject_sequence << " at w " << location[index] << endl << endl;
 #endif				
 				index++;
 				if(index > count)
@@ -157,7 +163,13 @@ int DNAfind::find_sequence(const char* sequence,
 			{
 				location[index] = i + seq_len;
 #ifdef DNAFIND_DEBUG
-				cout << "Found " << rc_sequence << " at c " << location[index] << endl;
+				for(j = 0; j < seq_len; j++)
+					subject_sequence[j] = dna_template[i + j];
+				subject_sequence[seq_len] = 0;
+				
+				cout << "Query " << rc_sequence << " at c " << location[index] - seq_len << endl;
+				cout << "Sbjct " << subject_sequence << " at c " << location[index]  - seq_len << endl << endl;
+				
 #endif
 				index++;
 				if(index > count)
