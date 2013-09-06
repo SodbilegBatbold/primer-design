@@ -1,15 +1,14 @@
 /********************************************************************
  
- PD5: a general purpose library for primer design.
+ PD5: a general purpose library for primer design app development.
  
- basic_app.cpp
+ pd5.h
  
- Created by:	Michael C. Riley
- 		Amanda Clare
+ Created by:	Michael C. Riley and Amanda Clare
  
- Date:			05/11/2011
+ Date:			05/09/2013
  
- Copyright (c) 2010, 2011 Aberystwyth University. 
+ Copyright (c) 2013 Aberystwyth University. 
  All rights reserved.
  
  This program is free software: you can redistribute it and/or modify
@@ -39,40 +38,17 @@
  
  *******************************************************************/
 
+/** \file primer.h
+ \brief Individual primer design
+ 
+ This file contains the methods and attributes required for individual primer design
+ */
 
-#include "../pd5/primer_pair.h"
+#ifndef PD5_H
+#define PD5_H
 
-int main(int argc, char** argv)
-{	
-	primer_pair pcr1;
+#include "primer.h"
+#include "primer_pair.h"
+#include "genblast.h"
 
-	if(argc != 2) {
-	  cout << argv[0] << ": Please provide a DNA string as argument" << endl;
-	  exit(0);
-	}
-
-	// Set parameters
-	pcr1.set_target_location(200, 500);
-	pcr1.set_primer_length_range(20, 20);
-
-	// Get candidate primers (argv[1] = dna template)
-	pcr1.generate_candidates(argv[1]);
-
-	// Analyse candidates and display
-	pcr1.candidate_analysis();
-	pcr1.show_individual_candidates();
-
-	// Sort individual candidates and display
-	pcr1.sort_individual_candidates("HAIRPIN, SELF_DIMER, TEMPERATURE");
-	pcr1.show_individual_candidates();
-
-	// Select and sort primer pairs
-	pcr1.sort_pair_candidates("TM_DIFF, F_DIMER, R_DIMER, MOO_SORT");
-
-	// Display best 6 candidate pairs
-	pcr1.show_best_pair_candidates(6);
-	
-	
-
-	return(1);
-}	
+#endif

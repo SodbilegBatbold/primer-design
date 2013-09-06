@@ -1,6 +1,6 @@
 
 
-COMMONOBJS = pd5/annealing_temperature.o pd5/marmur_temperature.o pd5/freier_temperature.o pd5/wallace_temperature.o pd5/primer3_Tm_temperature.o pd5/dna_find.o pd5/primer_data.o pd5/primer.o pd5/dimerisation.o pd5/primer_pair_data.o pd5/primer_pair.o pd5/oligotm.o pd5/sequence_utils.o pd5/display_utils.o pd5/nsb.o
+COMMONOBJS = pd5/annealing_temperature.o pd5/marmur_temperature.o pd5/freier_temperature.o pd5/wallace_temperature.o pd5/primer3_Tm_temperature.o pd5/dna_find.o pd5/primer_data.o pd5/primer.o pd5/dimerisation.o pd5/primer_pair_data.o pd5/primer_pair.o pd5/oligotm.o pd5/sequence_utils.o pd5/display_utils.o pd5/nsb.o pd5/genblast.o
 
 
 OBJ_PD = precise_deletion/precise_deletion.o
@@ -42,6 +42,8 @@ basic_app: $(OBJ_BA) libpd5.a
 
 unit_tests: $(OBJ_TEST) libpd5.a
 	$(CC) $(CFLAGS) $(OBJ_TEST)  -L. -lpd5 -o test/unit_tests
+
+
 
 .PHONY: clean
 
