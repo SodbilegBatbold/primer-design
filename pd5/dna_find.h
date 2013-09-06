@@ -125,6 +125,7 @@ public:
 	//int set_optimisation(int var);
 	bool GC_array_optimisation; ///< Optimisation parameter
 	bool report_details;   ///< Outputs to stdout
+	bool report_matches;  ///< Reports query sequence and it's match to the template to std out
 	
 private:
 	//ifstream fin;
