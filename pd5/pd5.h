@@ -38,10 +38,9 @@
  
  *******************************************************************/
 
-/** \file primer.h
- \brief Individual primer design
+/** \file pd5.h
+ \brief PD5 primer design. Include this header for access to the entire PD5 library
  
- This file contains the methods and attributes required for individual primer design
  */
 
 #ifndef PD5_H
