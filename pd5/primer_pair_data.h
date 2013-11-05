@@ -49,7 +49,7 @@
 #define PRIMER_PAIR_DATA_H
 
 #include "dimerisation.h"
-#include "dna_find.h"
+#include "nsb.h"
 
 
 //! Primer pair data class
@@ -88,7 +88,7 @@ public:
 	int pair_dimerisation(void);
 	/** Sets number_of_pcr_products by calling DNAfind::search_for_pcr_products. Returns 
 	    TRUE on success and FALSE on failure. */
-	int pcr_products(DNAfind &mynsb);
+	int pcr_products(nsb &mynsb);
 };
 
 #endif

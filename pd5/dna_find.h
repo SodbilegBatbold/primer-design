@@ -81,7 +81,7 @@ class DNAfind : public nsb
 public:
 	//! Constructor
 	/** Note that the instantiation of a DNAfind object requires the file name of the genome sequence for the 
-	 organism under investigation. Must be in FASTA format with each chromosome separately delineated by >. */
+	 organism under investigation. Must be in FASTA format with each chromosome separately delineated by ">" */
         DNAfind(const char* filename);
 	
 	//!Destructor
