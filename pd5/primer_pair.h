@@ -66,7 +66,7 @@
 
 #include "primer.h"
 #include "primer_pair_data.h"
-#include "dna_find.h"
+#include "nsb.h"
 #include "global_defs.h"
 
 
@@ -101,13 +101,13 @@ public:
 	// Array of optimum pair results
 	primer_pair_data pair_candidate[38];
 
-	DNAfind *nsbP; 	///< Non-specific binding search mechanism
-
+	nsb *nsbP; 	///< Non-specific binding search mechanism
+        int hasNSB;
 
 	// int get_primers(const char* dna_template);
 
 	/** Sets the non-specific binding mechanism */
-	int set_dna_find(DNAfind *dnafind);
+	int set_nsb(nsb *n);
 
 	/** Sets the begin and end locations of the region for amplification */
 	int set_target_location(int begin, int end);

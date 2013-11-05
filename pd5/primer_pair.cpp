@@ -74,10 +74,12 @@ primer_pair::primer_pair(void)
 	good_pair_candidates = 0;
 	max_number_pairs = 38;
 	nsbP = NULL;
+	hasNSB = FALSE;
 }
 
-int primer_pair::set_dna_find(DNAfind *dnafind) {
-  nsbP = dnafind;
+int primer_pair::set_nsb(nsb *n) {
+  nsbP = n;
+  hasNSB = TRUE;
   return TRUE;
 }
 
@@ -446,8 +448,11 @@ int primer_pair::sort_pair_candidates(const char* priority_list)
 		pair_candidate[i].pair_dimerisation();
 		
 		// Initialising 
-		//pair_candidate[i].number_of_pcr_products = 0;
-		pair_candidate[i].pcr_products(*nsbP);
+		if (hasNSB) {
+		  pair_candidate[i].pcr_products(*nsbP);
+		} else {
+		  pair_candidate[i].number_of_pcr_products = 0;
+		}
 		//pair_candidate[i].number_of_pcr_products = search_for_pcr_products(pcr1.pair_candidate[i].forward_sequence, pcr1.pair_candidate[i].reverse_sequence);
 		
 	}

@@ -66,7 +66,7 @@ int primer_pair_data::pair_dimerisation(void)
 	return(TRUE);
 }
 
-int primer_pair_data::pcr_products(DNAfind &mynsb)
+int primer_pair_data::pcr_products(nsb &mynsb)
 {
 	if(forward_sequence && reverse_sequence)
 	{

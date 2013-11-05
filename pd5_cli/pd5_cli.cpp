@@ -20,6 +20,7 @@
 
 #include "../pd5/primer_pair.h"
 #include "../pd5/display_utils.h"
+#include "../pd5/dna_find.h"
 
 
 using namespace std;
@@ -218,7 +219,9 @@ int new_process(char* template_sequence,
   if(template_sequence != NULL)
   {
     primer_pair pcr1;
-
+    if (nsbP != NULL) { 
+      pcr1.set_nsb(nsbP);
+    }
 	// Get and set parameters
 	//pcr1.set_target_location(200, 500);
     //pcr1.set_primer_length_range(20, 20);
