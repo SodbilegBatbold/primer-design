@@ -1,5 +1,6 @@
 #include "test_primer_pair.h" 
 #include "../pd5/primer_pair.h"
+#include "../pd5/dna_find.h"
 
 /**
  * Reads template sequence from a fasta-formatted file.

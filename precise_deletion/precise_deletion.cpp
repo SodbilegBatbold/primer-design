@@ -19,10 +19,12 @@
 
 using namespace std;
 
-#include "../pd5/primer_pair.h"
+//#include "../pd5/primer_pair.h"
 #include "../pd5/dna_find.h"
-#include "../pd5/annealing_temperature.h"
-#include "../pd5/sequence_utils.h"
+#include "../pd5/primer3_Tm_temperature.h"
+//#include "../pd5/sequence_utils.h"
+
+#include "../pd5/pd5.h"
 
 // ORGANISM (POMBE, S_CERE, LACTIS)
 #define POMBE

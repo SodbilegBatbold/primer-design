@@ -1,6 +1,21 @@
 
 
-COMMONOBJS = pd5/annealing_temperature.o pd5/marmur_temperature.o pd5/freier_temperature.o pd5/wallace_temperature.o pd5/primer3_Tm_temperature.o pd5/dna_find.o pd5/primer_data.o pd5/primer.o pd5/dimerisation.o pd5/primer_pair_data.o pd5/primer_pair.o pd5/oligotm.o pd5/sequence_utils.o pd5/display_utils.o pd5/nsb.o pd5/genblast.o
+COMMONOBJS = pd5/annealing_temperature.o \
+             pd5/marmur_temperature.o \
+             pd5/freier_temperature.o \
+             pd5/wallace_temperature.o \
+             pd5/primer3_Tm_temperature.o \
+             pd5/dna_find.o \
+             pd5/primer_data.o \
+             pd5/primer.o \
+             pd5/dimerisation.o \
+             pd5/primer_pair_data.o \
+             pd5/primer_pair.o \
+             pd5/oligotm.o \
+             pd5/sequence_utils.o \
+             pd5/display_utils.o \
+             pd5/nsb.o \
+             pd5/genblast.o
 
 
 OBJ_PD = precise_deletion/precise_deletion.o
@@ -11,7 +26,13 @@ OBJ_SSR = pd5_ssr/sputnik_ssr.o pd5_ssr/sputnik.o pd5_ssr/pd5_ssr.o
 
 OBJ_BA = basic_app/basic_app.o
 
-OBJ_TEST = test/test_annealing_temperature.o test/test_sequence_utils.o test/test_DNAfind.o test/test_dimerisation.o test/test_primer.o test/test_primer_pair.o test/unit_tests.o 
+OBJ_TEST = test/test_annealing_temperature.o \
+           test/test_sequence_utils.o \
+           test/test_DNAfind.o \
+           test/test_dimerisation.o \
+           test/test_primer.o \
+           test/test_primer_pair.o \
+           test/unit_tests.o 
 
 CC     = g++
 
@@ -26,10 +47,8 @@ libpd5.a: $(COMMONOBJS)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 
-
 precise_deletion : $(OBJ_PD) libpd5.a
 	$(CC) $(CFLAGS) $(OBJ_PD) -L. -lpd5 -o precise_deletion/precise_deletion
-
 
 pd5_ssr: $(OBJ_SSR) libpd5.a
 	$(CC) $(CFLAGS) $(OBJ_SSR) -L. -lpd5 -o pd5_ssr/pd5_ssr
