@@ -20,6 +20,8 @@ COMMONOBJS = pd5/annealing_temperature.o \
 
 OBJ_PD = precise_deletion/precise_deletion.o
 
+OBJ_CC = precise_deletion/cassette_confirmation.o
+
 OBJ_CLI = pd5_cli/pd5_cli.o
 
 OBJ_SSR = pd5_ssr/sputnik_ssr.o pd5_ssr/sputnik.o pd5_ssr/pd5_ssr.o
@@ -38,7 +40,7 @@ CC     = g++
 
 CFLAGS = -O2 -g -Wall
 
-all: libpd5.a pd5_ssr pd5_cli basic_app unit_tests
+all: libpd5.a pd5_ssr pd5_cli basic_app unit_tests precise_deletion cassette_confirmation
 
 libpd5.a: $(COMMONOBJS)
 	libtool -static -o libpd5.a $(COMMONOBJS)
@@ -47,8 +49,11 @@ libpd5.a: $(COMMONOBJS)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 
-precise_deletion : $(OBJ_PD) libpd5.a
+precise_deletion: $(OBJ_PD) libpd5.a
 	$(CC) $(CFLAGS) $(OBJ_PD) -L. -lpd5 -o precise_deletion/precise_deletion
+
+cassette_confirmation: $(OBJ_CC) libpd5.a
+	$(CC) $(CFLAGS) $(OBJ_PD) -L. -lpd5 -o precise_deletion/cassette_confirmation
 
 pd5_ssr: $(OBJ_SSR) libpd5.a
 	$(CC) $(CFLAGS) $(OBJ_SSR) -L. -lpd5 -o pd5_ssr/pd5_ssr
